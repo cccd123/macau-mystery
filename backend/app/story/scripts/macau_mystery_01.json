@@ -1,0 +1,142 @@
+{
+  "script_id": "macau_mystery_01",
+  "title": "跨越中葡的悬案",
+  "description": "玩家扮演文物修复师，沿澳门历史城区步行路线，通过与AI NPC对话破解一个跨越中葡两个家族的悬案。",
+  "chapters": [
+    {
+      "id": "prologue",
+      "location": "妈阁庙",
+      "gps": {
+        "lat": 22.1867,
+        "lng": 113.5318
+      },
+      "npc": "mage_temple_keeper",
+      "scenes": [
+        {
+          "id": "prologue_01",
+          "narration": "你站在妈阁庙前，空气中弥漫着檀香。庙前的石狮子已经被岁月磨得发亮，一位老伯正在扫地。他抬起头看了你一眼……",
+          "dialogue": {
+            "npc": "妈阁庙看庙老伯",
+            "text": "后生仔，拜妈祖啊？香炉这边，小心别撞到。…… 哦你是来修东西的？那你晓不晓得，‘澳门’这个英文名字，就是从这庙门口传出去的——当年洋人问本地人这是什么地方，人家答‘妈阁’，洋人听成了‘Macau’，后来就这么叫开了。"
+          },
+          "choices": [
+            {
+              "id": "c1",
+              "text": "请问这里的历史",
+              "next_scene": "prologue_02a"
+            },
+            {
+              "id": "c2",
+              "text": "我在调查一封信",
+              "next_scene": "prologue_02b",
+              "clue_reward": "letter_fragment"
+            },
+            {
+              "id": "c3",
+              "text": "拍照庙前石狮",
+              "next_scene": "prologue_photo"
+            }
+          ]
+        },
+        {
+          "id": "prologue_02a",
+          "narration": "老伯放下扫帚，笑着开始讲古。",
+          "dialogue": {
+            "npc": "妈阁庙看庙老伯",
+            "text": "这妈阁庙啊，比我爷爷的爷爷还老！明朝的时候就建起来了。你看这石狮子，几百年了，还这么威风。当年葡萄牙人第一次来澳门，就是从这庙门口上岸的。"
+          },
+          "choices": [
+            {
+              "id": "c1a",
+              "text": "葡萄牙人来了之后怎么样？",
+              "next_scene": "prologue_03"
+            },
+            {
+              "id": "c1b",
+              "text": "我想知道更多关于那封信",
+              "next_scene": "prologue_02b"
+            }
+          ]
+        },
+        {
+          "id": "prologue_02b",
+          "narration": "老伯的眼神变得认真起来，他放下扫帚，从口袋里拿出一个发黄的信封。",
+          "dialogue": {
+            "npc": "妈阁庙看庙老伯",
+            "text": "信？说起来，我确实在庙里拾到过一封老信……你等等，让我找找。啊，在这里！信封上写着“某年春，自妈阁启程”。看起来是很久以前的东西了。"
+          },
+          "choices": [
+            {
+              "id": "c4",
+              "text": "这封信是谁写的？",
+              "next_scene": "prologue_03"
+            },
+            {
+              "id": "c5",
+              "text": "信里还有其他内容吗？",
+              "next_scene": "prologue_03"
+            }
+          ]
+        },
+        {
+          "id": "prologue_03",
+          "narration": "老伯摇了摇头，抬头望向山上的方向。",
+          "dialogue": {
+            "npc": "妈阁庙看庙老伯",
+            "text": "信里提到妈阁？那你该往上走走，去亚婆井看看，那边老人多，说不定有人记得。我只知道，这封信和山上那户人家有关……"
+          },
+          "choices": [
+            {
+              "id": "c6",
+              "text": "好的，我去亚婆井看看",
+              "next_scene": "transition_ch1"
+            }
+          ]
+        }
+      ],
+      "photo_triggers": [
+        {
+          "target": "stone_lion",
+          "description": "庙前石狮",
+          "clue_reward": "stone_inscription",
+          "response_text": "你拍到了石狮上的刻字，似乎是某个年代和人名……"
+        }
+      ],
+      "transition": {
+        "text": "信里提到妈阁？那你该往上走走，去亚婆井看看……",
+        "next_chapter": "chapter_01"
+      }
+    }
+  ],
+  "clues": {
+    "letter_fragment": {
+      "id": "letter_fragment",
+      "title": "信封内页残字",
+      "description": "“某年春，自妈阁启程”",
+      "icon": "✉️"
+    },
+    "stone_inscription": {
+      "id": "stone_inscription",
+      "title": "石狮刻字",
+      "description": "石狮底座上刻有一行小字，已经模糊不清",
+      "icon": "🪨"
+    }
+  },
+  "endings": [
+    {
+      "id": "ending_good",
+      "condition": "clues >= 5",
+      "text": "你成功破解了这个跨越百年的悬案，揭开了中葡两个家族的秘密……"
+    },
+    {
+      "id": "ending_normal",
+      "condition": "clues >= 3",
+      "text": "你找到了部分线索，但悬案的真相仍然被迷雾笼罩……"
+    },
+    {
+      "id": "ending_bad",
+      "condition": "default",
+      "text": "线索太少了，你无法解开这个悬案。也许下次可以更仔细地探索每个景点……"
+    }
+  ]
+}
