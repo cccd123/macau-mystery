@@ -1,13 +1,17 @@
 """FastAPI backend - Macau Mystery Platform."""
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.encoders import jsonable_encoder
+from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.config import get_settings
 from app.db import check_database
+from app.game_errors import GameError
 
 
 def create_app() -> FastAPI:
@@ -25,6 +29,44 @@ def create_app() -> FastAPI:
         yield
 
     application = FastAPI(title="Macau Mystery API", version="0.2.0", lifespan=lifespan)
+
+    @application.exception_handler(GameError)
+    async def game_error_handler(_request: Request, exc: GameError) -> JSONResponse:
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={
+                "error": {
+                    "code": exc.code,
+                    "message": exc.message,
+                    "details": jsonable_encoder(exc.details),
+                }
+            },
+        )
+
+    @application.exception_handler(RequestValidationError)
+    async def request_validation_handler(request: Request, exc: RequestValidationError):
+        if not request.url.path.startswith("/api/v1/game"):
+            return await request_validation_exception_handler(request, exc)
+        details = {
+            "errors": [
+                {
+                    "path": ".".join(str(part) for part in error["loc"]),
+                    "message": error["msg"],
+                    "type": error["type"],
+                }
+                for error in exc.errors()
+            ]
+        }
+        return JSONResponse(
+            status_code=422,
+            content={
+                "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": "请求字段、类型或格式不合法",
+                    "details": details,
+                }
+            },
+        )
 
     application.add_middleware(
         CORSMiddleware,
