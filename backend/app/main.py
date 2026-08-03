@@ -1,7 +1,10 @@
 """FastAPI backend - Macau Mystery Platform."""
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.config import get_settings
 from app.db import check_database
@@ -9,7 +12,19 @@ from app.db import check_database
 
 def create_app() -> FastAPI:
     settings = get_settings()
-    application = FastAPI(title="Macau Mystery API", version="0.2.0")
+
+    @asynccontextmanager
+    async def lifespan(_application: FastAPI):
+        if settings.bootstrap_demo_story:
+            from app.story.importer import bootstrap_demo_story
+
+            try:
+                await bootstrap_demo_story()
+            except SQLAlchemyError as exc:
+                raise RuntimeError("数据库尚未迁移；请先执行 alembic upgrade head") from exc
+        yield
+
+    application = FastAPI(title="Macau Mystery API", version="0.2.0", lifespan=lifespan)
 
     application.add_middleware(
         CORSMiddleware,
