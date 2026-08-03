@@ -1,70 +1,78 @@
 import json
-import uuid
 from pathlib import Path
-from fastapi import APIRouter
+
+from fastapi import APIRouter, HTTPException
+
 from app.models import (
-    GameStartRequest, GameStartResponse,
-    ChoiceRequest, ChoiceResponse, GameState,
+    ChoiceRequest,
+    ChoiceResponse,
+    GameStartRequest,
+    GameStartResponse,
+    GameState,
 )
+from app.story.ending_calculator import calculate_ending
+from app.story.state import GameSession
+
 
 router = APIRouter()
-sessions: dict = {}
+sessions: dict[str, GameSession] = {}
 SCRIPTS_DIR = Path(__file__).parent.parent / "story" / "scripts"
 
 
 def load_script(script_id: str) -> dict:
     script_path = SCRIPTS_DIR / f"{script_id}.json"
-    if script_path.exists():
-        with open(script_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return {}
+    if not script_path.exists():
+        raise HTTPException(status_code=404, detail=f"Script '{script_id}' not found")
+    with open(script_path, "r", encoding="utf-8") as file:
+        return json.load(file)
 
 
-def chapter_label(chapter: dict) -> str:
-    chapter_id = chapter.get("id", "")
-    if chapter_id == "prologue":
-        return "序章"
-    return chapter.get("title") or chapter_id
+def clue_payload(script: dict, clue_id: str | None) -> dict | None:
+    if not clue_id:
+        return None
+    clue = script.get("clues", {}).get(clue_id)
+    return clue if clue else {"id": clue_id, "title": clue_id, "description": ""}
 
 
-def find_scene(script: dict, scene_id: str) -> tuple[dict, dict] | None:
-    for chapter in script.get("chapters", []):
-        for scene in chapter.get("scenes", []):
-            if scene.get("id") == scene_id:
-                return chapter, scene
-    return None
+def scene_response(
+    session: GameSession,
+    chapter: dict,
+    scene: dict,
+    clue_reward: str | None = None,
+    ending: dict | None = None,
+) -> ChoiceResponse:
+    return ChoiceResponse(
+        scene_id=scene["id"],
+        chapter=chapter.get("title", chapter.get("id", "")),
+        location=chapter.get("location", ""),
+        narration=scene.get("narration", ""),
+        dialogue=scene.get("dialogue", {"npc": "旁白", "text": ""}),
+        choices=scene.get("choices", []),
+        clue_reward=clue_payload(session.script_data, clue_reward),
+        transition=scene.get("transition"),
+        empathy_score=session.empathy_score,
+        hairpin_assembled=session.flags.get("hairpin_assembled", False),
+        ending=ending,
+    )
 
 
 @router.post("/start", response_model=GameStartResponse)
 async def start_game(req: GameStartRequest):
-    session_id = str(uuid.uuid4())[:8]
     script = load_script(req.script_id)
+    if not script.get("chapters") or not script["chapters"][0].get("scenes"):
+        raise HTTPException(status_code=422, detail="Script has no playable scenes")
 
-    if not script or not script.get("chapters"):
-        return GameStartResponse(
-            session_id=session_id,
-            chapter="Prologue", location="A-Ma Temple",
-            narration="You stand before the A-Ma Temple. An old man is sweeping the ground.",
-            dialogue={"npc": "Temple Keeper", "text": "Welcome! This temple is older than you think."},
-            choices=[{"id": "c1", "text": "Tell me about the history"}, {"id": "c2", "text": "I am investigating a letter"}],
-        )
-
-    first_chapter = script["chapters"][0]
-    first_scene = first_chapter["scenes"][0]
-    sessions[session_id] = {
-        "script_id": req.script_id,
-        "current_chapter": first_chapter["id"],
-        "current_scene": first_scene["id"],
-        "clues": [], "choices": [],
-    }
-
+    session = GameSession.create(req.script_id, script)
+    sessions[session.id] = session
+    chapter = session.get_current_chapter()
+    scene = session.get_current_scene()
     return GameStartResponse(
-        session_id=session_id,
-        chapter=chapter_label(first_chapter),
-        location=first_chapter.get("location", ""),
-        narration=first_scene.get("narration", ""),
-        dialogue=first_scene.get("dialogue", {}),
-        choices=first_scene.get("choices", []),
+        session_id=session.id,
+        chapter=chapter.get("title", chapter["id"]),
+        location=chapter.get("location", ""),
+        narration=scene.get("narration", ""),
+        dialogue=scene.get("dialogue", {}),
+        choices=scene.get("choices", []),
     )
 
 
@@ -72,86 +80,44 @@ async def start_game(req: GameStartRequest):
 async def make_choice(req: ChoiceRequest):
     session = sessions.get(req.session_id)
     if not session:
-        return ChoiceResponse(
-            scene_id="unknown", chapter="", location="",
-            narration="Session expired. Please restart.",
-            dialogue={"npc": "System", "text": "Please restart the game."},
-            choices=[],
+        raise HTTPException(status_code=404, detail="Session expired. Please restart.")
+
+    try:
+        result = session.process_choice(req.choice_id)
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
+
+    if result["is_ending"]:
+        ending = calculate_ending(
+            clues=session.clues,
+            choices=session.choices_history,
+            endings=session.script_data.get("endings", []),
+            empathy_score=session.empathy_score,
+            hairpin_assembled=session.flags.get("hairpin_assembled", False),
+        )
+        session.ending_id = ending["id"]
+        session.current_chapter_id = "ending"
+        session.current_scene_id = ending["id"]
+        ending_chapter = {"id": "ending", "title": ending.get("title", "结局"), "location": ending.get("location", "大三巴牌坊")}
+        ending_scene = {
+            "id": ending["id"],
+            "narration": ending.get("narration", ""),
+            "dialogue": ending.get("dialogue", {"npc": "旁白", "text": ""}),
+            "choices": [],
+        }
+        return scene_response(
+            session,
+            ending_chapter,
+            ending_scene,
+            result["clue_reward"],
+            ending,
         )
 
-    script = load_script(session["script_id"])
-    current = find_scene(script, session["current_scene"])
-    if not current:
-        return ChoiceResponse(
-            scene_id="unknown", chapter="", location="",
-            narration="没有找到当前剧情，请重新开始。",
-            dialogue={"npc": "系统", "text": "当前场景不存在。"},
-            choices=[],
-        )
-
-    current_chapter, current_scene = current
-    selected_choice = next(
-        (
-            choice
-            for choice in current_scene.get("choices", [])
-            if choice.get("id") == req.choice_id
-        ),
-        None,
-    )
-    if not selected_choice:
-        return ChoiceResponse(
-            scene_id=current_scene.get("id", ""),
-            chapter=chapter_label(current_chapter),
-            location=current_chapter.get("location", ""),
-            narration=current_scene.get("narration", ""),
-            dialogue=current_scene.get("dialogue", {}),
-            choices=current_scene.get("choices", []),
-        )
-
-    session["choices"].append(req.choice_id)
-    clue_reward = None
-    clue_id = selected_choice.get("clue_reward")
-    if clue_id:
-        clue_reward = script.get("clues", {}).get(clue_id)
-        if clue_reward and clue_id not in session["clues"]:
-            session["clues"].append(clue_id)
-
-    next_scene_id = selected_choice.get("next_scene", "")
-    next_result = find_scene(script, next_scene_id)
-    if next_result:
-        next_chapter, next_scene = next_result
-        session["current_chapter"] = next_chapter.get("id", "")
-        session["current_scene"] = next_scene.get("id", "")
-        return ChoiceResponse(
-            scene_id=next_scene.get("id", ""),
-            chapter=chapter_label(next_chapter),
-            location=next_chapter.get("location", ""),
-            narration=next_scene.get("narration", ""),
-            dialogue=next_scene.get("dialogue", {}),
-            choices=next_scene.get("choices", []),
-            clue_reward=clue_reward,
-        )
-
-    transition = current_chapter.get("transition", {})
-    photo_trigger = current_chapter.get("photo_triggers", [{}])[0]
-    is_photo_scene = next_scene_id.endswith("photo")
-    narration = (
-        photo_trigger.get("response_text", "你记录下了现场细节。")
-        if is_photo_scene
-        else transition.get("text", "这一段调查已经完成。")
-    )
-    return ChoiceResponse(
-        scene_id=next_scene_id or "chapter_complete",
-        chapter=chapter_label(current_chapter),
-        location=current_chapter.get("location", ""),
-        narration=narration,
-        dialogue={
-            "npc": "调查记录",
-            "text": "当前演示剧情到这里。后续场景加入剧本文件后，会自动接着显示。",
-        },
-        choices=[],
-        clue_reward=clue_reward,
-        transition=transition or None,
+    return scene_response(
+        session,
+        result["chapter"],
+        result["scene"],
+        result["clue_reward"],
     )
 
 
@@ -159,17 +125,17 @@ async def make_choice(req: ChoiceRequest):
 async def get_state(session_id: str):
     session = sessions.get(session_id)
     if not session:
-        return GameState(
-            session_id=session_id, script_id="unknown",
-            current_chapter="", current_scene="",
-            clues_collected=[], choices_made=[], started_at="",
-        )
+        raise HTTPException(status_code=404, detail="Session not found")
+    state = session.to_dict()
     return GameState(
-        session_id=session_id,
-        script_id=session["script_id"],
-        current_chapter=session["current_chapter"],
-        current_scene=session["current_scene"],
-        clues_collected=session["clues"],
-        choices_made=session["choices"],
-        started_at="2026-08-01T00:00:00",
+        session_id=state["session_id"],
+        script_id=state["script_id"],
+        current_chapter=state["current_chapter"],
+        current_scene=state["current_scene"],
+        clues_collected=state["clues"],
+        choices_made=state["choices"],
+        started_at=state["started_at"],
+        empathy_score=state["empathy_score"],
+        hairpin_assembled=state["hairpin_assembled"],
+        ending_id=state["ending_id"],
     )

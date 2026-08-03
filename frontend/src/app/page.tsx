@@ -153,7 +153,7 @@ export default function HomePage() {
             </p>
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Link href="/game/demo">
+              <Link href="/game/broken_hairpin">
                 <Button
                   size="lg"
                   className="h-12 w-full gap-2 bg-brass px-7 text-base font-bold text-[#122a28] shadow-lg shadow-black/20 hover:bg-brass/90 sm:w-auto"

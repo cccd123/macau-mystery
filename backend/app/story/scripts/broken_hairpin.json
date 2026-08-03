@@ -1,0 +1,659 @@
+{
+  "script_id": "broken_hairpin",
+  "title": "漂洋过海的断簪",
+  "description": "玩家受老人委托，沿澳门历史城区寻找失落的簪尾，逐步拼出一段跨越六十年的往事。",
+  "estimated_minutes": "90-120",
+  "route": [
+    "妈阁庙",
+    "亚婆井前地",
+    "郑家大屋",
+    "岗顶剧院",
+    "议事亭前地",
+    "大三巴牌坊"
+  ],
+  "initial_item": {
+    "id": "hairpin_head",
+    "title": "半支银发簪",
+    "description": "簪首饰有缠枝莲纹，仅能辨认出“……春”二字。另一半下落不明。"
+  },
+  "npcs": {
+    "liang_bo": {
+      "name": "看店老伯·梁伯",
+      "location": "妈阁庙",
+      "personality": "唠叨、爱开玩笑、本地通"
+    },
+    "maria": {
+      "name": "阿婆·玛丽亚",
+      "location": "亚婆井前地",
+      "personality": "土生葡人后裔、爱念旧、说话夹葡语"
+    },
+    "zheng_shu": {
+      "name": "老管家后人·郑叔",
+      "location": "郑家大屋",
+      "personality": "严谨、护家族、略带警惕"
+    },
+    "fernando": {
+      "name": "老乐师·飞南度",
+      "location": "岗顶剧院",
+      "personality": "说书腔调、神神叨叨、爱掉书袋"
+    },
+    "chen_bo": {
+      "name": "修表匠·陈伯",
+      "location": "议事亭前地",
+      "personality": "沧桑、克制、话里有禅"
+    }
+  },
+  "chapters": [
+    {
+      "id": "chapter_01",
+      "title": "第一章 · 妈阁庙",
+      "location": "妈阁庙",
+      "gps": {"lat": 22.1867, "lng": 113.5318},
+      "npc": "liang_bo",
+      "historical_note": "妈阁庙在1565年以前已经存在；“Macau”的词源通常与“妈阁”的葡语转写有关。",
+      "scenes": [
+        {
+          "id": "ch1_arrival",
+          "narration": "委托人交给你半支银发簪。簪首饰有缠枝莲纹，只能辨认出“……春”二字。他的母亲临终前留下心愿：若能找到另一半，请替她把簪合上。你带着簪首来到妈阁庙，香火在石阶上方缓缓散开。",
+          "dialogue": {
+            "npc": "看店老伯·梁伯",
+            "avatar": "👴",
+            "text": "后生仔，你是来拜妈祖，还是来修东西的？这地方的故事多，你若愿意听，我就讲两句。"
+          },
+          "choices": [
+            {
+              "id": "ch1_photo_lion",
+              "text": "拍照辨认石狮基座上的磨损刻字",
+              "next_scene": "ch1_inscription"
+            },
+            {
+              "id": "ch1_tell_truth",
+              "text": "坦诚说明：我受一位老人委托寻找断簪的另一半",
+              "next_scene": "ch1_inscription",
+              "empathy_delta": 1
+            },
+            {
+              "id": "ch1_ask_history",
+              "text": "先请梁伯讲讲妈阁庙与澳门地名的故事",
+              "next_scene": "ch1_inscription"
+            }
+          ]
+        },
+        {
+          "id": "ch1_inscription",
+          "narration": "你借着光检查簪首。断口整齐，像是被人故意折断；氧化层下只能看见一个模糊的“春”字。石狮基座上还留有“某年春，自妈阁启程”的残痕。",
+          "dialogue": {
+            "npc": "看店老伯·梁伯",
+            "avatar": "👴",
+            "text": "这缠枝莲纹是老银铺的手艺。庙前街从前有家苏记银铺，老板姓苏，专给大户人家打首饰。后来铺子关了，人也不知去了哪里。"
+          },
+          "choices": [
+            {
+              "id": "ch1_press_origin",
+              "text": "追问苏记银铺与年轻人的去向",
+              "next_scene": "ch1_departure"
+            },
+            {
+              "id": "ch1_note_gently",
+              "text": "先记下细节，不催促老人回忆",
+              "next_scene": "ch1_departure",
+              "empathy_delta": 1
+            }
+          ]
+        },
+        {
+          "id": "ch1_departure",
+          "narration": "梁伯朝山上的方向抬了抬下巴。簪首、苏记银铺与“庚子春”之间似乎存在联系。",
+          "dialogue": {
+            "npc": "看店老伯·梁伯",
+            "avatar": "👴",
+            "text": "去亚婆井看看吧。那边老人多，也许有人认得这支簪。有些簪子断了几十年，能合上就不错了。"
+          },
+          "choices": [
+            {
+              "id": "ch1_to_lilau",
+              "text": "收好簪首，前往亚婆井前地",
+              "next_scene": "ch2_fountain"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter_02",
+      "title": "第二章 · 亚婆井前地",
+      "location": "亚婆井前地",
+      "gps": {"lat": 22.1884, "lng": 113.5382},
+      "npc": "maria",
+      "historical_note": "亚婆井是澳门葡萄牙人早期聚居地之一，相关葡语民谣表达了对澳门的眷恋。",
+      "scenes": [
+        {
+          "id": "ch2_fountain",
+          "narration": "老榕树下，阿婆玛丽亚坐在石凳上织毛线。你刚取出簪首，她手上的动作便停了。",
+          "dialogue": {
+            "npc": "阿婆·玛丽亚",
+            "avatar": "👵",
+            "text": "Quem bebe água do Lilau, não esquece Macau——喝过亚婆井水，就忘不掉澳门。你手上这支簪，我认得。"
+          },
+          "choices": [
+            {
+              "id": "ch2_ask_directly",
+              "text": "轻声问：阿婆，您愿意告诉我它的故事吗？",
+              "next_scene": "ch2_fragment",
+              "empathy_delta": 1
+            },
+            {
+              "id": "ch2_photo_marks",
+              "text": "先拍下石壁上的“苏”字和树根处的“S、L”刻痕",
+              "next_scene": "ch2_fragment"
+            }
+          ]
+        },
+        {
+          "id": "ch2_fragment",
+          "narration": "阿婆说，这支簪是苏家后生亲手打造，送给一位林家姑娘。簪身里的字只有两半合在一起才能看全。",
+          "dialogue": {
+            "npc": "阿婆·玛丽亚",
+            "avatar": "👵",
+            "text": "庚子年春天打的。后来簪断了，可姑娘舍不得扔。你若把锈迹下的字仔细拓下来，也许能认出第一段。"
+          },
+          "choices": [
+            {
+              "id": "ch2_collect_fragment",
+              "text": "耐心拓印簪首，获得第一段铭文",
+              "next_scene": "ch2_name",
+              "clue_reward": "inscription_1"
+            },
+            {
+              "id": "ch2_skip_fragment",
+              "text": "担心损伤银器，暂时不清理锈迹",
+              "next_scene": "ch2_name"
+            }
+          ]
+        },
+        {
+          "id": "ch2_name",
+          "narration": "第一段铭文可能是“苏郎赠·庚子春”。阿婆还记得，姑娘姓林，林家当年借住在郑家大屋后院的厢房。",
+          "dialogue": {
+            "npc": "阿婆·玛丽亚",
+            "avatar": "👵",
+            "text": "苏家后生后来去了很远的地方。林姑娘一直戴着这支簪，直到家里知道了他们的事。"
+          },
+          "choices": [
+            {
+              "id": "ch2_ask_hairpin_tail",
+              "text": "问簪尾后来去了哪里",
+              "next_scene": "ch2_memory",
+              "empathy_delta": 1
+            },
+            {
+              "id": "ch2_listen_silently",
+              "text": "坐到阿婆身边，安静等她自己说下去",
+              "next_scene": "ch2_memory",
+              "empathy_delta": 2
+            },
+            {
+              "id": "ch2_leave_quickly",
+              "text": "只记下郑家大屋的位置，准备离开",
+              "next_scene": "ch2_memory"
+            }
+          ]
+        },
+        {
+          "id": "ch2_memory",
+          "narration": "阿婆终于说出最痛的一段：雨夜错过之后，林姑娘的父亲当着她的面将银簪折成两半。离开澳门前，她把簪尾藏了起来。",
+          "dialogue": {
+            "npc": "阿婆·玛丽亚",
+            "avatar": "👵",
+            "text": "不是摔断的，是林家老爷亲手折断的。簪首后来被苏家后生捡回，簪尾藏在哪里，我不知道。你去郑家大屋找吧。"
+          },
+          "choices": [
+            {
+              "id": "ch2_to_mandarin_house",
+              "text": "向阿婆道谢，前往郑家大屋",
+              "next_scene": "ch3_hall"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter_03",
+      "title": "第三章 · 郑家大屋",
+      "location": "郑家大屋",
+      "gps": {"lat": 22.1881, "lng": 113.5389},
+      "npc": "zheng_shu",
+      "historical_note": "郑家大屋约建于1869年，是郑观应故居，也是澳门中西合璧建筑的代表。",
+      "scenes": [
+        {
+          "id": "ch3_hall",
+          "narration": "岭南灰瓦与西式拱门交错。郑叔站在厅堂里，听见你提起林家姑娘，神情立即警惕起来。",
+          "dialogue": {
+            "npc": "老管家后人·郑叔",
+            "avatar": "🧓",
+            "text": "你是来考古的，还是来翻旧账的？这宅子里的事，不是每一件都适合往外说。"
+          },
+          "choices": [
+            {
+              "id": "ch3_sincere",
+              "text": "诚恳说明：我是替老人完成母亲合簪的心愿",
+              "next_scene": "ch3_compartment",
+              "empathy_delta": 1
+            },
+            {
+              "id": "ch3_cautious",
+              "text": "谨慎说明委托人与林家姑娘的关系",
+              "next_scene": "ch3_compartment",
+              "empathy_delta": 1
+            },
+            {
+              "id": "ch3_force",
+              "text": "坚持要求立即查看旧宅记录",
+              "next_scene": "ch3_compartment"
+            }
+          ]
+        },
+        {
+          "id": "ch3_compartment",
+          "narration": "厅堂角落的老樟木柜有一处接缝不平。你按动底板，暗格弹开：里面是一张残缺合影，以及光素无纹的簪尾。它的断口与簪首完全吻合。",
+          "dialogue": {
+            "npc": "老管家后人·郑叔",
+            "avatar": "🧓",
+            "text": "林家姑娘离开前求先人替她藏好簪尾，不肯让家人把最后的念想扔掉。它在这里等了六十年。"
+          },
+          "choices": [
+            {
+              "id": "ch3_take_tail",
+              "text": "戴上手套，小心取出簪尾和残缺合影",
+              "next_scene": "ch3_fragment",
+              "set_flags": {"hairpin_tail_found": true}
+            }
+          ]
+        },
+        {
+          "id": "ch3_fragment",
+          "narration": "簪尾内侧也有刻痕。合影背面写着“岗顶剧院，庚子年冬”，画面里只剩年轻人的身影与一角裙摆。",
+          "dialogue": {
+            "npc": "老管家后人·郑叔",
+            "avatar": "🧓",
+            "text": "我只看过两段铭文。后面的字被锈盖住了。你可以在这里辨认第二段，也可以先保护原物。"
+          },
+          "choices": [
+            {
+              "id": "ch3_collect_fragment",
+              "text": "在保护银器的前提下辨读第二段铭文",
+              "next_scene": "ch3_room",
+              "clue_reward": "inscription_2"
+            },
+            {
+              "id": "ch3_skip_fragment",
+              "text": "先收好簪尾，不继续清理",
+              "next_scene": "ch3_room"
+            }
+          ]
+        },
+        {
+          "id": "ch3_room",
+          "narration": "后院厢房的窗台刻着一个“等”字，旁边是“林·庚子冬”。附近还有几道以“勿”字开头的模糊刻痕，但无法辨认完整内容——第三段铭文仍要到岗顶剧院寻找。",
+          "dialogue": {
+            "npc": "老管家后人·郑叔",
+            "avatar": "🧓",
+            "text": "她离开前每天坐在这里，望着岗顶剧院。她没有带走簪尾，只把簪子的秘密记在心里。"
+          },
+          "choices": [
+            {
+              "id": "ch3_listen",
+              "text": "不打断郑叔，让他讲完林姑娘离开前的往事",
+              "next_scene": "ch4_lobby",
+              "empathy_delta": 2
+            },
+            {
+              "id": "ch3_thank",
+              "text": "不再深问，道谢后前往岗顶剧院",
+              "next_scene": "ch4_lobby",
+              "empathy_delta": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter_04",
+      "title": "第四章 · 岗顶剧院",
+      "location": "岗顶剧院",
+      "gps": {"lat": 22.1898, "lng": 113.5398},
+      "npc": "fernando",
+      "historical_note": "岗顶剧院建于1860年，是中国现存最古老的西式剧院。",
+      "scenes": [
+        {
+          "id": "ch4_lobby",
+          "narration": "马赛克地板泛着旧光。老乐师飞南度正在擦拭乐器，看到你手里的断簪后，缓缓放下了布。",
+          "dialogue": {
+            "npc": "老乐师·飞南度",
+            "avatar": "🎻",
+            "text": "他们最后一次一起来，是看《茶花女》。后生仔在乐池里伴奏，林姑娘坐第三间包厢。戏散场了，人也散了。"
+          },
+          "choices": [
+            {
+              "id": "ch4_ask_date",
+              "text": "询问那场演出的日期",
+              "next_scene": "ch4_program"
+            },
+            {
+              "id": "ch4_ask_seats",
+              "text": "询问两人最后一次见面的位置",
+              "next_scene": "ch4_program"
+            }
+          ]
+        },
+        {
+          "id": "ch4_program",
+          "narration": "泛黄节目单写着：1960年12月15日，《茶花女》，第三包厢，预订人“林”。背面还有“散场后，妈阁码头见”和一行更小的字。",
+          "dialogue": {
+            "npc": "老乐师·飞南度",
+            "avatar": "🎻",
+            "text": "那行小字和簪身第三段相同。你若愿意仔细对照，应该能把它完整认出来。"
+          },
+          "choices": [
+            {
+              "id": "ch4_collect_fragment",
+              "text": "将节目单小字与簪身刻痕逐字比对",
+              "next_scene": "ch4_fragment",
+              "clue_reward": "inscription_3"
+            },
+            {
+              "id": "ch4_skip_fragment",
+              "text": "只拍下节目单，不立即辨读",
+              "next_scene": "ch4_fragment"
+            }
+          ]
+        },
+        {
+          "id": "ch4_fragment",
+          "narration": "节目单上的小字是“勿失勿忘”。这正是第三段铭文。老乐师说，当夜苏家后生没能赶到码头，林姑娘独自等到天亮。",
+          "dialogue": {
+            "npc": "老乐师·飞南度",
+            "avatar": "🎻",
+            "text": "Ele tentou. Mas não conseguiu——他试过了，但没能做到。真正折断发簪的事，发生在她回家以后。"
+          },
+          "choices": [
+            {
+              "id": "ch4_ask_fate",
+              "text": "问林姑娘后来如何生活、如何把心愿告诉儿子",
+              "next_scene": "ch4_rain",
+              "empathy_delta": 2
+            },
+            {
+              "id": "ch4_silent",
+              "text": "陪老人听一会儿窗外的雨",
+              "next_scene": "ch4_rain",
+              "empathy_delta": 1
+            },
+            {
+              "id": "ch4_focus_clue",
+              "text": "只记录雨夜经过和下一站线索",
+              "next_scene": "ch4_rain"
+            }
+          ]
+        },
+        {
+          "id": "ch4_rain",
+          "narration": "雨夜的时间线终于清楚：林姑娘先在码头等待；回家后，父亲得知私下相约才将完整发簪折断。簪首后来被苏家后生捡回，簪尾则被林姑娘藏进郑家大屋。",
+          "dialogue": {
+            "npc": "老乐师·飞南度",
+            "avatar": "🎻",
+            "text": "她临终前没有把簪尾交给儿子，只把往事和心愿告诉了他：若有一天找到簪首，就去旧宅找回另一半。最后一段铭文，去议事亭前地问陈伯。"
+          },
+          "choices": [
+            {
+              "id": "ch4_to_senado",
+              "text": "带着两半发簪前往议事亭前地",
+              "next_scene": "ch5_square"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter_05",
+      "title": "第五章 · 议事亭前地",
+      "location": "议事亭前地",
+      "gps": {"lat": 22.1934, "lng": 113.5395},
+      "npc": "chen_bo",
+      "historical_note": "议事亭前地是澳门历史城区的核心广场，地面铺有葡式碎石波浪图案。",
+      "scenes": [
+        {
+          "id": "ch5_square",
+          "narration": "葡式碎石路在脚下铺成波浪。陈伯守着一方小修表摊，看到你放下簪首与簪尾，像是早已知道你会来。",
+          "dialogue": {
+            "npc": "修表匠·陈伯",
+            "avatar": "⌚",
+            "text": "簪首被那后生带去了远方，簪尾在旧宅暗格里等了半辈子。时间不等人，但人会替别人等。"
+          },
+          "choices": [
+            {
+              "id": "ch5_ask_return",
+              "text": "问苏家后生后来是否回过澳门",
+              "next_scene": "ch5_truth"
+            },
+            {
+              "id": "ch5_ask_inscription",
+              "text": "请陈伯说出最后一段铭文",
+              "next_scene": "ch5_truth"
+            },
+            {
+              "id": "ch5_reflect",
+              "text": "回答：合簪不是抹去遗憾，而是替人完成心愿",
+              "next_scene": "ch5_truth",
+              "empathy_delta": 2
+            }
+          ]
+        },
+        {
+          "id": "ch5_truth",
+          "narration": "陈伯说，苏家后生后来回来过一次，却只在广场上望着关着的门，最终没有进去。林姑娘离开澳门前，用绣花针刻下最后一段铭文，并把簪尾藏回旧宅。",
+          "dialogue": {
+            "npc": "修表匠·陈伯",
+            "avatar": "⌚",
+            "text": "第四段是“归处即来处”。她把这句话当成面对漂泊的勇气。簪子合上了，心愿就到了。"
+          },
+          "choices": [
+            {
+              "id": "ch5_collect_fragment",
+              "text": "记录陈伯口述，并辨认簪身最后一段",
+              "next_scene": "ch5_summary",
+              "clue_reward": "inscription_4"
+            },
+            {
+              "id": "ch5_skip_fragment",
+              "text": "不继续除锈，只记下故事",
+              "next_scene": "ch5_summary"
+            }
+          ]
+        },
+        {
+          "id": "ch5_summary",
+          "narration": "路线完整连起：妈阁庙、亚婆井、郑家大屋、岗顶剧院、议事亭前地。所有矛盾也已统一——林姑娘离开前将簪尾藏入旧宅，临终时只向儿子留下合簪心愿。",
+          "dialogue": {
+            "npc": "修表匠·陈伯",
+            "avatar": "⌚",
+            "text": "去大三巴吧。两半能不能合上，由你决定。合上后，簪尾末端那行隐藏小字才会出现。"
+          },
+          "choices": [
+            {
+              "id": "ch5_to_ruins",
+              "text": "前往大三巴牌坊，完成最后的选择",
+              "next_scene": "ch6_arch"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter_06",
+      "title": "第六章 · 大三巴牌坊",
+      "location": "大三巴牌坊",
+      "gps": {"lat": 22.1976, "lng": 113.5409},
+      "npc": null,
+      "historical_note": "圣保禄教堂始建于1602年，1835年大火后仅存前壁；其建筑融合东西方元素。",
+      "scenes": [
+        {
+          "id": "ch6_arch",
+          "narration": "夕阳照亮大三巴牌坊。它曾经历大火，只留下前壁，却仍成为城市的记忆。你掌心里的两半断簪，也在等待最后的决定。",
+          "dialogue": {
+            "npc": "AI旁白",
+            "avatar": "✨",
+            "text": "它不会自己合上，但只要有人愿意替它合上，心愿就算到了。"
+          },
+          "choices": [
+            {
+              "id": "ch6_review",
+              "text": "回想沿途找到的铭文和林姑娘的故事",
+              "next_scene": "ch6_decision",
+              "empathy_delta": 1
+            },
+            {
+              "id": "ch6_decide_now",
+              "text": "直接准备处理两半发簪",
+              "next_scene": "ch6_decision"
+            }
+          ]
+        },
+        {
+          "id": "ch6_decision",
+          "narration": "你将簪首与簪尾并放在修复垫上。断口严丝合缝。委托人的消息再次出现：他找了几十年，只希望有人替母亲完成这件事。",
+          "dialogue": {
+            "npc": "委托人",
+            "avatar": "✉️",
+            "text": "母亲说，簪尾仍在旧宅。如果有一天找回两半，请替她把簪合上。至于是否真的拼合，我尊重你的判断。"
+          },
+          "choices": [
+            {
+              "id": "ch6_ask_last",
+              "text": "再确认隐藏铭文的来历和刻写时间",
+              "next_scene": "ch6_return",
+              "empathy_delta": 1
+            },
+            {
+              "id": "ch6_prepare",
+              "text": "完成清洁和断口保护，进入最后一步",
+              "next_scene": "ch6_return"
+            }
+          ]
+        },
+        {
+          "id": "ch6_return",
+          "narration": "隐藏铭文并非临终刻下。林姑娘离开澳门前已在簪尾末端刻下“簪合即归”，随后将簪尾藏入郑家大屋。现在，两半都在你手中。",
+          "dialogue": {
+            "npc": "AI旁白",
+            "avatar": "✨",
+            "text": "请选择是否拼合发簪。这个选择与已收集的铭文、共情分一起决定最终结局。"
+          },
+          "choices": [
+            {
+              "id": "ch6_assemble",
+              "text": "拼合发簪，让“簪合即归”重新显现",
+              "next_scene": "__ending__",
+              "set_flags": {"hairpin_assembled": true}
+            },
+            {
+              "id": "ch6_leave_apart",
+              "text": "暂不拼合，保留两段断簪的原状",
+              "next_scene": "__ending__",
+              "set_flags": {"hairpin_assembled": false}
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "clues": {
+    "inscription_1": {
+      "id": "inscription_1",
+      "title": "铭文碎片①",
+      "description": "苏郎赠·庚子春",
+      "icon": "①"
+    },
+    "inscription_2": {
+      "id": "inscription_2",
+      "title": "铭文碎片②",
+      "description": "林氏女·持此簪",
+      "icon": "②"
+    },
+    "inscription_3": {
+      "id": "inscription_3",
+      "title": "铭文碎片③",
+      "description": "勿失勿忘",
+      "icon": "③"
+    },
+    "inscription_4": {
+      "id": "inscription_4",
+      "title": "铭文碎片④",
+      "description": "归处即来处",
+      "icon": "④"
+    }
+  },
+  "endings": [
+    {
+      "id": "ending_c",
+      "title": "结局C · 传承",
+      "location": "大三巴牌坊",
+      "condition": {
+        "hairpin_assembled": true,
+        "min_fragments": 4,
+        "min_empathy": 8
+      },
+      "narration": "夜幕初降，牌坊亮起微光。四段铭文与隐藏小字全部显现。老人没有把这份记忆只留给自己，而是邀请你为簪子加刻一行属于当下的话。",
+      "dialogue": {
+        "npc": "委托人",
+        "avatar": "👴",
+        "text": "你替她把簪合上了。请再替我们留下一句话吧——刻下来，就是到了。"
+      }
+    },
+    {
+      "id": "ending_a",
+      "title": "结局A · 簪合",
+      "location": "大三巴牌坊",
+      "condition": {
+        "hairpin_assembled": true,
+        "min_fragments": 3
+      },
+      "narration": "夕阳斜照。簪身合拢，老人取出另一半老照片，与郑家大屋的残片正好拼合。照片背面写着“庚子冬·岗顶·苏与林”。",
+      "dialogue": {
+        "npc": "委托人",
+        "avatar": "👴",
+        "text": "簪合即归。谢谢你让我知道，这段感情是真的。簪子合上了，母亲的心愿也到了。"
+      }
+    },
+    {
+      "id": "ending_b",
+      "title": "结局B · 释怀",
+      "location": "大三巴牌坊",
+      "condition": {
+        "hairpin_assembled": true,
+        "min_fragments": 0,
+        "max_fragments": 2
+      },
+      "narration": "黄昏里，两半发簪终于合上，但部分铭文仍被锈迹遮住。真相没有完全显现，心愿却得到了安放。",
+      "dialogue": {
+        "npc": "委托人",
+        "avatar": "👴",
+        "text": "有些字终究看不全。不过能把它合上，也算了了一桩心事。人没等到，簪到了。"
+      }
+    },
+    {
+      "id": "ending_d",
+      "title": "结局D · 未达",
+      "location": "大三巴牌坊",
+      "condition": {
+        "hairpin_assembled": false
+      },
+      "narration": "天色渐暗，两段发簪仍静静并排。故事停在尚未完成的位置，但这并不是永远的失败。",
+      "dialogue": {
+        "npc": "委托人",
+        "avatar": "👴",
+        "text": "没关系。有些簪子本来就不是一次能合上的。城不会走，簪子也不会走，我们下次再来。"
+      }
+    }
+  ]
+}
