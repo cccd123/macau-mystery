@@ -20,6 +20,21 @@ def load_script(script_id: str) -> dict:
     return {}
 
 
+def chapter_label(chapter: dict) -> str:
+    chapter_id = chapter.get("id", "")
+    if chapter_id == "prologue":
+        return "序章"
+    return chapter.get("title") or chapter_id
+
+
+def find_scene(script: dict, scene_id: str) -> tuple[dict, dict] | None:
+    for chapter in script.get("chapters", []):
+        for scene in chapter.get("scenes", []):
+            if scene.get("id") == scene_id:
+                return chapter, scene
+    return None
+
+
 @router.post("/start", response_model=GameStartResponse)
 async def start_game(req: GameStartRequest):
     session_id = str(uuid.uuid4())[:8]
@@ -45,7 +60,7 @@ async def start_game(req: GameStartRequest):
 
     return GameStartResponse(
         session_id=session_id,
-        chapter=first_chapter.get("location", ""),
+        chapter=chapter_label(first_chapter),
         location=first_chapter.get("location", ""),
         narration=first_scene.get("narration", ""),
         dialogue=first_scene.get("dialogue", {}),
@@ -64,28 +79,79 @@ async def make_choice(req: ChoiceRequest):
             choices=[],
         )
 
+    script = load_script(session["script_id"])
+    current = find_scene(script, session["current_scene"])
+    if not current:
+        return ChoiceResponse(
+            scene_id="unknown", chapter="", location="",
+            narration="没有找到当前剧情，请重新开始。",
+            dialogue={"npc": "系统", "text": "当前场景不存在。"},
+            choices=[],
+        )
+
+    current_chapter, current_scene = current
+    selected_choice = next(
+        (
+            choice
+            for choice in current_scene.get("choices", [])
+            if choice.get("id") == req.choice_id
+        ),
+        None,
+    )
+    if not selected_choice:
+        return ChoiceResponse(
+            scene_id=current_scene.get("id", ""),
+            chapter=chapter_label(current_chapter),
+            location=current_chapter.get("location", ""),
+            narration=current_scene.get("narration", ""),
+            dialogue=current_scene.get("dialogue", {}),
+            choices=current_scene.get("choices", []),
+        )
+
     session["choices"].append(req.choice_id)
     clue_reward = None
-    if req.choice_id == "c2":
-        clue_reward = {
-            "id": "letter_fragment",
-            "title": "Letter Fragment",
-            "description": "Spring of a certain year, departed from A-Ma Temple",
-        }
-        session["clues"].append("letter_fragment")
+    clue_id = selected_choice.get("clue_reward")
+    if clue_id:
+        clue_reward = script.get("clues", {}).get(clue_id)
+        if clue_reward and clue_id not in session["clues"]:
+            session["clues"].append(clue_id)
 
+    next_scene_id = selected_choice.get("next_scene", "")
+    next_result = find_scene(script, next_scene_id)
+    if next_result:
+        next_chapter, next_scene = next_result
+        session["current_chapter"] = next_chapter.get("id", "")
+        session["current_scene"] = next_scene.get("id", "")
+        return ChoiceResponse(
+            scene_id=next_scene.get("id", ""),
+            chapter=chapter_label(next_chapter),
+            location=next_chapter.get("location", ""),
+            narration=next_scene.get("narration", ""),
+            dialogue=next_scene.get("dialogue", {}),
+            choices=next_scene.get("choices", []),
+            clue_reward=clue_reward,
+        )
+
+    transition = current_chapter.get("transition", {})
+    photo_trigger = current_chapter.get("photo_triggers", [{}])[0]
+    is_photo_scene = next_scene_id.endswith("photo")
+    narration = (
+        photo_trigger.get("response_text", "你记录下了现场细节。")
+        if is_photo_scene
+        else transition.get("text", "这一段调查已经完成。")
+    )
     return ChoiceResponse(
-        scene_id="prologue_02b", chapter="Prologue", location="A-Ma Temple",
-        narration="The old man's expression turns serious. He puts down his broom and pulls out a yellowed envelope from his pocket.",
+        scene_id=next_scene_id or "chapter_complete",
+        chapter=chapter_label(current_chapter),
+        location=current_chapter.get("location", ""),
+        narration=narration,
         dialogue={
-            "npc": "Temple Keeper",
-            "text": "A letter? Actually, I did find an old letter in the temple once... Let me look. Ah, here it is! The envelope says: departed from A-Ma Temple in spring.",
+            "npc": "调查记录",
+            "text": "当前演示剧情到这里。后续场景加入剧本文件后，会自动接着显示。",
         },
-        choices=[
-            {"id": "c4", "text": "Who wrote this letter?"},
-            {"id": "c5", "text": "Is there more content inside?"},
-        ],
+        choices=[],
         clue_reward=clue_reward,
+        transition=transition or None,
     )
 
 
