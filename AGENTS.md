@@ -4,9 +4,32 @@
 
 ## 项目定位
 
-“澳秘 / Macau Mystery”是一个澳门历史城区主题的 AI 沉浸式互动剧本平台原型。核心设想是让玩家沿真实文化遗产步行路线推进剧情、与 NPC 对话和收集线索，同时提供一句话生成互动短剧、用户发布投稿和管理后台能力。
+“澳秘 / Macau Mystery”是一个澳门历史城区主题的沉浸式互动剧本平台原型。仓库中仍保留 NPC 对话、一句话生成互动短剧、用户投稿和管理后台等早期设想及骨架，但它们不是当前成员 C 的交付范围。
 
 当前仓库处于 v0.2 原型阶段。页面和 API 骨架较完整，但多数业务数据存放在进程内存中，游戏推进与 AI 能力仍以 mock 为主，尚不是可持久化或可生产部署的完整产品。
+
+## 当前冻结范围
+
+当前成员 C 的工作已严格收敛为“沉浸式预制视频分支短剧游戏”后端：匿名玩家开始游戏后播放预制视频，视频结束时选择剧本配置的选项，后端记录选择和线索并返回下一个视频节点，允许分支汇合并最终到达不同结局。正式内容规划为沿澳门六个景点破解历史悬案，共六章。
+
+本阶段边界：
+
+- 负责版本化剧情 JSON、剧情校验与加载、通用分支状态机、匿名会话持久化、线索、结局、游戏 API、错误契约和自动化测试。
+- 首版只要求同一浏览器通过 `session_id` 恢复进度，不要求登录、跨设备恢复或生产级安全。
+- 首版不依赖 GPS；章节坐标只作为未来扩展数据，不参与剧情解锁。
+- 视频内旁白、对白、文字和字幕由视频制作人员处理；后端只保存媒体 URL、海报和元数据。
+- 前端负责视频末帧保持、选项覆盖层、候选视频预加载和播放器切换；成员 C 不修改页面视觉或播放器组件。
+- 不处理六章正式剧本创作、视频制作、视频上传转码、国际化、社区、账号、UGC、真实 LLM/RAG/TTS 或其他成员任务。
+- “一句话短剧”延后到沉浸式游戏完成后再评估，可以降级为只生成剧本或取消。
+
+当前阶段的权威交付文档位于 `backend-deliverables/`：
+
+- `00-requirements-baseline.md` 1.0：已确认并冻结的需求基线。
+- `01-database-design.md` 1.0：已确认的数据库设计。
+- `02-story-data-contract.md` 1.0：已确认的剧情 JSON 数据契约。
+- `03-game-api-contract.md` 1.0：已确认的游戏 API 契约。
+
+这些文档描述目标实现；在业务代码同步完成前，判断“当前已经能运行什么”仍应以源代码和测试为准。
 
 ## 实际技术栈
 
@@ -39,6 +62,7 @@ macau-mystery/
 │   ├── app/ugc/                    # 真正的 LLM 生成器和提示词模板（未接到公开 API）
 │   ├── app/knowledge/              # 澳门资料、ChromaDB 客户端和导入脚本
 │   └── app/admin/                  # 旧的管理 token helper，目前路由未使用
+├── backend-deliverables/            # 当前成员 C 已确认的需求、数据库、剧情和 API 契约
 ├── README.md                       # 快速启动说明，部分版本信息已过时
 ├── TASK_BREAKDOWN.md               # 团队分工与路线图，不等于当前完成度
 └── docker-compose.yml              # 仅后端开发服务
@@ -65,7 +89,7 @@ macau-mystery/
 - 管理剧本、用户剧本和投稿也分别保存在模块级字典中，重启即丢失。
 - 管理 API 的读取类端点有部分无需认证；写入、投稿审核等端点要求内存 token 中的 admin 角色。
 
-## API 契约速查
+## 当前实现 API 速查
 
 基础地址默认是 `http://localhost:8000/api/v1`。
 
@@ -86,6 +110,18 @@ macau-mystery/
 
 新增或修改接口时保持 JSON 字段为 snake_case，并同步更新 `frontend/src/lib/api.ts` 的类型和适配逻辑。
 
+### 已确认的目标游戏 API
+
+路径继续保留，但实现需要升级到 `backend-deliverables/03-game-api-contract.md` 1.0：
+
+- `POST /game/start`
+- `POST /game/choice`
+- `GET /game/state/{session_id}`
+
+目标响应统一包含 `story`、`scene`、`media`、`choices`、`clues` 和 `progress`。后端只向前端返回 `video` 或 `ending`；内部 `router` 永不暴露。每个选项包含后端按“模拟发放线索后解析 router”计算的 `preload` 媒体信息。
+
+提交选择必须携带 `session_id`、`scene_id`、`choice_id` 和 `request_id`。幂等重放检查优先于会话完成、旧场景和选项可用性判断；合法重试必须返回第一次保存的响应快照。业务错误统一使用 `{ "error": { "code", "message", "details" } }`，请求校验错误也适配为这一外层结构。
+
 ## 当前实现边界与已知断点
 
 - `app/api/game.py` 的 `/choice` 无论 JSON 中的 `next_scene` 是什么，基本都返回同一个硬编码后续场景；只有选择 `c2` 会发放固定线索。
@@ -100,6 +136,12 @@ macau-mystery/
 - 导航栏与首页的"开始游戏"链接指向 `/game/demo`，但该路由不存在（实际页面是 `/game/[sessionId]`），点击会 404。
 - 首页路线预览请求失败时回退到硬编码列表，成功后直接显示后端返回的英文地名，其 locale 判断逻辑依赖 `t("home.title")` 返回值，写法较绕。
 - 当前没有测试文件和 CI 配置。应把 `npm run lint`、`npm run build`、Python 编译检查和关键 API 冒烟测试作为最基本验证。
+
+与当前冻结方案直接相关的额外断点：
+
+- 当前没有 `stories`、`story_versions`、`game_sessions`、`game_events`、`session_clues` 五类持久化数据模型或迁移。
+- 当前剧情 JSON 只有妈阁庙初稿和 4 个实际场景，缺少其余五章、媒体字段和可达结局；`prologue_photo`、`transition_ch1`、`chapter_01` 等目标不存在，只能作为迁移参考。
+- 当前代码尚未实现 `video`、`router`、`ending` 三类节点、结构化线索条件、连续 router 解析、预加载目标计算或选择请求幂等。
 
 ## 本地开发
 
@@ -167,7 +209,7 @@ npm run build
 - 先查实际代码和锁定依赖，再参考规划文档；修改实现后同步维护相关文档。
 - 保持前后端契约一致：后端 snake_case，前端在 API 层转换，不要把适配散落到页面。
 - 新的持久化逻辑应替换模块级字典，而不是再增加新的全局内存数据源。
-- 剧本 JSON 以 `chapters -> scenes -> choices` 为核心；choice 跳转通过 `next_scene`，线索通过 `clue_reward`。扩展 schema 时同时更新加载校验、引擎、API 和编辑器。
+- 目标剧情 JSON 以 `chapters -> scenes -> choices` 为核心；choice 跳转通过 `next_scene`，线索通过 `grant_clues` 数组发放。现有 `clue_reward` 是待迁移的旧字段，不应继续扩展。契约以 `backend-deliverables/02-story-data-contract.md` 1.0 为准。
 - 用户可见文案应通过 `useTranslation()` 获取；新增翻译键必须同时补齐三种 locale。
 - 前端优先复用 `src/components/ui` 和已有布局习惯；含浏览器 API、Leaflet、local/session storage 的组件必须是 Client Component。
 - 不要在客户端暴露服务端密钥。`NEXT_PUBLIC_*` 只能存放允许公开的配置。
@@ -176,8 +218,12 @@ npm run build
 
 ## 推荐的改造顺序
 
-1. 先统一 API 基址、错误格式和类型定义，并补最小测试。
-2. 用通用 `StoryEngine` 替换硬编码游戏推进，完整支持 `next_scene`、章节、线索和结局。
-3. 建立 SQLite 持久化层，统一用户、token/session、剧本、UGC 和投稿数据。
-4. 将真实 LLM、RAG、TTS 通过可配置服务接到路由，同时保留明确的本地 mock 模式。
-5. 最后补齐六章内容、发布闭环、完整 i18n、GPS/地图增强和生产部署配置。
+当前只按以下顺序推进成员 C 的最小后端闭环：
+
+1. 按四份 1.0 交付文档建立最小数据模型、SQLite 持久化和迁移；部署 SQLite 时必须使用持久化卷，并保持 PostgreSQL 兼容性。
+2. 实现剧情 v1 加载与发布前校验，以及 `video`、`router`、`ending` 状态机、线索发放和结局解析。
+3. 升级 start → choice → state 三个接口，实现统一快照、错误格式、预加载信息、旧页面防护、事务和幂等重放。
+4. 补自动化测试，至少覆盖分支、汇合、线索、router、多结局、恢复、非法请求、重复请求和已完成会话。
+5. 完成后端冒烟与部署适配；正式视频使用对象存储/CDN URL，不通过 FastAPI 或 Railway 容器转发大视频流量。
+
+不要在该闭环中顺手实现六章内容、播放器、GPS、账号、UGC、AI、国际化或其他旧路线图事项。需要联调时只同步 `frontend/src/lib/api.ts` 的类型和 API 适配，不扩展为前端视觉工作。
