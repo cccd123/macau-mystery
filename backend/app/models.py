@@ -29,6 +29,9 @@ class ChoiceResponse(BaseModel):
     choices: list
     clue_reward: Optional[dict] = None
     transition: Optional[dict] = None
+    empathy_score: int = 0
+    hairpin_assembled: bool = False
+    ending: Optional[dict] = None
 
 
 class GameState(BaseModel):
@@ -39,6 +42,9 @@ class GameState(BaseModel):
     clues_collected: list[str]
     choices_made: list[str]
     started_at: str
+    empathy_score: int = 0
+    hairpin_assembled: bool = False
+    ending_id: Optional[str] = None
 
 
 class ChatRequest(BaseModel):
