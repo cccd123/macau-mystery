@@ -1,11 +1,16 @@
 """UGC user scripts API - publish, list, submit to official"""
 import uuid
 from datetime import datetime
-from fastapi import APIRouter, Header, HTTPException
-from typing import Optional
+from fastapi import APIRouter, Depends, Header, HTTPException
+from typing import Annotated, Optional
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.auth_service import authenticate_bearer
+from app.db import get_db_session
 
 router = APIRouter()
+DbSession = Annotated[AsyncSession, Depends(get_db_session)]
 
 # User scripts store
 user_scripts_db: dict[str, dict] = {}
@@ -23,27 +28,21 @@ class SubmitRequest(BaseModel):
 
 
 # We import auth helpers - in production use proper dependency injection
-def _get_user_id(authorization: Optional[str]) -> str:
-    """Simple token extraction - mirrors auth.py logic."""
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    from app.api.auth import tokens_db, users_db
-    token = authorization.replace("Bearer ", "")
-    user_id = tokens_db.get(token)
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    return user_id
+async def _get_user_id(authorization: Optional[str], db: AsyncSession) -> str:
+    user = await authenticate_bearer(db, authorization)
+    await db.commit()
+    return user.id
 
 
 @router.get("/my-scripts")
-async def list_my_scripts(authorization: Optional[str] = Header(None)):
-    user_id = _get_user_id(authorization)
+async def list_my_scripts(db: DbSession, authorization: Optional[str] = Header(None)):
+    user_id = await _get_user_id(authorization, db)
     return [s for s in user_scripts_db.values() if s.get("user_id") == user_id]
 
 
 @router.post("/publish/{script_id}")
-async def publish_script(script_id: str, req: PublishRequest, authorization: Optional[str] = Header(None)):
-    user_id = _get_user_id(authorization)
+async def publish_script(script_id: str, req: PublishRequest, db: DbSession, authorization: Optional[str] = Header(None)):
+    user_id = await _get_user_id(authorization, db)
     script = user_scripts_db.get(script_id)
     if not script:
         raise HTTPException(status_code=404, detail="Script not found")
@@ -55,8 +54,8 @@ async def publish_script(script_id: str, req: PublishRequest, authorization: Opt
 
 
 @router.post("/submit/{script_id}")
-async def submit_to_official(script_id: str, req: SubmitRequest = SubmitRequest(), authorization: Optional[str] = Header(None)):
-    user_id = _get_user_id(authorization)
+async def submit_to_official(script_id: str, db: DbSession, req: SubmitRequest = SubmitRequest(), authorization: Optional[str] = Header(None)):
+    user_id = await _get_user_id(authorization, db)
     script = user_scripts_db.get(script_id)
     if not script:
         raise HTTPException(status_code=404, detail="Script not found")

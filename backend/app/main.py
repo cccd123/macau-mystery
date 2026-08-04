@@ -19,11 +19,16 @@ def create_app() -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(_application: FastAPI):
-        if settings.bootstrap_demo_story:
-            from app.story.importer import bootstrap_demo_story
-
+        if settings.bootstrap_demo_story or settings.bootstrap_demo_users:
             try:
-                await bootstrap_demo_story()
+                if settings.bootstrap_demo_story:
+                    from app.story.importer import bootstrap_demo_story
+
+                    await bootstrap_demo_story()
+                if settings.bootstrap_demo_users:
+                    from app.auth_service import bootstrap_demo_users
+
+                    await bootstrap_demo_users()
             except SQLAlchemyError as exc:
                 raise RuntimeError("数据库尚未迁移；请先执行 alembic upgrade head") from exc
         yield

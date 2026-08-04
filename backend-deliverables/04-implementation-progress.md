@@ -1,30 +1,24 @@
-# 沉浸式短剧游戏后端实现进度
+# 沉浸式短剧游戏与认证后端实现进度
 
-- 更新时间：2026-08-03
-- 当前阶段：最小后端闭环与自动化测试已完成。
-- 范围：成员 C 的预制视频分支短剧游戏后端；不含正式六章内容、视频制作、播放器、GPS、账号、UGC 或 AI。
-- 文档同步：`AGENTS.md` 已按当前实现、验收结果和后续职责更新；前端测试性适配已撤回，不计入后端交付代码。
+- 更新时间：2026-08-04
+- 当前阶段：游戏最小持久化闭环与持久化登录、注册、Bearer 会话均已实现并完成 Python 3.11 自动化验证。
+- 范围：成员 C 的预制视频分支短剧游戏后端，以及已明确授权的最小登录/注册持久化；不含正式六章内容、视频制作、播放器、GPS、密码重置、邮箱验证、UGC 或 AI。
 
 ## 已完成
 
-- 已建立 SQLite / PostgreSQL 兼容的持久化模型与 Alembic 初始迁移：`stories`、`story_versions`、`game_sessions`、`game_events`、`session_clues`。
-- Docker Compose 的 SQLite 数据库使用命名持久卷；容器启动前自动执行迁移。
-- 已实现版本化剧情 JSON 的严格契约、发布前语义校验、导入发布命令与开发环境可运行的最小演示剧情。
-- 已实现 `video`、`router`、`ending` 状态机，含条件分流、线索发放与去重、分支汇合、结局、候选媒体预加载计算；`router` 不暴露给前端。
-- 已升级 `POST /api/v1/game/start`、`POST /api/v1/game/choice`、`GET /api/v1/game/state/{session_id}` 到 1.0 统一快照契约，并实现会话版本固定、事务推进、旧场景防护、完成会话防护和 `request_id` 幂等重放。
-- 游戏业务错误与游戏请求校验错误统一为 `{"error":{"code","message","details"}}`。
+- 游戏部分保持完成：SQLite / PostgreSQL 兼容的剧情、会话、事件与线索持久化；版本化剧情校验、状态机、v1 游戏 API、幂等和 Docker 数据卷支持。
+- 新增 `users` 与 `auth_sessions` SQLAlchemy 模型及 Alembic 增量迁移 `20260804_0002`。用户名以规范化键大小写无关唯一，密码使用 Argon2 哈希，随机 Bearer token 仅以摘要持久化。
+- `POST /api/v1/auth/register`、`POST /api/v1/auth/login`、`GET /api/v1/auth/me` 已改为异步数据库实现，维持前端既有 `{ token, user }` 响应结构；注册成功后自动登录。
+- 为兼容现有登录页未声明密码长度的输入，密码校验设为 6–128 位；后端测试覆盖 6 位密码可注册、5 位密码返回 422。
+- 已将 `03-game-api-contract.md` 升级为项目统一 API 文档，覆盖健康检查、游戏、认证、AI、UGC 与管理后台，并标记 mock/内存接口的实际限制。
+- admin 与 UGC 的既有令牌解析已切换到持久化认证服务；它们自身的剧本、投稿等旧业务数据仍未持久化。
+- 开发环境可以通过 `BOOTSTRAP_DEMO_USERS` 幂等创建缺失的 `admin/admin123` 与 `guest/guest123`，生产默认关闭，且绝不覆盖既有用户。
+- 新增认证集成测试，覆盖迁移、注册、重复用户名、登录、`/me`、密码哈希、会话持久化、过期令牌、角色鉴权和 demo seed 幂等性。
 
 ## 验证结果
 
 - `python -m compileall backend/app backend/tests`：通过。
-- 重新构建 Docker 后，`docker compose run --rm backend pytest -q`：`14 passed`。
-- HTTP 冒烟：`health` 数据库状态为 `ok`；`start → choice → state` 成功推进，候选项含预加载数据。
-- OpenAPI：三个目标游戏路径均已暴露；`ChoiceRequest` 必填 `session_id`、`scene_id`、`choice_id`、`request_id`。
-- 持久卷恢复：停止并重启后端容器后，同一会话仍恢复到选择后的 `scene_letter` 场景。
-- `npx tsc --noEmit`：通过。
-
-## 已知验证限制
-
-- `npm run lint` 未通过：全仓共有 42 个既有错误，集中在 admin、UGC 和旧组件。
-- `npm run build` 被当前环境无法访问 Google Fonts（Geist / Geist Mono）阻断，未进入应用类型构建阶段；这不是游戏 API 改动导致的问题。
-- 前端客户端适配为测试性改动，验收后已全部撤回；现有游戏页仍是旧叙事文本页面，尚不能直接按 v1 契约提交 `scene_id` 和 `request_id`。后续应由前端负责人在播放器接入时完成该适配。
+- 在项目内隔离的 Python 3.11 `backend/.venv` 运行完整后端测试：`18 passed`。
+- 在临时 SQLite 文件执行 `alembic upgrade head`：通过，确认从空库可按 `20260803_0001 → 20260804_0002` 升级。
+- 认证自动化测试已验证注册自动登录、大小写无关重复用户名、错误密码、`/auth/me`、Argon2 非明文存储、令牌过期、同一数据库上的新应用实例恢复令牌，以及 admin/UGC 角色鉴权。
+- 前端 `/login` 未改动；其现有 URL、字段和 `{ token, user }` 响应与已测试 API 保持兼容。实际浏览器页面冒烟可在本地同时启动前后端后执行。
