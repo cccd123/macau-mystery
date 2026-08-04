@@ -76,3 +76,21 @@ async def submit_to_official(script_id: str, req: SubmitRequest = SubmitRequest(
     }
     script["submitted"] = True
     return {"submission_id": sub_id, "status": "pending"}
+
+@router.get("/public")
+async def list_public_scripts():
+    """List all publicly published user scripts."""
+    return [
+        {
+            "id": s["id"],
+            "title": s.get("title", "Untitled"),
+            "description": s.get("description", ""),
+            "style": s.get("style", "drama"),
+            "author": s.get("author", "Anonymous"),
+            "views_count": s.get("views_count", 0),
+            "created_at": s.get("created_at", ""),
+        }
+        for s in user_scripts_db.values()
+        if s.get("is_public")
+    ]
+

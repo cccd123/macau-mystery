@@ -14,53 +14,104 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   return res.json();
 }
 
-// Game API - adapts backend snake_case flat response to frontend expected format
+/* ============================
+   TYPES - Game API v1 (C backend)
+   ============================ */
+
+export interface GameMedia {
+  video_url: string;
+  poster_url: string;
+  mime_type: string;
+  duration_ms?: number;
+}
+
+export interface GameChoice {
+  id: string;
+  text: string;
+  preload: {
+    scene_id: string;
+    media: GameMedia;
+  };
+}
+
+export interface GameChapter {
+  id: string;
+  title: string;
+  location: string;
+}
+
+export interface GameScene {
+  id: string;
+  type: "video" | "ending";
+  chapter: GameChapter;
+  media: GameMedia;
+  choices: GameChoice[];
+}
+
+export interface GameClue {
+  id: string;
+  title: string;
+  description: string;
+  icon?: string;
+  acquired_at: string;
+}
+
+export interface GameProgress {
+  current_chapter: number;
+  total_chapters: number;
+}
+
+export interface GameEnding {
+  id: string;
+  code: string;
+}
+
+export interface GameSnapshot {
+  session_id: string;
+  status: "active" | "completed";
+  story: { id: string; title: string; version: number };
+  scene: GameScene;
+  clues: GameClue[];
+  progress: GameProgress;
+  awarded_clues?: GameClue[];
+  ending?: GameEnding;
+}
+
+/* ============================
+   GAME API
+   ============================ */
+
 export const gameApi = {
-  start: async (
-    scriptId: string
-  ): Promise<{ sessionId: string; scene: any }> => {
-    const res: any = await request("/game/start", {
+  start: async (scriptId: string): Promise<GameSnapshot> => {
+    return request<GameSnapshot>("/game/start", {
       method: "POST",
       body: JSON.stringify({ script_id: scriptId }),
     });
-    return {
-      sessionId: res.session_id,
-      scene: {
-        id: "scene_" + res.session_id,
-        chapter: res.chapter,
-        location: res.location,
-        narration: res.narration,
-        dialogue: res.dialogue,
-        choices: res.choices,
-      },
-    };
   },
 
   makeChoice: async (
     sessionId: string,
+    sceneId: string,
     choiceId: string
-  ): Promise<{ scene: any; clue?: any }> => {
-    const res: any = await request("/game/choice", {
+  ): Promise<GameSnapshot> => {
+    return request<GameSnapshot>("/game/choice", {
       method: "POST",
-      body: JSON.stringify({ session_id: sessionId, choice_id: choiceId }),
+      body: JSON.stringify({
+        session_id: sessionId,
+        scene_id: sceneId,
+        choice_id: choiceId,
+        request_id: crypto.randomUUID(),
+      }),
     });
-    return {
-      scene: {
-        id: res.scene_id || "scene_next",
-        chapter: res.chapter,
-        location: res.location,
-        narration: res.narration,
-        dialogue: res.dialogue,
-        choices: res.choices,
-      },
-      clue: res.clue_reward || undefined,
-    };
   },
 
-  getState: (sessionId: string) => request<any>(`/game/state/${sessionId}`),
+  getState: (sessionId: string) => request<GameSnapshot>(`/game/state/${sessionId}`),
 };
 
-// AI API
+/* ============================
+   AI API
+   ============================ */
+
 export const aiApi = {
   chat: (npcId: string, message: string, context?: any) =>
     request<{ response: string; audio_url?: string }>("/ai/chat", {
@@ -74,7 +125,10 @@ export const aiApi = {
     ),
 };
 
-// UGC API
+/* ============================
+   UGC API
+   ============================ */
+
 export const ugcApi = {
   generate: (input: string, style: string, options: any) =>
     request<any>("/create/generate", {
@@ -87,6 +141,8 @@ export const ugcApi = {
 
   listMyScripts: () => request<any[]>("/ugc/my-scripts"),
 
+  listPublicScripts: () => request<any[]>("/ugc/public"),
+
   publishScript: (scriptId: string, isPublic: boolean) =>
     request<any>(`/ugc/publish/${scriptId}`, {
       method: "POST",
@@ -97,7 +153,10 @@ export const ugcApi = {
     request<any>(`/ugc/submit/${scriptId}`, { method: "POST" }),
 };
 
-// Admin API
+/* ============================
+   ADMIN API
+   ============================ */
+
 export const adminApi = {
   listScripts: () => request<any[]>("/admin/scripts"),
 
@@ -135,7 +194,10 @@ export const adminApi = {
   getRoute: () => request<any>("/admin/route"),
 };
 
-// Auth API
+/* ============================
+   AUTH API
+   ============================ */
+
 export const authApi = {
   login: (username: string, password: string) =>
     request<{ token: string; user: any }>("/auth/login", {

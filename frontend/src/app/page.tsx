@@ -64,7 +64,7 @@ export default function HomePage() {
             {t("home.subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/game/demo">
+            <Link href="/game/macau_mystery_demo">
               <Button size="lg" className="gap-2 text-lg px-8">
                 <BookOpen className="h-5 w-5" />
                 {t("home.startBtn")}

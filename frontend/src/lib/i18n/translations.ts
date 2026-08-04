@@ -18,6 +18,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     "nav.login": "Login",
     "nav.logout": "Logout",
     "nav.brand": "Macau Mystery",
+    "nav.myScripts": "My Scripts",
+    "nav.community": "Community",
 
     // Common
     "common.loading": "Loading...",
@@ -70,6 +72,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     "game.clues": "clues",
     "game.chapter": "Chapter",
     "game.location": "Location",
+    "game.endingTitle": "The End",
+    "game.endingDesc": "You have reached an ending. Play again to explore other branches.",
+    "game.backHome": "Back to Home",
+    "game.showChoices": "Make a Choice",
+    "game.choosePrompt": "What will you do next?",
 
     // Create
     "create.title": "One-Sentence Drama",
@@ -95,6 +102,15 @@ export const translations: Record<Locale, Record<string, string>> = {
     "result.submitted": "Submitted for review! Admin will notify you if adopted.",
     "result.views": "Views",
     "result.plays": "Plays",
+
+    // My Scripts
+    "myScripts.title": "My Scripts",
+    "myScripts.subtitle": "Manage your generated scripts",
+    "myScripts.empty": "You haven't created any scripts yet.",
+
+    // Community
+    "community.title": "Community",
+    "community.subtitle": "Discover public scripts from the community",
 
     // Admin
     "admin.title": "Admin Panel",
