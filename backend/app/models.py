@@ -1,44 +1,95 @@
-from pydantic import BaseModel
-from typing import Optional
+from datetime import datetime
+from typing import Literal, Optional
+from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
-class GameStartRequest(BaseModel):
-    script_id: str = "macau_mystery_01"
+class GameContractModel(BaseModel):
+    model_config = ConfigDict(extra="forbid")
 
 
-class GameStartResponse(BaseModel):
-    session_id: str
-    chapter: str
-    location: str
-    narration: str
-    dialogue: dict
-    choices: list
+class GameStartRequest(GameContractModel):
+    script_id: str = Field(min_length=2, max_length=64, pattern=r"^[a-z][a-z0-9_]*$")
 
 
-class ChoiceRequest(BaseModel):
-    session_id: str
-    choice_id: str
+class GameMediaResponse(GameContractModel):
+    video_url: str
+    poster_url: str
+    mime_type: str
+    duration_ms: int | None = None
 
 
-class ChoiceResponse(BaseModel):
+class GamePreloadResponse(GameContractModel):
     scene_id: str
-    chapter: str
+    media: GameMediaResponse
+
+
+class GameChoiceResponse(GameContractModel):
+    id: str
+    text: str
+    preload: GamePreloadResponse
+
+
+class GameChapterResponse(GameContractModel):
+    id: str
+    title: str
     location: str
-    narration: str
-    dialogue: dict
-    choices: list
-    clue_reward: Optional[dict] = None
-    transition: Optional[dict] = None
 
 
-class GameState(BaseModel):
-    session_id: str
-    script_id: str
-    current_chapter: str
-    current_scene: str
-    clues_collected: list[str]
-    choices_made: list[str]
-    started_at: str
+class GameSceneResponse(GameContractModel):
+    id: str
+    type: Literal["video", "ending"]
+    chapter: GameChapterResponse
+    media: GameMediaResponse
+    choices: list[GameChoiceResponse]
+
+
+class GameStoryResponse(GameContractModel):
+    id: str
+    title: str
+    version: int
+
+
+class GameClueResponse(GameContractModel):
+    id: str
+    title: str
+    description: str
+    icon: str | None = None
+    acquired_at: datetime
+
+
+class GameProgressResponse(GameContractModel):
+    current_chapter: int
+    total_chapters: int
+
+
+class GameEndingResponse(GameContractModel):
+    id: str
+    code: str
+
+
+class GameSnapshot(GameContractModel):
+    session_id: UUID
+    status: Literal["active", "completed"]
+    story: GameStoryResponse
+    scene: GameSceneResponse
+    clues: list[GameClueResponse]
+    progress: GameProgressResponse
+    awarded_clues: list[GameClueResponse] | None = None
+    ending: GameEndingResponse | None = None
+
+
+class ChoiceRequest(GameContractModel):
+    session_id: UUID
+    scene_id: str = Field(min_length=2, max_length=64, pattern=r"^[a-z][a-z0-9_]*$")
+    choice_id: str = Field(min_length=2, max_length=64, pattern=r"^[a-z][a-z0-9_]*$")
+    request_id: UUID
+
+
+GameStartResponse = GameSnapshot
+ChoiceResponse = GameSnapshot
+GameState = GameSnapshot
 
 
 class ChatRequest(BaseModel):
