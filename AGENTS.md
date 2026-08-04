@@ -6,7 +6,7 @@
 
 “澳秘 / Macau Mystery”是一个澳门历史城区主题的沉浸式互动剧本平台原型。仓库仍保留 NPC 对话、一句话生成互动短剧、用户投稿和管理后台等早期设想及骨架，但它们不属于当前成员 C 的交付范围。
 
-当前仓库处于 v0.2 原型阶段。成员 C 负责的“沉浸式预制视频分支短剧游戏”后端最小闭环已经实现为可持久化的 SQLite / PostgreSQL 兼容链路；其他旧业务（认证、AI、UGC、管理后台等）多数仍以进程内存或 mock 为主，整个产品尚非生产级部署。
+当前仓库处于 v0.2 原型阶段。成员 C 负责的“沉浸式预制视频分支短剧游戏”后端最小闭环已经实现为可持久化的 SQLite / PostgreSQL 兼容链路；登录、注册与 Bearer 会话已获明确授权并改为持久化实现。AI、UGC 与管理后台等旧业务多数仍以进程内存或 mock 为主，整个产品尚非生产级部署。
 
 ## 当前冻结范围
 
@@ -19,7 +19,7 @@
 - 首版不依赖 GPS；章节坐标仅作未来扩展数据，不参与剧情解锁。
 - 视频内旁白、对白、文字和字幕由视频制作人员处理；后端仅保存媒体 URL、海报和元数据。
 - 前端负责视频末帧保持、选项覆盖层、候选视频预加载和播放器切换；成员 C 不修改页面视觉或播放器组件。
-- 不处理六章正式剧本创作、视频制作、视频上传转码、国际化、社区、账号、UGC、真实 LLM/RAG/TTS 或其他成员任务。
+- 不处理六章正式剧本创作、视频制作、视频上传转码、国际化、社区、密码重置/邮箱验证等扩展账号能力、UGC、真实 LLM/RAG/TTS 或其他成员任务。
 - “一句话短剧”延后到沉浸式游戏完成后再评估，可降级为只生成剧本或取消。
 
 当前阶段的权威交付文档位于 `backend-deliverables/`：
@@ -27,7 +27,7 @@
 - `00-requirements-baseline.md` 1.0：已确认的需求基线。
 - `01-database-design.md` 1.0：已确认的数据库设计。
 - `02-story-data-contract.md` 1.0：已确认的剧情 JSON 数据契约。
-- `03-game-api-contract.md` 1.0：已确认的游戏 API 契约。
+- `03-game-api-contract.md` 2.0：当前已注册项目接口的统一文档；游戏 v1 细节、认证、AI、UGC 和管理接口均以此为准。
 - `04-implementation-progress.md`：仅记录最新进度，完成每个执行批次后必须覆盖更新。
 - `05-minimal-backend-implementation-plan.md`：最小后端闭环实施计划与历史范围依据。
 
@@ -84,25 +84,25 @@ macau-mystery/
 - 剧情运行时支持 `video`、`router`、`ending` 三类节点，结构化线索条件、连续 router 解析、线索去重、分支汇合、结局和候选媒体预加载。
 - `backend/app/story/scripts/macau_mystery_demo.json` 是可运行的技术演示剧情，含分支、汇合、线索、router 和双结局；它使用占位媒体 URL。旧的 `macau_mystery_01.json` 仅可作迁移参考，不能作为正式运行内容。
 - 开发环境启动时可由 `BOOTSTRAP_DEMO_STORY=true` 自动导入/发布演示剧情；生产环境默认关闭。
-- 认证、AI、UGC 和管理后台仍遵循旧实现：认证和管理等数据多为内存数据，重启会丢失，不能视为生产安全能力。
+- 认证使用 `users` 与 `auth_sessions` 持久化用户、Argon2 密码哈希和带有效期的随机 Bearer token；开发环境可幂等创建 demo 管理员和访客。AI、UGC 与管理后台业务数据仍多为内存数据，重启会丢失，不能视为生产安全能力。
 
 ## 当前实现 API 速查
 
 基础地址默认是 `http://localhost:8000/api/v1`。
 
-| 功能 | 方法与路径 | 当前返回重点 |
-| --- | --- | --- |
-| 健康检查 | `GET /health` | `{ status, database, version }` |
-| 开始游戏 | `POST /game/start` | 201；v1 `GameSnapshot` |
-| 选择分支 | `POST /game/choice` | v1 `GameSnapshot`；请求必须含四个标识字段 |
-| 游戏状态 | `GET /game/state/{session_id}` | 会话绑定版本的 v1 `GameSnapshot` |
-| NPC 对话 | `POST /ai/chat` | `{ response, audio_url? }`，当前为 mock |
-| TTS | `GET /ai/tts` | `{ audio_url, text }`，当前 `audio_url` 为空 |
-| UGC 生成 | `POST /create/generate` | 固定模板响应 |
-| 登录/注册 | `POST /auth/login`、`POST /auth/register` | `{ token, user }` |
-| 当前用户 | `GET /auth/me` | Bearer token 认证 |
-| 管理剧本 | `/admin/scripts` | 旧内存实现；写入与发布需要 admin token |
-| UGC 发布/投稿 | `/ugc/*` | 旧链路，尚未端到端打通 |
+| 功能        | 方法与路径                                    | 当前返回重点                                  |
+| --------- | ---------------------------------------- | --------------------------------------- |
+| 健康检查      | `GET /health`                            | `{ status, database, version }`         |
+| 开始游戏      | `POST /game/start`                       | 201；v1 `GameSnapshot`                   |
+| 选择分支      | `POST /game/choice`                      | v1 `GameSnapshot`；请求必须含四个标识字段           |
+| 游戏状态      | `GET /game/state/{session_id}`           | 会话绑定版本的 v1 `GameSnapshot`               |
+| NPC 对话    | `POST /ai/chat`                          | `{ response, audio_url? }`，当前为 mock     |
+| TTS       | `GET /ai/tts`                            | `{ audio_url, text }`，当前 `audio_url` 为空 |
+| UGC 生成    | `POST /create/generate`                  | 固定模板响应                                  |
+| 登录/注册     | `POST /auth/login`、`POST /auth/register` | `{ token, user }`                       |
+| 当前用户      | `GET /auth/me`                           | Bearer token 认证                         |
+| 管理剧本      | `/admin/scripts`                         | 旧内存实现；写入与发布需要 admin token               |
+| UGC 发布/投稿 | `/ugc/*`                                 | 旧链路，尚未端到端打通                             |
 
 ### 已实现的游戏 API v1
 
@@ -159,6 +159,8 @@ Swagger：`http://localhost:8000/docs`。
 - `CORS_ORIGINS`：逗号分隔的前端来源。
 - `APP_ENV`：`development` 或 `production`。
 - `BOOTSTRAP_DEMO_STORY`：开发环境默认开启，生产环境默认关闭。
+- `BOOTSTRAP_DEMO_USERS`：开发环境默认开启，生产环境默认关闭；只创建缺失的 demo 用户，不覆盖已有用户。
+- `AUTH_TOKEN_TTL_HOURS`：随机 Bearer token 的有效期，默认 168 小时；`DEMO_*` 变量用于开发演示账号名和密码。
 - `SILICONFLOW_API_KEY`、`SILICONFLOW_BASE_URL`、`LLM_MODEL`、`EMBEDDING_MODEL`、`ADMIN_TOKEN`：旧预留能力的配置。
 
 剧情工具：
@@ -237,4 +239,4 @@ npm run build
 3. 部署时配置持久化数据库卷（或 PostgreSQL）、允许的 CORS 来源和正式媒体域名，并关闭演示剧情自动导入。
 4. 在需要持续交付时补 CI，至少运行后端测试与前端可用检查；前端既有 lint/字体构建问题由相应负责人解决。
 
-不得在该闭环中顺手实现六章内容、播放器、GPS、账号、UGC、AI、国际化或其他旧路线图事项。
+不得在该闭环中顺手实现六章内容、播放器、GPS、密码重置/邮箱验证等扩展账号能力、UGC、AI、国际化或其他旧路线图事项。

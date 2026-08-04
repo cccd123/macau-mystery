@@ -1,11 +1,16 @@
 """Enhanced admin API with stats, submissions review, AI generation, route config"""
 import uuid
 from datetime import datetime
-from fastapi import APIRouter, Header, HTTPException
-from typing import Optional
+from fastapi import APIRouter, Depends, Header, HTTPException
+from typing import Annotated, Optional
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.auth_service import require_admin
+from app.db import get_db_session
 
 router = APIRouter()
+DbSession = Annotated[AsyncSession, Depends(get_db_session)]
 
 # --- Script store ---
 scripts_db: dict[str, dict] = {
@@ -58,18 +63,9 @@ class ScriptMeta(BaseModel):
     created_at: str
 
 # --- Auth helper ---
-def _require_admin(authorization: Optional[str]) -> dict:
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    from app.api.auth import tokens_db, users_db
-    token = authorization.replace("Bearer ", "")
-    username = tokens_db.get(token)
-    if not username:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    user = users_db.get(username)
-    if not user or user["role"] != "admin":
-        raise HTTPException(status_code=403, detail="Admin access required")
-    return user
+async def _require_admin(authorization: Optional[str], db: AsyncSession) -> None:
+    await require_admin(db, authorization)
+    await db.commit()
 
 # --- Script CRUD ---
 @router.get("/scripts")
@@ -77,8 +73,8 @@ async def list_scripts():
     return list(scripts_db.values())
 
 @router.post("/scripts")
-async def create_script(req: ScriptCreateRequest, authorization: Optional[str] = Header(None)):
-    _require_admin(authorization)
+async def create_script(req: ScriptCreateRequest, db: DbSession, authorization: Optional[str] = Header(None)):
+    await _require_admin(authorization, db)
     new_id = str(len(scripts_db) + 100)
     script = {
         "id": new_id,
@@ -95,8 +91,8 @@ async def create_script(req: ScriptCreateRequest, authorization: Optional[str] =
     return script
 
 @router.put("/scripts/{script_id}")
-async def update_script(script_id: str, req: ScriptUpdateRequest, authorization: Optional[str] = Header(None)):
-    _require_admin(authorization)
+async def update_script(script_id: str, req: ScriptUpdateRequest, db: DbSession, authorization: Optional[str] = Header(None)):
+    await _require_admin(authorization, db)
     if script_id not in scripts_db:
         raise HTTPException(status_code=404, detail="Script not found")
     s = scripts_db[script_id]
@@ -109,16 +105,16 @@ async def update_script(script_id: str, req: ScriptUpdateRequest, authorization:
     return s
 
 @router.delete("/scripts/{script_id}")
-async def delete_script(script_id: str, authorization: Optional[str] = Header(None)):
-    _require_admin(authorization)
+async def delete_script(script_id: str, db: DbSession, authorization: Optional[str] = Header(None)):
+    await _require_admin(authorization, db)
     if script_id not in scripts_db:
         raise HTTPException(status_code=404, detail="Script not found")
     del scripts_db[script_id]
     return {"message": "Deleted"}
 
 @router.post("/scripts/{script_id}/publish")
-async def publish_script(script_id: str, authorization: Optional[str] = Header(None)):
-    _require_admin(authorization)
+async def publish_script(script_id: str, db: DbSession, authorization: Optional[str] = Header(None)):
+    await _require_admin(authorization, db)
     if script_id not in scripts_db:
         raise HTTPException(status_code=404, detail="Script not found")
     s = scripts_db[script_id]
@@ -127,8 +123,8 @@ async def publish_script(script_id: str, authorization: Optional[str] = Header(N
 
 # --- AI Generation ---
 @router.post("/scripts/ai-generate")
-async def ai_generate_script(req: AIGenerateRequest, authorization: Optional[str] = Header(None)):
-    _require_admin(authorization)
+async def ai_generate_script(req: AIGenerateRequest, db: DbSession, authorization: Optional[str] = Header(None)):
+    await _require_admin(authorization, db)
     new_id = str(uuid.uuid4())[:8]
     if req.mode == "quick":
         chapters = [
@@ -187,14 +183,14 @@ async def get_stats():
 
 # --- Submissions Review ---
 @router.get("/submissions")
-async def list_submissions(authorization: Optional[str] = Header(None)):
-    _require_admin(authorization)
+async def list_submissions(db: DbSession, authorization: Optional[str] = Header(None)):
+    await _require_admin(authorization, db)
     from app.api.ugc_user import submissions_db
     return list(submissions_db.values())
 
 @router.post("/submissions/{sub_id}/approve")
-async def approve_submission(sub_id: str, authorization: Optional[str] = Header(None)):
-    _require_admin(authorization)
+async def approve_submission(sub_id: str, db: DbSession, authorization: Optional[str] = Header(None)):
+    await _require_admin(authorization, db)
     from app.api.ugc_user import submissions_db
     sub = submissions_db.get(sub_id)
     if not sub:
@@ -203,8 +199,8 @@ async def approve_submission(sub_id: str, authorization: Optional[str] = Header(
     return {"status": "approved"}
 
 @router.post("/submissions/{sub_id}/reject")
-async def reject_submission(sub_id: str, authorization: Optional[str] = Header(None)):
-    _require_admin(authorization)
+async def reject_submission(sub_id: str, db: DbSession, authorization: Optional[str] = Header(None)):
+    await _require_admin(authorization, db)
     from app.api.ugc_user import submissions_db
     sub = submissions_db.get(sub_id)
     if not sub:

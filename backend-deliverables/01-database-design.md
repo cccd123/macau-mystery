@@ -260,7 +260,7 @@ erDiagram
 
 第一阶段不创建以下表：
 
-- 用户、密码、登录令牌和跨设备进度表。
+- 跨设备游戏进度表。
 - 社区、点赞、投稿、评论和作品审核表。
 - AI 生成任务、提示词和模型调用记录表。
 - GPS 打卡和实时位置表。
@@ -268,7 +268,18 @@ erDiagram
 
 这些内容不能继续使用新的内存字典伪装成持久化；进入对应阶段时再正式扩展数据库。
 
-## 8. 数据库与部署选择
+## 8. 已授权的认证持久化扩展
+
+登录与注册已在 2026-08-04 获得明确授权，使用增量迁移新增以下通用认证表；详细契约见 `06-authentication-api-and-persistence.md`。
+
+| 表 | 关键字段 | 约束与用途 |
+| --- | --- | --- |
+| `users` | `id`、`username`、`username_key`、`nickname`、`password_hash`、`role`、`is_active`、`created_at` | `username_key` 大小写无关且唯一；只保存 Argon2 哈希；角色限定为 `admin` 或 `user`。 |
+| `auth_sessions` | `id`、`token_digest`、`user_id`、`created_at`、`last_used_at`、`expires_at` | 只保存随机 Bearer token 的 SHA-256 摘要；令牌原文只在登录或注册成功时返回一次；删除用户时级联删除会话。 |
+
+认证会话与匿名 `game_sessions` 不建立外键关系：首版游戏仍允许匿名开始，登录也不把既有匿名游戏进度合并到账号。
+
+## 9. 数据库与部署选择
 
 - 本地开发默认使用 SQLite，匹配现有 `DATABASE_URL` 和依赖。
 - SQLAlchemy 模型避免依赖 SQLite 专有语法，为未来切换 PostgreSQL 保留空间。
@@ -276,7 +287,7 @@ erDiagram
 - 正式视频存放在对象存储或 CDN，数据库和剧情 JSON 仅保存可访问 URL。
 - 数据库迁移应使用版本化迁移工具执行，不能在应用启动时反复删除或重建已有表。
 
-## 9. 本阶段评审点
+## 10. 本阶段评审点
 
 请在进入接口设计和编码前确认：
 

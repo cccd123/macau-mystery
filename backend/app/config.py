@@ -23,12 +23,30 @@ def _cors_origins(value: str | None) -> tuple[str, ...]:
     return origins or DEFAULT_CORS_ORIGINS
 
 
+def _positive_int(value: str | None, *, default: int, name: str) -> int:
+    if value is None:
+        return default
+    try:
+        parsed = int(value)
+    except ValueError as exc:
+        raise ValueError(f"{name} 必须是正整数") from exc
+    if parsed < 1:
+        raise ValueError(f"{name} 必须是正整数")
+    return parsed
+
+
 @dataclass(frozen=True)
 class Settings:
     database_url: str
     cors_origins: tuple[str, ...]
     app_env: str
     bootstrap_demo_story: bool
+    bootstrap_demo_users: bool
+    auth_token_ttl_hours: int
+    demo_admin_username: str
+    demo_admin_password: str
+    demo_guest_username: str
+    demo_guest_password: str
 
     @property
     def is_production(self) -> bool:
@@ -45,4 +63,14 @@ def get_settings() -> Settings:
         bootstrap_demo_story=_as_bool(
             os.getenv("BOOTSTRAP_DEMO_STORY"), default=app_env.lower() != "production"
         ),
+        bootstrap_demo_users=_as_bool(
+            os.getenv("BOOTSTRAP_DEMO_USERS"), default=app_env.lower() != "production"
+        ),
+        auth_token_ttl_hours=_positive_int(
+            os.getenv("AUTH_TOKEN_TTL_HOURS"), default=168, name="AUTH_TOKEN_TTL_HOURS"
+        ),
+        demo_admin_username=os.getenv("DEMO_ADMIN_USERNAME", "admin"),
+        demo_admin_password=os.getenv("DEMO_ADMIN_PASSWORD", "admin123"),
+        demo_guest_username=os.getenv("DEMO_GUEST_USERNAME", "guest"),
+        demo_guest_password=os.getenv("DEMO_GUEST_PASSWORD", "guest123"),
     )

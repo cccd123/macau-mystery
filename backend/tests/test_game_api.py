@@ -50,6 +50,7 @@ def game_api(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
 
     asyncio.run(prepare_database())
     monkeypatch.setenv("BOOTSTRAP_DEMO_STORY", "false")
+    monkeypatch.setenv("BOOTSTRAP_DEMO_USERS", "false")
     get_settings.cache_clear()
 
     from app.main import create_app

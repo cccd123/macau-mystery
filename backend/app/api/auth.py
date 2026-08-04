@@ -1,22 +1,49 @@
-"""Authentication API - simple token-based auth"""
-import uuid
-import hashlib
-from datetime import datetime
-from fastapi import APIRouter, Header, HTTPException
-from typing import Optional
-from pydantic import BaseModel
+"""Persistent username/password authentication API."""
+from __future__ import annotations
+
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, Header, HTTPException
+from pydantic import BaseModel, field_validator
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.auth_service import (
+    create_auth_session,
+    create_user,
+    find_user_by_username,
+    normalize_nickname,
+    password_hasher,
+    validate_password,
+    validate_username,
+)
+from app.db import get_db_session
+from app.db_models import User
+
 
 router = APIRouter()
+DbSession = Annotated[AsyncSession, Depends(get_db_session)]
 
-# --- Models ---
+
 class LoginRequest(BaseModel):
     username: str
     password: str
 
-class RegisterRequest(BaseModel):
-    username: str
-    password: str
+    _validate_username = field_validator("username")(validate_username)
+    _validate_password = field_validator("password")(validate_password)
+
+
+class RegisterRequest(LoginRequest):
     nickname: str = ""
+
+    @field_validator("nickname")
+    @classmethod
+    def validate_nickname(cls, value: str) -> str:
+        # The fallback username is applied after the username validator has run.
+        if len(value.strip()) > 64:
+            raise ValueError("昵称不能超过 64 个字符")
+        return value
+
 
 class UserResponse(BaseModel):
     id: str
@@ -24,102 +51,46 @@ class UserResponse(BaseModel):
     nickname: str
     role: str
 
+
 class AuthResponse(BaseModel):
     token: str
     user: UserResponse
 
-# --- In-memory user store ---
-def _hash(pw: str) -> str:
-    return hashlib.sha256(pw.encode()).hexdigest()
 
-users_db: dict[str, dict] = {
-    "admin": {
-        "id": "u001",
-        "username": "admin",
-        "password": _hash("admin123"),
-        "nickname": "Admin",
-        "role": "admin",
-        "created_at": "2026-07-28",
-    },
-    "guest": {
-        "id": "u002",
-        "username": "guest",
-        "password": _hash("guest123"),
-        "nickname": "Guest Player",
-        "role": "user",
-        "created_at": "2026-08-01",
-    },
-}
+def as_user_response(user: User) -> UserResponse:
+    return UserResponse(id=user.id, username=user.username, nickname=user.nickname, role=user.role)
 
-# Token -> user_id mapping
-tokens_db: dict[str, str] = {}
 
-def get_current_user(authorization: Optional[str] = Header(None)) -> dict:
-    """Extract and validate user from Authorization header."""
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    token = authorization.replace("Bearer ", "")
-    user_id = tokens_db.get(token)
-    if not user_id or user_id not in users_db:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    return users_db[user_id]
-
-def require_admin(authorization: Optional[str] = Header(None)) -> dict:
-    """Require admin role."""
-    user = get_current_user(authorization)
-    if user["role"] != "admin":
-        raise HTTPException(status_code=403, detail="Admin access required")
-    return user
-
-# --- Endpoints ---
 @router.post("/login", response_model=AuthResponse)
-async def login(req: LoginRequest):
-    user = users_db.get(req.username)
-    if not user or user["password"] != _hash(req.password):
+async def login(req: LoginRequest, db: DbSession) -> AuthResponse:
+    user = await find_user_by_username(db, req.username)
+    if user is None or not user.is_active or not password_hasher.verify(req.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    token = str(uuid.uuid4())
-    tokens_db[token] = user["username"]
-    return AuthResponse(
-        token=token,
-        user=UserResponse(
-            id=user["id"],
-            username=user["username"],
-            nickname=user["nickname"],
-            role=user["role"],
-        ),
-    )
+
+    token = await create_auth_session(db, user)
+    await db.commit()
+    return AuthResponse(token=token, user=as_user_response(user))
+
 
 @router.post("/register", response_model=AuthResponse)
-async def register(req: RegisterRequest):
-    if req.username in users_db:
-        raise HTTPException(status_code=400, detail="Username already exists")
-    user_id = f"u{len(users_db) + 1:03d}"
-    users_db[req.username] = {
-        "id": user_id,
-        "username": req.username,
-        "password": _hash(req.password),
-        "nickname": req.nickname or req.username,
-        "role": "user",
-        "created_at": datetime.now().strftime("%Y-%m-%d"),
-    }
-    token = str(uuid.uuid4())
-    tokens_db[token] = req.username
-    return AuthResponse(
-        token=token,
-        user=UserResponse(
-            id=user_id,
-            username=req.username,
-            nickname=req.nickname or req.username,
-            role="user",
-        ),
-    )
+async def register(req: RegisterRequest, db: DbSession) -> AuthResponse:
+    nickname = normalize_nickname(req.nickname, fallback=req.username)
+    try:
+        async with db.begin():
+            existing = await find_user_by_username(db, req.username)
+            if existing is not None:
+                raise HTTPException(status_code=409, detail="Username already exists")
+            user = await create_user(db, username=req.username, password=req.password, nickname=nickname)
+            token = await create_auth_session(db, user)
+    except IntegrityError as exc:
+        raise HTTPException(status_code=409, detail="Username already exists") from exc
+    return AuthResponse(token=token, user=as_user_response(user))
 
-@router.get("/me")
-async def get_me(authorization: Optional[str] = Header(None)):
-    user = get_current_user(authorization)
-    return UserResponse(
-        id=user["id"],
-        username=user["username"],
-        nickname=user["nickname"],
-        role=user["role"],
-    )
+
+@router.get("/me", response_model=UserResponse)
+async def get_me(db: DbSession, authorization: Annotated[str | None, Header()] = None) -> UserResponse:
+    from app.auth_service import authenticate_bearer
+
+    user = await authenticate_bearer(db, authorization)
+    await db.commit()
+    return as_user_response(user)
