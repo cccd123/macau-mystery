@@ -18,6 +18,8 @@ const navItems = [
   { href: "/game/demo", labelKey: "nav.play" },
   { href: "/game/map", labelKey: "nav.map" },
   { href: "/create", labelKey: "nav.create" },
+  { href: "/community", labelKey: "nav.community" },
+  { href: "/my-scripts", labelKey: "nav.myScripts" },
   { href: "/admin", labelKey: "nav.admin", adminOnly: true },
 ];
 
