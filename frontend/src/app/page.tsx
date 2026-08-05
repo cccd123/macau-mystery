@@ -35,126 +35,189 @@ function FloatingDecor() {
   );
 }
 
-/* ── Macau heritage skyline (SVG silhouettes) ── */
+/* ── Macau heritage skyline (prominent SVG landmarks) ── */
 function MacauSkyline() {
   return (
-    <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[45%] pointer-events-none overflow-hidden">
-      <svg viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice" className="w-full h-full">
+    <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[55%] pointer-events-none overflow-hidden">
+      <svg viewBox="0 0 1440 500" preserveAspectRatio="xMidYMax slice" className="w-full h-full">
         <defs>
-          <linearGradient id="ms-sky" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id="ms-fade" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="var(--jade)" stopOpacity="0" />
-            <stop offset="50%" stopColor="var(--jade)" stopOpacity="0.045" />
-            <stop offset="100%" stopColor="var(--azulejo)" stopOpacity="0.1" />
+            <stop offset="30%" stopColor="var(--jade)" stopOpacity="0.06" />
+            <stop offset="100%" stopColor="var(--azulejo)" stopOpacity="0.16" />
           </linearGradient>
-          <linearGradient id="ms-hills" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--azulejo)" stopOpacity="0" />
-            <stop offset="100%" stopColor="var(--azulejo)" stopOpacity="0.06" />
+          <linearGradient id="ms-harbor" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--azulejo)" stopOpacity="0.03" />
+            <stop offset="100%" stopColor="var(--azulejo)" stopOpacity="0.1" />
           </linearGradient>
         </defs>
 
-        {/* Distant hills */}
-        <path fill="url(#ms-hills)" d="M 0 360 Q 150 300 300 330 T 600 310 T 900 325 T 1200 305 T 1440 320 L 1440 400 L 0 400 Z" />
-
-        {/* A-Ma Temple (left) */}
-        <g transform="translate(60, 210)" fill="url(#ms-sky)">
-          <path d="M 30 14 L 34 0 L 38 14 Z" />
-          <path d="M 0 42 Q -10 36 -4 30 L 22 20 Q 34 14 46 20 L 72 30 Q 78 36 68 42 Z" />
-          <rect x="8" y="42" width="56" height="38" />
-          <rect x="2" y="80" width="68" height="5" />
-          <rect x="-3" y="85" width="78" height="5" />
-          <path d="M 26 56 L 26 80 L 42 80 L 42 56 Q 34 49 26 56 Z" fill="white" fillOpacity="0.3" />
+        {/* ── A-Ma Temple 妈阁庙 (left) ── sweeping roof, traditional Chinese */}
+        <g transform="translate(50, 160)" fill="var(--jade)" opacity="0.14">
+          {/* Ridge ornament */}
+          <path d="M 46 18 L 50 0 L 54 18 Z" />
+          {/* Sweeping roof with upturned eaves */}
+          <path d="M -15 70 Q -25 58 -12 48 L 16 34 Q 30 24 50 20 Q 70 24 84 34 L 112 48 Q 125 58 115 70 Z" />
+          {/* Eave tips curling upward */}
+          <path d="M -12 48 Q -22 40 -18 32 L -10 40 Z" />
+          <path d="M 112 48 Q 122 40 118 32 L 110 40 Z" />
+          {/* Second tier roof */}
+          <path d="M 0 82 Q -8 76 2 72 L 20 66 Q 38 58 50 56 Q 62 58 80 66 L 98 72 Q 108 76 100 82 Z" />
+          {/* Body / walls */}
+          <rect x="8" y="82" width="84" height="52" />
+          {/* Central arched doorway */}
+          <path d="M 36 100 L 36 134 L 64 134 L 64 100 Q 50 86 36 100 Z" fill="var(--background)" fillOpacity="0.7" />
+          {/* Side windows */}
+          <rect x="14" y="98" width="14" height="18" fill="var(--background)" fillOpacity="0.6" />
+          <rect x="72" y="98" width="14" height="18" fill="var(--background)" fillOpacity="0.6" />
+          {/* Stone gate entrance */}
+          <rect x="24" y="118" width="52" height="16" fill="var(--background)" fillOpacity="0.5" />
+          {/* Steps */}
+          <rect x="2" y="134" width="96" height="6" />
+          <rect x="-4" y="140" width="108" height="6" />
+          <rect x="-10" y="146" width="120" height="5" />
         </g>
 
-        {/* Trees */}
-        <g transform="translate(260, 250)" fill="url(#ms-sky)">
-          <rect x="6" y="22" width="3" height="18" />
-          <circle cx="7.5" cy="16" r="11" />
+        {/* Trees (left area) */}
+        <g transform="translate(220, 240)" fill="var(--jade)" opacity="0.1">
+          <rect x="8" y="30" width="5" height="28" />
+          <ellipse cx="10" cy="18" rx="16" ry="20" />
         </g>
-        <g transform="translate(300, 265)" fill="url(#ms-sky)">
-          <rect x="5" y="18" width="3" height="15" />
-          <circle cx="6.5" cy="13" r="9" />
-        </g>
-
-        {/* Colonial building (Dom Pedro V Theatre style) */}
-        <g transform="translate(360, 245)" fill="url(#ms-sky)">
-          <path d="M -5 5 L 45 -10 L 95 5 Z" />
-          <rect x="-2" y="5" width="94" height="8" />
-          <rect x="0" y="13" width="90" height="47" />
-          <rect x="-6" y="60" width="102" height="5" />
-          <rect x="4" y="13" width="3" height="47" fill="white" fillOpacity="0.25" />
-          <rect x="20" y="13" width="3" height="47" fill="white" fillOpacity="0.25" />
-          <rect x="42" y="13" width="3" height="47" fill="white" fillOpacity="0.25" />
-          <rect x="66" y="13" width="3" height="47" fill="white" fillOpacity="0.25" />
-          <rect x="82" y="13" width="3" height="47" fill="white" fillOpacity="0.25" />
-          <path d="M 38 40 L 38 60 L 52 60 L 52 40 Q 45 33 38 40 Z" fill="white" fillOpacity="0.35" />
+        <g transform="translate(270, 260)" fill="var(--jade)" opacity="0.08">
+          <rect x="6" y="24" width="4" height="22" />
+          <ellipse cx="8" cy="14" rx="12" ry="16" />
         </g>
 
-        {/* Ruins of St. Paul's (center) */}
-        <g transform="translate(590, 95)" fill="url(#ms-sky)">
-          <rect x="49" y="0" width="4" height="15" />
-          <rect x="43" y="4" width="16" height="4" />
-          <path d="M 22 30 L 51 12 L 80 30 Z" />
-          <circle cx="51" cy="24" r="4" fill="white" fillOpacity="0.25" />
-          <rect x="20" y="30" width="62" height="20" />
-          <path d="M 28 37 Q 32 33 36 37 L 36 46 L 28 46 Z" fill="white" fillOpacity="0.3" />
-          <path d="M 47 37 Q 51 33 55 37 L 55 46 L 47 46 Z" fill="white" fillOpacity="0.3" />
-          <path d="M 66 37 Q 70 33 74 37 L 74 46 L 66 46 Z" fill="white" fillOpacity="0.3" />
-          <rect x="12" y="50" width="78" height="24" />
-          <path d="M 43 57 L 43 70 L 59 70 L 59 57 Q 51 50 43 57 Z" fill="white" fillOpacity="0.3" />
-          <path d="M 18 57 Q 22 53 26 57 L 26 70 L 18 70 Z" fill="white" fillOpacity="0.3" />
-          <path d="M 76 57 Q 80 53 84 57 L 84 70 L 76 70 Z" fill="white" fillOpacity="0.3" />
-          <rect x="6" y="74" width="90" height="30" />
-          <path d="M 36 80 L 36 100 L 66 100 L 66 80 Q 51 66 36 80 Z" fill="white" fillOpacity="0.3" />
-          <rect x="10" y="82" width="20" height="22" fill="white" fillOpacity="0.25" />
-          <rect x="72" y="82" width="20" height="22" fill="white" fillOpacity="0.25" />
-          <rect x="0" y="104" width="102" height="36" />
-          <path d="M 39 110 L 39 134 L 63 134 L 63 110 Q 51 97 39 110 Z" fill="white" fillOpacity="0.3" />
-          <rect x="-8" y="140" width="118" height="12" />
-          <rect x="-14" y="152" width="130" height="8" />
+        {/* ── Dom Pedro V Theatre 岗顶剧院 (center-left) ── neoclassical columns */}
+        <g transform="translate(340, 195)" fill="var(--azulejo)" opacity="0.13">
+          {/* Triangular pediment */}
+          <path d="M -8 8 L 60 -12 L 128 8 Z" />
+          {/* Pediment detail */}
+          <circle cx="60" cy="-1" r="5" fill="var(--background)" fillOpacity="0.5" />
+          {/* Entablature */}
+          <rect x="-4" y="8" width="128" height="10" />
+          {/* Body with columns */}
+          <rect x="0" y="18" width="120" height="72" />
+          {/* Column gaps (negative space) */}
+          <rect x="6" y="18" width="5" height="72" fill="var(--background)" fillOpacity="0.55" />
+          <rect x="26" y="18" width="5" height="72" fill="var(--background)" fillOpacity="0.55" />
+          <rect x="49" y="18" width="5" height="72" fill="var(--background)" fillOpacity="0.55" />
+          <rect x="69" y="18" width="5" height="72" fill="var(--background)" fillOpacity="0.55" />
+          <rect x="89" y="18" width="5" height="72" fill="var(--background)" fillOpacity="0.55" />
+          <rect x="109" y="18" width="5" height="72" fill="var(--background)" fillOpacity="0.55" />
+          {/* Central arched doorway */}
+          <path d="M 46 52 L 46 90 L 74 90 L 74 52 Q 60 38 46 52 Z" fill="var(--background)" fillOpacity="0.65" />
+          {/* Steps */}
+          <rect x="-8" y="90" width="136" height="6" />
+          <rect x="-14" y="96" width="148" height="5" />
         </g>
 
-        {/* Small building */}
-        <g transform="translate(820, 270)" fill="url(#ms-sky)">
-          <rect x="0" y="0" width="60" height="35" />
-          <path d="M -4 0 L 30 -10 L 64 0 Z" />
-          <rect x="10" y="10" width="10" height="15" fill="white" fillOpacity="0.25" />
-          <rect x="25" y="10" width="10" height="15" fill="white" fillOpacity="0.25" />
-          <rect x="40" y="10" width="10" height="15" fill="white" fillOpacity="0.25" />
+        {/* ── Ruins of St. Paul's 大三巴牌坊 (center piece) ── iconic baroque facade */}
+        <g transform="translate(580, 50)" fill="var(--jade)" opacity="0.16">
+          {/* Cross at summit */}
+          <rect x="66" y="0" width="6" height="22" />
+          <rect x="58" y="6" width="22" height="6" />
+          {/* Triangular pediment */}
+          <path d="M 28 44 L 69 18 L 110 44 Z" />
+          {/* Pediment relief circle */}
+          <circle cx="69" cy="36" r="6" fill="var(--background)" fillOpacity="0.5" />
+          {/* Tier 4 - upper niche band */}
+          <rect x="26" y="44" width="86" height="28" />
+          {/* 3 arched niches */}
+          <path d="M 36 54 Q 41 48 46 54 L 46 68 L 36 68 Z" fill="var(--background)" fillOpacity="0.6" />
+          <path d="M 62 54 Q 69 46 76 54 L 76 68 L 62 68 Z" fill="var(--background)" fillOpacity="0.6" />
+          <path d="M 92 54 Q 97 48 102 54 L 102 68 L 92 68 Z" fill="var(--background)" fillOpacity="0.6" />
+          {/* Tier 3 - main window tier */}
+          <rect x="16" y="72" width="106" height="34" />
+          {/* Central large arched window */}
+          <path d="M 56 82 L 56 100 L 82 100 L 82 82 Q 69 72 56 82 Z" fill="var(--background)" fillOpacity="0.6" />
+          {/* Side arched windows */}
+          <path d="M 22 82 Q 28 76 34 82 L 34 100 L 22 100 Z" fill="var(--background)" fillOpacity="0.55" />
+          <path d="M 104 82 Q 110 76 116 82 L 116 100 L 104 100 Z" fill="var(--background)" fillOpacity="0.55" />
+          {/* Decorative columns */}
+          <rect x="18" y="76" width="4" height="30" fill="var(--background)" fillOpacity="0.4" />
+          <rect x="46" y="76" width="3" height="30" fill="var(--background)" fillOpacity="0.35" />
+          <rect x="89" y="76" width="3" height="30" fill="var(--background)" fillOpacity="0.35" />
+          <rect x="116" y="76" width="4" height="30" fill="var(--background)" fillOpacity="0.4" />
+          {/* Tier 2 - grand arch tier */}
+          <rect x="8" y="106" width="122" height="44" />
+          {/* Large central arch */}
+          <path d="M 48 114 L 48 144 L 90 144 L 90 114 Q 69 96 48 114 Z" fill="var(--background)" fillOpacity="0.6" />
+          {/* Side rectangular niches */}
+          <rect x="14" y="116" width="26" height="32" fill="var(--background)" fillOpacity="0.5" />
+          <rect x="98" y="116" width="26" height="32" fill="var(--background)" fillOpacity="0.5" />
+          {/* Flanking columns */}
+          <rect x="42" y="110" width="4" height="40" fill="var(--background)" fillOpacity="0.4" />
+          <rect x="92" y="110" width="4" height="40" fill="var(--background)" fillOpacity="0.4" />
+          {/* Tier 1 - ground level with main doorway */}
+          <rect x="0" y="150" width="138" height="52" />
+          {/* Main doorway arch */}
+          <path d="M 50 160 L 50 196 L 88 196 L 88 160 Q 69 142 50 160 Z" fill="var(--background)" fillOpacity="0.6" />
+          {/* Side doorways */}
+          <path d="M 8 166 L 8 196 L 32 196 L 32 166 Q 20 154 8 166 Z" fill="var(--background)" fillOpacity="0.5" />
+          <path d="M 106 166 L 106 196 L 130 196 L 130 166 Q 118 154 106 166 Z" fill="var(--background)" fillOpacity="0.5" />
+          {/* Foundation steps */}
+          <rect x="-10" y="202" width="158" height="14" />
+          <rect x="-18" y="216" width="174" height="12" />
+          <rect x="-24" y="228" width="186" height="8" />
         </g>
 
-        {/* Trees */}
-        <g transform="translate(900, 260)" fill="url(#ms-sky)">
-          <rect x="6" y="22" width="3" height="18" />
-          <circle cx="7.5" cy="16" r="11" />
-        </g>
-        <g transform="translate(950, 275)" fill="url(#ms-sky)">
-          <rect x="5" y="18" width="3" height="15" />
-          <circle cx="6.5" cy="13" r="9" />
+        {/* Trees (center-right) */}
+        <g transform="translate(860, 240)" fill="var(--jade)" opacity="0.1">
+          <rect x="8" y="30" width="5" height="28" />
+          <ellipse cx="10" cy="18" rx="16" ry="20" />
         </g>
 
-        {/* Guia Lighthouse (right) */}
-        <g transform="translate(1120, 175)" fill="url(#ms-sky)">
-          <rect x="24" y="0" width="3" height="10" />
-          <rect x="20" y="3" width="11" height="3" />
-          <rect x="18" y="10" width="15" height="12" />
-          <path d="M 15 22 Q 25.5 12 36 22 Z" />
-          <rect x="15" y="22" width="21" height="68" />
-          <rect x="21" y="32" width="9" height="7" fill="white" fillOpacity="0.3" />
-          <rect x="21" y="48" width="9" height="7" fill="white" fillOpacity="0.3" />
-          <rect x="21" y="64" width="9" height="7" fill="white" fillOpacity="0.3" />
-          <rect x="21" y="80" width="9" height="7" fill="white" fillOpacity="0.3" />
-          <rect x="8" y="90" width="35" height="12" />
-          <rect x="2" y="102" width="47" height="8" />
-          <rect x="-4" y="110" width="59" height="6" />
+        {/* Small colonial building */}
+        <g transform="translate(920, 245)" fill="var(--azulejo)" opacity="0.1">
+          <path d="M -4 6 L 40 -6 L 84 6 Z" />
+          <rect x="0" y="6" width="80" height="48" />
+          <rect x="8" y="16" width="12" height="20" fill="var(--background)" fillOpacity="0.5" />
+          <rect x="34" y="16" width="12" height="20" fill="var(--background)" fillOpacity="0.5" />
+          <rect x="60" y="16" width="12" height="20" fill="var(--background)" fillOpacity="0.5" />
         </g>
 
-        {/* Small shrine (far right) */}
-        <g transform="translate(1240, 270)" fill="url(#ms-sky)">
-          <path d="M 0 20 Q -6 16 -2 12 L 25 6 Q 33 2 41 6 L 68 12 Q 72 16 66 20 Z" />
-          <rect x="4" y="20" width="58" height="25" />
-          <rect x="0" y="45" width="66" height="4" />
-          <path d="M 24 28 L 24 45 L 42 45 L 42 28 Q 33 22 24 28 Z" fill="white" fillOpacity="0.3" />
+        {/* Trees (right area) */}
+        <g transform="translate(1040, 260)" fill="var(--jade)" opacity="0.08">
+          <rect x="6" y="24" width="4" height="22" />
+          <ellipse cx="8" cy="14" rx="12" ry="16" />
         </g>
+
+        {/* ── Guia Lighthouse 东望洋灯塔 (right) ── tall cylindrical tower */}
+        <g transform="translate(1120, 110)" fill="var(--azulejo)" opacity="0.14">
+          {/* Lightning rod */}
+          <rect x="28" y="0" width="4" height="16" />
+          <rect x="24" y="4" width="12" height="4" />
+          {/* Lantern room (glass panels) */}
+          <rect x="20" y="16" width="20" height="18" />
+          <rect x="24" y="20" width="4" height="10" fill="var(--background)" fillOpacity="0.6" />
+          <rect x="32" y="20" width="4" height="10" fill="var(--background)" fillOpacity="0.6" />
+          {/* Dome */}
+          <path d="M 16 34 Q 30 18 44 34 Z" />
+          {/* Tower body */}
+          <rect x="16" y="34" width="28" height="100" />
+          {/* Windows */}
+          <rect x="22" y="46" width="16" height="10" fill="var(--background)" fillOpacity="0.6" />
+          <rect x="22" y="68" width="16" height="10" fill="var(--background)" fillOpacity="0.6" />
+          <rect x="22" y="90" width="16" height="10" fill="var(--background)" fillOpacity="0.6" />
+          <rect x="22" y="112" width="16" height="10" fill="var(--background)" fillOpacity="0.6" />
+          {/* Base platform */}
+          <rect x="6" y="134" width="48" height="16" />
+          <rect x="0" y="150" width="60" height="10" />
+          <rect x="-6" y="160" width="72" height="8" />
+        </g>
+
+        {/* Small Portuguese chapel (far right) */}
+        <g transform="translate(1260, 240)" fill="var(--jade)" opacity="0.1">
+          <path d="M 28 8 L 35 -4 L 42 8 Z" />
+          <rect x="26" y="-2" width="4" height="10" />
+          <rect x="22" y="8" width="26" height="46" />
+          <path d="M 30 22 L 30 54 L 42 54 L 42 22 Q 36 14 30 22 Z" fill="var(--background)" fillOpacity="0.5" />
+          <rect x="18" y="54" width="34" height="4" />
+        </g>
+
+        {/* ── Harbor wave pattern at bottom ── */}
+        <path fill="url(#ms-harbor)" d="M 0 440 Q 120 420 240 435 T 480 428 T 720 438 T 960 425 T 1200 435 T 1440 430 L 1440 500 L 0 500 Z" />
       </svg>
     </div>
   );
@@ -202,7 +265,7 @@ function HeroParallax({ children }: { children: React.ReactNode }) {
 }
 
 export default function HomePage() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [route, setRoute] = useState<string[]>([]);
   const [loadingRoute, setLoadingRoute] = useState(true);
 
@@ -231,9 +294,6 @@ export default function HomePage() {
     "Senado Square": { en: "Senado Square", "zh-CN": "\u8bae\u4e8b\u4ead\u524d\u5730", "zh-TW": "\u8b70\u4e8b\u4ead\u524d\u5730" },
     "Ruins of St Paul": { en: "Ruins of St. Paul's", "zh-CN": "\u5927\u4e09\u5df4\u724c\u574a", "zh-TW": "\u5927\u4e09\u5df4\u724c\u574a" },
   };
-
-  // Detect locale from title text
-  const localeKey = t("home.title") === "Macau Mystery" ? "en" : t("home.title") === "\u6fb3\u79d8" ? "zh-CN" : "zh-TW";
 
   return (
     <div className="flex flex-col">
@@ -408,7 +468,7 @@ export default function HomePage() {
                     </div>
                     {/* Location name */}
                     <span className="text-sm font-medium leading-tight">
-                      {routeNames[name]?.[localeKey] || name}
+                      {routeNames[name]?.[locale] || name}
                     </span>
                   </div>
                 ))}

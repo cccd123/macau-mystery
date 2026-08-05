@@ -38,7 +38,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "common.private": "Private",
 
     // Home
-    "home.tagline": "AI \u00d7 Macau Cultural Heritage",
+    "home.tagline": "AI \u00d7 Macau Cultural Tourism",
     "home.title": "Macau Mystery",
     "home.subtitle": "Not a tour guide, but a cross-border mystery between Chinese and Portuguese families. Walk along Macau's real heritage trail, solve the case with AI NPCs, and learn real Macau history.",
     "home.startBtn": "Start Investigation",
@@ -180,6 +180,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     "nav.login": "\u767b\u5f55",
     "nav.logout": "\u9000\u51fa",
     "nav.brand": "\u6fb3\u79d8",
+    "nav.myScripts": "\u6211\u7684\u5267\u672c",
+    "nav.community": "\u793e\u533a",
 
     // Common
     "common.loading": "\u52a0\u8f7d\u4e2d...",
@@ -198,7 +200,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "common.private": "\u79c1\u6709",
 
     // Home
-    "home.tagline": "AI \u00d7 \u6fb3\u95e8\u6587\u5316\u9057\u4ea7",
+    "home.tagline": "AI \u00d7 \u6fb3\u95e8\u6587\u65c5",
     "home.title": "\u6fb3\u79d8",
     "home.subtitle": "\u4e0d\u662f\u201c\u542c\u5bfc\u89c8\u201d\uff0c\u800c\u662f\u201c\u7834\u4e00\u4e2a\u8de8\u8d8a\u4e2d\u8461\u4e24\u4e2a\u5bb6\u65cf\u7684\u60ac\u6848\u201d\u3002\u6cbf\u6fb3\u95e8\u771f\u5b9e\u5386\u53f2\u57ce\u533a\u6b65\u884c\uff0c\u4e0eAI NPC\u5bf9\u8bdd\u7834\u6848\uff0c\u987a\u4fbf\u5b66\u4f1a\u4e00\u6bb5\u771f\u5b9e\u7684\u6fb3\u95e8\u53f2\u3002",
     "home.startBtn": "\u5f00\u59cb\u63a2\u6848",
@@ -232,6 +234,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     "game.clues": "\u7ebf\u7d22",
     "game.chapter": "\u7ae0\u8282",
     "game.location": "\u5730\u70b9",
+    "game.endingTitle": "\u7ed3\u5c40",
+    "game.endingDesc": "\u4f60\u5df2\u89e3\u9501\u4e00\u4e2a\u7ed3\u5c40\u3002\u91cd\u65b0\u5f00\u59cb\u63a2\u7d22\u5176\u4ed6\u5206\u652f\u3002",
+    "game.backHome": "\u8fd4\u56de\u9996\u9875",
+    "game.showChoices": "\u505a\u51fa\u9009\u62e9",
+    "game.choosePrompt": "\u63a5\u4e0b\u6765\u4f60\u8981\u600e\u4e48\u505a\uff1f",
 
     // Create
     "create.title": "\u4e00\u53e5\u8bdd\u5199\u77ed\u5267",
@@ -257,6 +264,15 @@ export const translations: Record<Locale, Record<string, string>> = {
     "result.submitted": "\u5df2\u63d0\u4ea4\u5ba1\u6838\uff01\u7ba1\u7406\u5458\u91c7\u7528\u540e\u4f1a\u901a\u77e5\u4f60\u3002",
     "result.views": "\u6d4f\u89c8",
     "result.plays": "\u64ad\u653e",
+
+    // My Scripts
+    "myScripts.title": "\u6211\u7684\u5267\u672c",
+    "myScripts.subtitle": "\u7ba1\u7406\u4f60\u751f\u6210\u7684\u5267\u672c",
+    "myScripts.empty": "\u4f60\u8fd8\u6ca1\u6709\u521b\u5efa\u4efb\u4f55\u5267\u672c\u3002",
+
+    // Community
+    "community.title": "\u793e\u533a",
+    "community.subtitle": "\u53d1\u73b0\u793e\u533a\u516c\u5f00\u5267\u672c",
 
     // Admin
     "admin.title": "\u7ba1\u7406\u540e\u53f0",
@@ -326,6 +342,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     "nav.login": "\u767b\u5165",
     "nav.logout": "\u767b\u51fa",
     "nav.brand": "\u6fb3\u79d8",
+    "nav.myScripts": "\u6211\u7684\u5287\u672c",
+    "nav.community": "\u793e\u5340",
 
     // Common
     "common.loading": "\u8f09\u5165\u4e2d...",
@@ -344,7 +362,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "common.private": "\u79c1\u6709",
 
     // Home
-    "home.tagline": "AI \u00d7 \u6fb3\u9580\u6587\u5316\u907a\u7522",
+    "home.tagline": "AI \u00d7 \u6fb3\u9580\u6587\u65c5",
     "home.title": "\u6fb3\u79d8",
     "home.subtitle": "\u4e0d\u662f\u201c\u807d\u5c0e\u89bd\u201d\uff0c\u800c\u662f\u201c\u7834\u4e00\u500b\u8de8\u8d8a\u4e2d\u8461\u5169\u500b\u5bb6\u65cf\u7684\u61f8\u6848\u201d\u3002\u6cbf\u6fb3\u9580\u771f\u5be6\u6b77\u53f2\u57ce\u5340\u6b65\u884c\uff0c\u8207AI NPC\u5c0d\u8a71\u7834\u6848\uff0c\u9806\u4fbf\u5b78\u6703\u4e00\u6bb5\u771f\u5be6\u7684\u6fb3\u9580\u53f2\u3002",
     "home.startBtn": "\u958b\u59cb\u63a2\u6848",
@@ -378,6 +396,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     "game.clues": "\u7dda\u7d22",
     "game.chapter": "\u7ae0\u7bc0",
     "game.location": "\u5730\u9ede",
+    "game.endingTitle": "\u7d50\u5c40",
+    "game.endingDesc": "\u4f60\u5df2\u89e3\u9396\u4e00\u500b\u7d50\u5c40\u3002\u91cd\u65b0\u958b\u59cb\u63a2\u7d22\u5176\u4ed6\u5206\u652f\u3002",
+    "game.backHome": "\u8fd4\u56de\u9996\u9801",
+    "game.showChoices": "\u505a\u51fa\u9078\u64c7",
+    "game.choosePrompt": "\u63a5\u4e0b\u4f86\u4f60\u8981\u600e\u9ebc\u505a\uff1f",
 
     // Create
     "create.title": "\u4e00\u53e5\u8a71\u5beb\u77ed\u5287",
@@ -403,6 +426,15 @@ export const translations: Record<Locale, Record<string, string>> = {
     "result.submitted": "\u5df2\u63d0\u4ea4\u5be9\u6838\uff01\u7ba1\u7406\u54e1\u63a1\u7528\u5f8c\u6703\u901a\u77e5\u4f60\u3002",
     "result.views": "\u700f\u89bd",
     "result.plays": "\u64ad\u653e",
+
+    // My Scripts
+    "myScripts.title": "\u6211\u7684\u5287\u672c",
+    "myScripts.subtitle": "\u7ba1\u7406\u4f60\u751f\u6210\u7684\u5287\u672c",
+    "myScripts.empty": "\u4f60\u9084\u6c92\u6709\u5efa\u7acb\u4efb\u4f55\u5287\u672c\u3002",
+
+    // Community
+    "community.title": "\u793e\u5340",
+    "community.subtitle": "\u767c\u73fe\u793e\u5340\u516c\u958b\u5287\u672c",
 
     // Admin
     "admin.title": "\u7ba1\u7406\u5f8c\u53f0",
