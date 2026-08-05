@@ -12,6 +12,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.config import get_settings
 from app.db import check_database
 from app.game_errors import GameError
+from app.object_storage import object_storage_health
 
 
 def create_app() -> FastAPI:
@@ -86,6 +87,8 @@ def create_app() -> FastAPI:
     from app.api.ugc import router as ugc_router
     from app.api.admin import router as admin_router
     from app.api.auth import router as auth_router
+    from app.api.locations import router as locations_router
+    from app.api.media import router as media_router
     from app.api.ugc_user import router as ugc_user_router
 
     application.include_router(game_router, prefix="/api/v1/game", tags=["game"])
@@ -94,14 +97,25 @@ def create_app() -> FastAPI:
     application.include_router(admin_router, prefix="/api/v1/admin", tags=["admin"])
     application.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
     application.include_router(ugc_user_router, prefix="/api/v1/ugc", tags=["ugc"])
+    application.include_router(locations_router, prefix="/api/v1/locations", tags=["locations"])
+    application.include_router(media_router, prefix="/api/v1/admin/media", tags=["admin-media"])
 
     @application.get("/api/v1/health")
     async def health():
-        if await check_database():
-            return {"status": "ok", "database": "ok", "version": application.version}
+        database_status = "ok" if await check_database() else "unavailable"
+        storage_status = await object_storage_health()
+        payload = {
+            "status": "ok",
+            "database": database_status,
+            "object_storage": storage_status,
+            "version": application.version,
+        }
+        if database_status == "ok" and storage_status in {"ok", "disabled"}:
+            return payload
+        payload["status"] = "degraded"
         return JSONResponse(
             status_code=503,
-            content={"status": "degraded", "database": "unavailable", "version": application.version},
+            content=payload,
         )
 
     return application

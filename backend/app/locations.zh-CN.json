@@ -1,0 +1,64 @@
+{
+  "items": [
+    {
+      "id": "a_ma_temple",
+      "order": 1,
+      "name": "妈阁庙",
+      "summary": "澳门现存最古老的庙宇之一",
+      "description": "妈阁庙依山面海，是澳门现存有实物可考的古老庙宇，也是澳门历史城区的重要组成部分。庙内建筑沿山势分布，包括弘仁殿、正觉禅林、观音阁等，集中呈现了澳门传统民间信仰、航海文化与岭南庙宇建筑特色。庙宇与内港的地理关系，也让这里成为理解澳门早期城市发展和海上往来的重要起点。",
+      "coordinates": {"lat": 22.1867, "lng": 113.5318},
+      "source_title": "澳门特别行政区政府旅游局：中区世遗游",
+      "source_url": "https://www.macaotourism.gov.mo/zh-hans/macao-full-of-fun/world-heritage-tour-in-central-district"
+    },
+    {
+      "id": "lilau_square",
+      "order": 2,
+      "name": "亚婆井前地",
+      "summary": "葡萄牙人在澳门最早的聚居点",
+      "description": "亚婆井的葡文名称 Lilau 意为山泉。这里靠近内港，过去拥有重要水源，也是葡萄牙人在澳门较早形成的聚居区域之一。前地周围保留了富有南欧气息的住宅和街巷空间，见证了不同社群长期生活、往来与文化交融的城市历史。关于亚婆井水的民谣至今仍被提起，也使这处宁静前地带有鲜明的澳门生活记忆。",
+      "coordinates": {"lat": 22.1876, "lng": 113.5331},
+      "source_title": "澳门特别行政区政府旅游局：中区世遗游",
+      "source_url": "https://www.macaotourism.gov.mo/zh-hans/macao-full-of-fun/world-heritage-tour-in-central-district"
+    },
+    {
+      "id": "mandarins_house",
+      "order": 3,
+      "name": "郑家大屋",
+      "summary": "晚清思想家郑观应故居",
+      "description": "郑家大屋约建于十九世纪中叶，是近代思想家郑观应的故居。建筑以传统中式院落为主体，同时在天花、门窗、檐口和墙面装饰中吸收西方做法。规模宏大的宅院与细致的空间布局，反映了澳门中西建筑文化相互影响的城市特色。郑观应曾在这里完成影响深远的《盛世危言》，使宅院同时具有重要的人文思想价值。",
+      "coordinates": {"lat": 22.1879, "lng": 113.5347},
+      "source_title": "澳门特别行政区政府旅游局：中区世遗游",
+      "source_url": "https://www.macaotourism.gov.mo/zh-hans/macao-full-of-fun/world-heritage-tour-in-central-district"
+    },
+    {
+      "id": "dom_pedro_v_theatre",
+      "order": 4,
+      "name": "岗顶剧院",
+      "summary": "中国现存最古老的西式剧院",
+      "description": "岗顶剧院原称伯多禄五世剧院，建于十九世纪，后来增建具有新古典主义特色的正立面。这里曾用于戏剧、音乐会和葡人社群的重要活动，是中国早期西式剧院建筑的代表，也记录了澳门作为中西文化交流城市的艺术生活。剧院至今仍保留舞台、观众厅和回廊等空间，让访客能够直观感受昔日的演出环境。",
+      "coordinates": {"lat": 22.1892, "lng": 113.5389},
+      "source_title": "澳门特别行政区政府旅游局：岗顶剧院",
+      "source_url": "https://www.macaotourism.gov.mo/zh-hans/sightseeing/macao-world-heritage/dom-pedro-v-theatre"
+    },
+    {
+      "id": "senado_square",
+      "order": 5,
+      "name": "议事亭前地",
+      "summary": "澳门的城市中心广场",
+      "description": "议事亭前地长期是澳门重要的城市公共空间。广场以波浪形葡式碎石路面连接周边历史建筑，附近分布议事亭、邮政总局和仁慈堂等地标。它既保留了澳门旧城区的街道尺度，也延续着节庆、商业和市民日常活动。从这里步行可继续通往大堂、板樟堂和大三巴一带，是认识澳门历史城区空间结构的重要节点。",
+      "coordinates": {"lat": 22.1918, "lng": 113.5396},
+      "source_title": "澳门特别行政区政府旅游局：中区世遗游",
+      "source_url": "https://www.macaotourism.gov.mo/zh-hans/macao-full-of-fun/world-heritage-tour-in-central-district"
+    },
+    {
+      "id": "ruins_of_st_pauls",
+      "order": 6,
+      "name": "大三巴牌坊",
+      "summary": "澳门最著名的地标建筑",
+      "description": "大三巴牌坊是圣保禄教堂遗址保存下来的前壁，与石阶和周边遗迹共同构成澳门最具代表性的历史景观。立面雕刻融合宗教图像、汉字和东方纹样，体现了早期东西方工艺与思想在澳门相遇、交流并留下印记的过程。遗址与相邻的圣保禄学院旧址共同见证了澳门早期教育、宗教传播和跨文化交流的历史。",
+      "coordinates": {"lat": 22.1946, "lng": 113.5414},
+      "source_title": "澳门特别行政区政府旅游局：中区世遗游",
+      "source_url": "https://www.macaotourism.gov.mo/zh-hans/macao-full-of-fun/world-heritage-tour-in-central-district"
+    }
+  ]
+}

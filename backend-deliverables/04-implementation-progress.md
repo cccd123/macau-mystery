@@ -1,24 +1,31 @@
-# 沉浸式短剧游戏与认证后端实现进度
+# 沉浸式短剧后端最新实现进度
 
-- 更新时间：2026-08-04
-- 当前阶段：游戏最小持久化闭环与持久化登录、注册、Bearer 会话均已实现并完成 Python 3.11 自动化验证。
-- 范围：成员 C 的预制视频分支短剧游戏后端，以及已明确授权的最小登录/注册持久化；不含正式六章内容、视频制作、播放器、GPS、密码重置、邮箱验证、UGC 或 AI。
+- 更新时间：2026-08-05
+- 当前阶段：游戏与认证持久化闭环保持完成；新增 S3 兼容媒体上传能力和固定六景点匿名查询接口。
+- 范围：只修改后端、部署配置和交付文档；未修改前端播放器、地图或弹框页面。
 
 ## 已完成
 
-- 游戏部分保持完成：SQLite / PostgreSQL 兼容的剧情、会话、事件与线索持久化；版本化剧情校验、状态机、v1 游戏 API、幂等和 Docker 数据卷支持。
-- 新增 `users` 与 `auth_sessions` SQLAlchemy 模型及 Alembic 增量迁移 `20260804_0002`。用户名以规范化键大小写无关唯一，密码使用 Argon2 哈希，随机 Bearer token 仅以摘要持久化。
-- `POST /api/v1/auth/register`、`POST /api/v1/auth/login`、`GET /api/v1/auth/me` 已改为异步数据库实现，维持前端既有 `{ token, user }` 响应结构；注册成功后自动登录。
-- 为兼容现有登录页未声明密码长度的输入，密码校验设为 6–128 位；后端测试覆盖 6 位密码可注册、5 位密码返回 422。
-- 已将 `03-game-api-contract.md` 升级为项目统一 API 文档，覆盖健康检查、游戏、认证、AI、UGC 与管理后台，并标记 mock/内存接口的实际限制。
-- admin 与 UGC 的既有令牌解析已切换到持久化认证服务；它们自身的剧本、投稿等旧业务数据仍未持久化。
-- 开发环境可以通过 `BOOTSTRAP_DEMO_USERS` 幂等创建缺失的 `admin/admin123` 与 `guest/guest123`，生产默认关闭，且绝不覆盖既有用户。
-- 新增认证集成测试，覆盖迁移、注册、重复用户名、登录、`/me`、密码哈希、会话持久化、过期令牌、角色鉴权和 demo seed 幂等性。
+- 新增统一 `ObjectStorageService`，通过 `boto3` 同时兼容本地 MinIO 与 Cloudflare R2，并分别配置后端内部 endpoint、浏览器预签名 endpoint 和长期公开媒体基地址。
+- 新增管理员 `POST /api/v1/admin/media/uploads`，校验文件扩展名、MIME 和声明大小后生成 15 分钟预签名 PUT 地址；对象键使用 UUID，避免覆盖已有文件。
+- 新增管理员 `POST /api/v1/admin/media/uploads/complete`，通过 HEAD 校验对象存在、实际大小及 Content-Type，并返回可写入剧情 JSON 的长期 `public_url`、ETag 和 `ready` 状态。
+- 视频首版限定 MP4 且最大 1 GiB；海报支持 JPEG、PNG、WebP 且最大 10 MiB。上传需持久化管理员 Bearer token，播放 URL 为公开只读。
+- Docker Compose 新增固定版本 MinIO 服务、9000/9001 端口和 `minio_data` 持久卷；后端启动前幂等创建 `macau-media` 桶、公开读策略和浏览器 CORS。
+- 新增六景点只读简体中文目录，包含稳定 ID、顺序、名称、极简摘要、详细介绍、坐标和澳门旅游局来源。
+- 新增匿名 `GET /api/v1/locations` 与 `GET /api/v1/locations/{location_id}`；保留旧 `/admin/route` 兼容接口，不返回当前位置、解锁状态或 GPS 结果。
+- `/api/v1/health` 新增 `object_storage: ok|unavailable|disabled`；已启用存储不可用时返回 503 degraded。
+- 游戏剧情、会话、认证、数据库结构与剧情 JSON v1 契约均未改变；本批次不需要 Alembic 迁移。
 
 ## 验证结果
 
-- `python -m compileall backend/app backend/tests`：通过。
-- 在项目内隔离的 Python 3.11 `backend/.venv` 运行完整后端测试：`18 passed`。
-- 在临时 SQLite 文件执行 `alembic upgrade head`：通过，确认从空库可按 `20260803_0001 → 20260804_0002` 升级。
-- 认证自动化测试已验证注册自动登录、大小写无关重复用户名、错误密码、`/auth/me`、Argon2 非明文存储、令牌过期、同一数据库上的新应用实例恢复令牌，以及 admin/UGC 角色鉴权。
-- 前端 `/login` 未改动；其现有 URL、字段和 `{ token, user }` 响应与已测试 API 保持兼容。实际浏览器页面冒烟可在本地同时启动前后端后执行。
+- 使用隔离的 Python 3.12 验证环境安装项目锁定版本依赖并运行完整后端测试：`28 passed`。
+- 新增测试覆盖景点目录完整性、匿名列表/详情/404、管理员媒体鉴权、预签名地址、非法媒体、对象缺失、元数据冲突与上传完成响应。
+- 既有游戏、认证、迁移、剧情导入、剧情运行时和健康检查测试全部回归通过。
+- `docker compose config`：通过，确认后端、MinIO、环境变量和两个持久卷配置可解析。
+- 本机 Docker daemon 当前未运行，因此尚未执行真实 MinIO PUT、公开 GET 与 Range 206 的容器冒烟；该项保留为启动 Docker 后的部署验收步骤。
+
+## 当前交付边界
+
+- 本地使用 MinIO；评委公网演示使用公共读 Cloudflare R2。预签名 URL 仅用于上传，完成接口返回的长期公开 URL 才能写入剧情 JSON。
+- 仍未制作正式六章 JSON、视频或海报，也未把演示剧情中的占位 URL 替换为真实媒体。
+- 前端仍需自行对接 v1 游戏快照、视频播放器、景点接口和弹框；本批次未修改任何 `frontend/` 文件。

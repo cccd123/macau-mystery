@@ -47,6 +47,19 @@ class Settings:
     demo_admin_password: str
     demo_guest_username: str
     demo_guest_password: str
+    object_storage_enabled: bool
+    s3_endpoint_url: str
+    s3_presign_endpoint_url: str
+    s3_access_key_id: str
+    s3_secret_access_key: str
+    s3_bucket: str
+    s3_region: str
+    s3_addressing_style: str
+    media_public_base_url: str
+    media_upload_ttl_seconds: int
+    media_max_video_bytes: int
+    media_max_poster_bytes: int
+    media_cors_origins: tuple[str, ...]
 
     @property
     def is_production(self) -> bool:
@@ -73,4 +86,25 @@ def get_settings() -> Settings:
         demo_admin_password=os.getenv("DEMO_ADMIN_PASSWORD", "admin123"),
         demo_guest_username=os.getenv("DEMO_GUEST_USERNAME", "guest"),
         demo_guest_password=os.getenv("DEMO_GUEST_PASSWORD", "guest123"),
+        object_storage_enabled=_as_bool(os.getenv("OBJECT_STORAGE_ENABLED"), default=False),
+        s3_endpoint_url=os.getenv("S3_ENDPOINT_URL", "").rstrip("/"),
+        s3_presign_endpoint_url=os.getenv(
+            "S3_PRESIGN_ENDPOINT_URL", os.getenv("S3_ENDPOINT_URL", "")
+        ).rstrip("/"),
+        s3_access_key_id=os.getenv("S3_ACCESS_KEY_ID", ""),
+        s3_secret_access_key=os.getenv("S3_SECRET_ACCESS_KEY", ""),
+        s3_bucket=os.getenv("S3_BUCKET", "macau-media"),
+        s3_region=os.getenv("S3_REGION", "us-east-1"),
+        s3_addressing_style=os.getenv("S3_ADDRESSING_STYLE", "path"),
+        media_public_base_url=os.getenv("MEDIA_PUBLIC_BASE_URL", "").rstrip("/"),
+        media_upload_ttl_seconds=_positive_int(
+            os.getenv("MEDIA_UPLOAD_TTL_SECONDS"), default=900, name="MEDIA_UPLOAD_TTL_SECONDS"
+        ),
+        media_max_video_bytes=_positive_int(
+            os.getenv("MEDIA_MAX_VIDEO_BYTES"), default=1073741824, name="MEDIA_MAX_VIDEO_BYTES"
+        ),
+        media_max_poster_bytes=_positive_int(
+            os.getenv("MEDIA_MAX_POSTER_BYTES"), default=10485760, name="MEDIA_MAX_POSTER_BYTES"
+        ),
+        media_cors_origins=_cors_origins(os.getenv("MEDIA_CORS_ORIGINS")),
     )

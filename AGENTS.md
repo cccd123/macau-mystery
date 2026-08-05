@@ -6,7 +6,7 @@
 
 “澳秘 / Macau Mystery”是一个澳门历史城区主题的沉浸式互动剧本平台原型。仓库仍保留 NPC 对话、一句话生成互动短剧、用户投稿和管理后台等早期设想及骨架，但它们不属于当前成员 C 的交付范围。
 
-当前仓库处于 v0.2 原型阶段。成员 C 负责的“沉浸式预制视频分支短剧游戏”后端最小闭环已经实现为可持久化的 SQLite / PostgreSQL 兼容链路；登录、注册与 Bearer 会话已获明确授权并改为持久化实现。AI、UGC 与管理后台等旧业务多数仍以进程内存或 mock 为主，整个产品尚非生产级部署。
+当前仓库处于 v0.2 原型阶段。成员 C 负责的“沉浸式预制视频分支短剧游戏”后端最小闭环已经实现为可持久化的 SQLite / PostgreSQL 兼容链路；登录、注册与 Bearer 会话已获明确授权并改为持久化实现。2026-08-05 又明确授权增加 S3 兼容媒体上传和固定六景点介绍 API。AI、UGC 与管理后台等旧业务多数仍以进程内存或 mock 为主，整个产品尚非生产级部署。
 
 ## 当前冻结范围
 
@@ -19,25 +19,27 @@
 - 首版不依赖 GPS；章节坐标仅作未来扩展数据，不参与剧情解锁。
 - 视频内旁白、对白、文字和字幕由视频制作人员处理；后端仅保存媒体 URL、海报和元数据。
 - 前端负责视频末帧保持、选项覆盖层、候选视频预加载和播放器切换；成员 C 不修改页面视觉或播放器组件。
-- 不处理六章正式剧本创作、视频制作、视频上传转码、国际化、社区、密码重置/邮箱验证等扩展账号能力、UGC、真实 LLM/RAG/TTS 或其他成员任务。
+- 已提供管理员预签名上传与上传完成校验，但不处理六章正式剧本创作、视频制作、视频转码、国际化、社区、密码重置/邮箱验证等扩展账号能力、UGC、真实 LLM/RAG/TTS 或其他成员任务。
+- 固定六景点只读简体中文介绍与匿名 API 已实现；前端地图点击、弹框、当前位置和解锁状态仍由前端负责人处理。
 - “一句话短剧”延后到沉浸式游戏完成后再评估，可降级为只生成剧本或取消。
 
 当前阶段的权威交付文档位于 `backend-deliverables/`：
 
-- `00-requirements-baseline.md` 1.0：已确认的需求基线。
+- `00-requirements-baseline.md` 1.1：已确认的需求基线。
 - `01-database-design.md` 1.0：已确认的数据库设计。
 - `02-story-data-contract.md` 1.0：已确认的剧情 JSON 数据契约。
-- `03-game-api-contract.md` 2.0：当前已注册项目接口的统一文档；游戏 v1 细节、认证、AI、UGC 和管理接口均以此为准。
+- `03-接口文档.md` 2.1：当前已注册项目接口的统一文档；游戏 v1、景点、媒体上传、认证、AI、UGC 和管理接口均以此为准。
 - `04-implementation-progress.md`：仅记录最新进度，完成每个执行批次后必须覆盖更新。
 - `05-minimal-backend-implementation-plan.md`：最小后端闭环实施计划与历史范围依据。
 
 ## 实际技术栈
 
 - 前端：Next.js 16.2.12、React 19.2.4、TypeScript 5、Tailwind CSS 4、shadcn/Base UI、Leaflet 1.9.4。
-- 后端：Python 3.11、FastAPI 0.115、Pydantic 2.9、Uvicorn、SQLAlchemy 2 async、Alembic。
+- 后端：Python 3.11、FastAPI 0.115、Pydantic 2.9、Uvicorn、SQLAlchemy 2 async、Alembic、boto3。
 - 数据库：本地默认 SQLite + `aiosqlite`；已预留 `asyncpg` PostgreSQL 驱动。
 - 预留服务：OpenAI Python SDK 对接 SiliconFlow/DeepSeek、ChromaDB、edge-tts。
-- 容器：根目录 `docker-compose.yml` 仅启动后端；`backend/Dockerfile` 使用 Python 3.11 slim。
+- 对象存储：本地 MinIO；公网演示使用 Cloudflare R2；后端通过 S3 兼容接口生成预签名 PUT 并校验对象，不代理视频流。
+- 容器：根目录 `docker-compose.yml` 启动后端与固定版本 MinIO，并分别挂载 SQLite 与媒体持久卷；`backend/Dockerfile` 使用 Python 3.11 slim。
 
 注意：根 README 仍写着 Next.js 14，这是过时信息。修改前端必须先阅读 `frontend/AGENTS.md`；当前 Next.js 版本可能含训练数据之外的破坏性变化，应再阅读安装包中 `node_modules/next/dist/docs/` 的相关文档。
 
@@ -54,7 +56,9 @@ macau-mystery/
 │   ├── app/
 │   │   ├── api/game.py             # 持久化游戏 API
 │   │   ├── game_service.py         # 会话、事务、幂等和快照服务
-│   │   ├── db.py / db_models.py    # async 数据库与五类游戏表
+│   │   ├── db.py / db_models.py    # async 数据库、游戏与认证表
+│   │   ├── object_storage.py        # MinIO/R2、预签名上传与对象校验
+│   │   ├── location_service.py      # 固定六景点只读目录
 │   │   ├── story/                  # 契约、校验、运行时、导入与演示剧情
 │   │   ├── ai/、ugc/、knowledge/    # 旧路线保留，非当前范围
 │   │   └── main.py                 # FastAPI、CORS、生命周期和错误处理
@@ -62,7 +66,7 @@ macau-mystery/
 ├── backend-deliverables/            # 当前成员 C 的权威交付文档
 ├── README.md                        # 快速启动说明，部分信息过时
 ├── TASK_BREAKDOWN.md                # 团队分工与路线图，不等于当前完成度
-└── docker-compose.yml               # 仅后端开发服务与 SQLite 持久卷
+└── docker-compose.yml               # 后端、MinIO 与两类持久卷
 ```
 
 ## 主要运行链路
@@ -78,13 +82,15 @@ macau-mystery/
 
 ### 后端
 
-- `backend/app/main.py` 注册 `/api/v1/game`、`/ai`、`/create`、`/admin`、`/auth`、`/ugc` 路由；`/api/v1/health` 返回应用版本与数据库状态。
+- `backend/app/main.py` 注册 `/api/v1/game`、`/locations`、`/admin/media`、`/ai`、`/create`、`/admin`、`/auth`、`/ugc` 路由；`/api/v1/health` 返回应用版本、数据库与对象存储状态。
 - 游戏 API 使用 `GameService` 和 async SQLAlchemy，不再使用全局 `sessions` 字典。启动游戏时会绑定已发布的不可变剧情版本；后续发布不影响已有会话。
 - 已有 `stories`、`story_versions`、`game_sessions`、`game_events`、`session_clues` 五类持久化模型及 Alembic 初始迁移 `20260803_0001`。
 - 剧情运行时支持 `video`、`router`、`ending` 三类节点，结构化线索条件、连续 router 解析、线索去重、分支汇合、结局和候选媒体预加载。
 - `backend/app/story/scripts/macau_mystery_demo.json` 是可运行的技术演示剧情，含分支、汇合、线索、router 和双结局；它使用占位媒体 URL。旧的 `macau_mystery_01.json` 仅可作迁移参考，不能作为正式运行内容。
 - 开发环境启动时可由 `BOOTSTRAP_DEMO_STORY=true` 自动导入/发布演示剧情；生产环境默认关闭。
 - 认证使用 `users` 与 `auth_sessions` 持久化用户、Argon2 密码哈希和带有效期的随机 Bearer token；开发环境可幂等创建 demo 管理员和访客。AI、UGC 与管理后台业务数据仍多为内存数据，重启会丢失，不能视为生产安全能力。
+- `/api/v1/admin/media/uploads` 生成管理员专用预签名 PUT，`/uploads/complete` 通过 HEAD 校验对象并返回长期公开 URL；预签名 URL 不能写入剧情 JSON。
+- `/api/v1/locations` 和 `/api/v1/locations/{location_id}` 匿名返回固定六景点摘要与详情；旧 `/admin/route` 保留兼容。
 
 ## 当前实现 API 速查
 
@@ -92,10 +98,12 @@ macau-mystery/
 
 | 功能        | 方法与路径                                    | 当前返回重点                                  |
 | --------- | ---------------------------------------- | --------------------------------------- |
-| 健康检查      | `GET /health`                            | `{ status, database, version }`         |
+| 健康检查      | `GET /health`                            | `{ status, database, object_storage, version }` |
 | 开始游戏      | `POST /game/start`                       | 201；v1 `GameSnapshot`                   |
 | 选择分支      | `POST /game/choice`                      | v1 `GameSnapshot`；请求必须含四个标识字段           |
 | 游戏状态      | `GET /game/state/{session_id}`           | 会话绑定版本的 v1 `GameSnapshot`               |
+| 景点路线/详情   | `GET /locations`、`GET /locations/{id}`   | 固定六景点摘要、坐标和简中介绍                     |
+| 媒体上传      | `POST /admin/media/uploads*`              | 管理员预签名 PUT 与完成校验                       |
 | NPC 对话    | `POST /ai/chat`                          | `{ response, audio_url? }`，当前为 mock     |
 | TTS       | `GET /ai/tts`                            | `{ audio_url, text }`，当前 `audio_url` 为空 |
 | UGC 生成    | `POST /create/generate`                  | 固定模板响应                                  |
@@ -124,8 +132,8 @@ macau-mystery/
 
 与成员 C 游戏闭环相关：
 
-- 后端闭环已完成并有自动化测试；但目前只有技术演示剧情，未制作正式六章内容、真实视频或 CDN / 对象存储媒体。
-- 正式部署时应使用对象存储/CDN URL，不通过 FastAPI 或 Railway 容器转发大视频流量；SQLite 部署必须绑定持久化卷。
+- 后端闭环、对象存储接口和景点接口已完成并有自动化测试；但目前只有技术演示剧情，未制作正式六章内容、真实视频或将占位 URL 替换为 R2 URL。
+- 本地 MinIO 已配置在 Compose 中；评委公网演示仍需创建 R2 公共桶、配置 CORS/环境变量并上传真实媒体。SQLite 部署必须绑定持久化卷。
 - 当前前端游戏页仍是旧叙事文本页面，`frontend/src/lib/api.ts` 未适配 v1 的 `scene_id`、`request_id`、媒体和预加载字段。播放器接入应由前端负责人负责，不得将页面视觉工作扩展到成员 C 范围。
 - 现有导航和首页“开始游戏”仍指向 `/game/demo`，而实际页面是 `/game/[sessionId]`，因此可导致 404。
 
@@ -161,6 +169,7 @@ Swagger：`http://localhost:8000/docs`。
 - `BOOTSTRAP_DEMO_STORY`：开发环境默认开启，生产环境默认关闭。
 - `BOOTSTRAP_DEMO_USERS`：开发环境默认开启，生产环境默认关闭；只创建缺失的 demo 用户，不覆盖已有用户。
 - `AUTH_TOKEN_TTL_HOURS`：随机 Bearer token 的有效期，默认 168 小时；`DEMO_*` 变量用于开发演示账号名和密码。
+- `OBJECT_STORAGE_ENABLED`、`S3_*`、`MEDIA_PUBLIC_BASE_URL`、`MEDIA_*`：MinIO/R2 endpoint、凭据、公开 URL、上传有效期/大小限制与媒体 CORS。
 - `SILICONFLOW_API_KEY`、`SILICONFLOW_BASE_URL`、`LLM_MODEL`、`EMBEDDING_MODEL`、`ADMIN_TOKEN`：旧预留能力的配置。
 
 剧情工具：
@@ -190,7 +199,7 @@ npm run dev
 docker compose up --build
 ```
 
-Docker Compose 会在启动 Uvicorn 前执行 `alembic upgrade head`，并把 SQLite 数据库挂载到命名卷 `backend_sqlite_data`。前端仍需单独运行。不要在需要保留游戏进度时执行 `docker compose down -v`。
+Docker Compose 会启动 MinIO，幂等初始化公开读媒体桶，再执行 `alembic upgrade head` 和 Uvicorn。SQLite 与媒体分别挂载到 `backend_sqlite_data`、`minio_data`。前端仍需单独运行。不要在需要保留数据时执行 `docker compose down -v`。
 
 ## 验证建议
 
@@ -215,7 +224,7 @@ npm run build
 3. `/openapi.json` 中 `ChoiceRequest` 必填四个请求标识字段。
 4. 容器停止并重启后，已有 `session_id` 仍能恢复进度。
 
-当前最后一次后端容器验收为 `14 passed`，并已完成上述 HTTP、OpenAPI 和持久卷恢复检查。
+当前最新隔离环境后端测试为 `28 passed`；Compose 配置解析通过。本机 Docker daemon 未运行，真实 MinIO PUT、公开 GET 和 Range 206 仍需在启动 Docker 后冒烟。
 
 ## 开发约定
 
@@ -235,8 +244,8 @@ npm run build
 成员 C 的最小后端闭环已完成。后续仅在明确授权下按以下顺序推进：
 
 1. 由前端负责人把播放器、末帧保持、选项覆盖层、候选媒体预加载与 v1 API 适配接入页面；该工作不属于成员 C 的页面/视觉职责。
-2. 由剧本和视频成员提供六章正式、可校验的剧情 JSON 与 CDN / 对象存储媒体 URL；成员 C 仅负责用既有 CLI 校验、导入和发布。
-3. 部署时配置持久化数据库卷（或 PostgreSQL）、允许的 CORS 来源和正式媒体域名，并关闭演示剧情自动导入。
+2. 由剧本和视频成员通过管理员上传接口把视频/海报上传到 MinIO 或 R2，再把完成响应中的长期公开 URL 写入正式六章 JSON。
+3. 部署时创建 R2 公共桶并配置媒体 CORS、后端 S3 环境变量、持久化数据库卷（或 PostgreSQL）和正式前端 CORS，并关闭演示剧情自动导入。
 4. 在需要持续交付时补 CI，至少运行后端测试与前端可用检查；前端既有 lint/字体构建问题由相应负责人解决。
 
 不得在该闭环中顺手实现六章内容、播放器、GPS、密码重置/邮箱验证等扩展账号能力、UGC、AI、国际化或其他旧路线图事项。

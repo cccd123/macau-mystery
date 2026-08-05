@@ -9,6 +9,7 @@ from app.config import get_settings
 def test_health_reports_database_connection(monkeypatch) -> None:
     monkeypatch.setenv("BOOTSTRAP_DEMO_STORY", "false")
     monkeypatch.setenv("BOOTSTRAP_DEMO_USERS", "false")
+    monkeypatch.setenv("OBJECT_STORAGE_ENABLED", "false")
     get_settings.cache_clear()
     try:
         from app.main import create_app
@@ -17,6 +18,11 @@ def test_health_reports_database_connection(monkeypatch) -> None:
             response = client.get("/api/v1/health")
 
         assert response.status_code == 200
-        assert response.json() == {"status": "ok", "database": "ok", "version": "0.2.0"}
+        assert response.json() == {
+            "status": "ok",
+            "database": "ok",
+            "object_storage": "disabled",
+            "version": "0.2.0",
+        }
     finally:
         get_settings.cache_clear()
