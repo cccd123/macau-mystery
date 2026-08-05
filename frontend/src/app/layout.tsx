@@ -20,6 +20,12 @@ export const metadata: Metadata = {
   description:
     "Transform Macau's disappearing oral history into an immersive walking mystery along the real heritage trail",
   keywords: ["Macau", "mystery", "AI", "tourism", "immersive"],
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "32x32" },
+    ],
+  },
 };
 
 export const viewport: Viewport = {

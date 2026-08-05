@@ -35,6 +35,131 @@ function FloatingDecor() {
   );
 }
 
+/* ── Macau heritage skyline (SVG silhouettes) ── */
+function MacauSkyline() {
+  return (
+    <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[45%] pointer-events-none overflow-hidden">
+      <svg viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice" className="w-full h-full">
+        <defs>
+          <linearGradient id="ms-sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--jade)" stopOpacity="0" />
+            <stop offset="50%" stopColor="var(--jade)" stopOpacity="0.045" />
+            <stop offset="100%" stopColor="var(--azulejo)" stopOpacity="0.1" />
+          </linearGradient>
+          <linearGradient id="ms-hills" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--azulejo)" stopOpacity="0" />
+            <stop offset="100%" stopColor="var(--azulejo)" stopOpacity="0.06" />
+          </linearGradient>
+        </defs>
+
+        {/* Distant hills */}
+        <path fill="url(#ms-hills)" d="M 0 360 Q 150 300 300 330 T 600 310 T 900 325 T 1200 305 T 1440 320 L 1440 400 L 0 400 Z" />
+
+        {/* A-Ma Temple (left) */}
+        <g transform="translate(60, 210)" fill="url(#ms-sky)">
+          <path d="M 30 14 L 34 0 L 38 14 Z" />
+          <path d="M 0 42 Q -10 36 -4 30 L 22 20 Q 34 14 46 20 L 72 30 Q 78 36 68 42 Z" />
+          <rect x="8" y="42" width="56" height="38" />
+          <rect x="2" y="80" width="68" height="5" />
+          <rect x="-3" y="85" width="78" height="5" />
+          <path d="M 26 56 L 26 80 L 42 80 L 42 56 Q 34 49 26 56 Z" fill="white" fillOpacity="0.3" />
+        </g>
+
+        {/* Trees */}
+        <g transform="translate(260, 250)" fill="url(#ms-sky)">
+          <rect x="6" y="22" width="3" height="18" />
+          <circle cx="7.5" cy="16" r="11" />
+        </g>
+        <g transform="translate(300, 265)" fill="url(#ms-sky)">
+          <rect x="5" y="18" width="3" height="15" />
+          <circle cx="6.5" cy="13" r="9" />
+        </g>
+
+        {/* Colonial building (Dom Pedro V Theatre style) */}
+        <g transform="translate(360, 245)" fill="url(#ms-sky)">
+          <path d="M -5 5 L 45 -10 L 95 5 Z" />
+          <rect x="-2" y="5" width="94" height="8" />
+          <rect x="0" y="13" width="90" height="47" />
+          <rect x="-6" y="60" width="102" height="5" />
+          <rect x="4" y="13" width="3" height="47" fill="white" fillOpacity="0.25" />
+          <rect x="20" y="13" width="3" height="47" fill="white" fillOpacity="0.25" />
+          <rect x="42" y="13" width="3" height="47" fill="white" fillOpacity="0.25" />
+          <rect x="66" y="13" width="3" height="47" fill="white" fillOpacity="0.25" />
+          <rect x="82" y="13" width="3" height="47" fill="white" fillOpacity="0.25" />
+          <path d="M 38 40 L 38 60 L 52 60 L 52 40 Q 45 33 38 40 Z" fill="white" fillOpacity="0.35" />
+        </g>
+
+        {/* Ruins of St. Paul's (center) */}
+        <g transform="translate(590, 95)" fill="url(#ms-sky)">
+          <rect x="49" y="0" width="4" height="15" />
+          <rect x="43" y="4" width="16" height="4" />
+          <path d="M 22 30 L 51 12 L 80 30 Z" />
+          <circle cx="51" cy="24" r="4" fill="white" fillOpacity="0.25" />
+          <rect x="20" y="30" width="62" height="20" />
+          <path d="M 28 37 Q 32 33 36 37 L 36 46 L 28 46 Z" fill="white" fillOpacity="0.3" />
+          <path d="M 47 37 Q 51 33 55 37 L 55 46 L 47 46 Z" fill="white" fillOpacity="0.3" />
+          <path d="M 66 37 Q 70 33 74 37 L 74 46 L 66 46 Z" fill="white" fillOpacity="0.3" />
+          <rect x="12" y="50" width="78" height="24" />
+          <path d="M 43 57 L 43 70 L 59 70 L 59 57 Q 51 50 43 57 Z" fill="white" fillOpacity="0.3" />
+          <path d="M 18 57 Q 22 53 26 57 L 26 70 L 18 70 Z" fill="white" fillOpacity="0.3" />
+          <path d="M 76 57 Q 80 53 84 57 L 84 70 L 76 70 Z" fill="white" fillOpacity="0.3" />
+          <rect x="6" y="74" width="90" height="30" />
+          <path d="M 36 80 L 36 100 L 66 100 L 66 80 Q 51 66 36 80 Z" fill="white" fillOpacity="0.3" />
+          <rect x="10" y="82" width="20" height="22" fill="white" fillOpacity="0.25" />
+          <rect x="72" y="82" width="20" height="22" fill="white" fillOpacity="0.25" />
+          <rect x="0" y="104" width="102" height="36" />
+          <path d="M 39 110 L 39 134 L 63 134 L 63 110 Q 51 97 39 110 Z" fill="white" fillOpacity="0.3" />
+          <rect x="-8" y="140" width="118" height="12" />
+          <rect x="-14" y="152" width="130" height="8" />
+        </g>
+
+        {/* Small building */}
+        <g transform="translate(820, 270)" fill="url(#ms-sky)">
+          <rect x="0" y="0" width="60" height="35" />
+          <path d="M -4 0 L 30 -10 L 64 0 Z" />
+          <rect x="10" y="10" width="10" height="15" fill="white" fillOpacity="0.25" />
+          <rect x="25" y="10" width="10" height="15" fill="white" fillOpacity="0.25" />
+          <rect x="40" y="10" width="10" height="15" fill="white" fillOpacity="0.25" />
+        </g>
+
+        {/* Trees */}
+        <g transform="translate(900, 260)" fill="url(#ms-sky)">
+          <rect x="6" y="22" width="3" height="18" />
+          <circle cx="7.5" cy="16" r="11" />
+        </g>
+        <g transform="translate(950, 275)" fill="url(#ms-sky)">
+          <rect x="5" y="18" width="3" height="15" />
+          <circle cx="6.5" cy="13" r="9" />
+        </g>
+
+        {/* Guia Lighthouse (right) */}
+        <g transform="translate(1120, 175)" fill="url(#ms-sky)">
+          <rect x="24" y="0" width="3" height="10" />
+          <rect x="20" y="3" width="11" height="3" />
+          <rect x="18" y="10" width="15" height="12" />
+          <path d="M 15 22 Q 25.5 12 36 22 Z" />
+          <rect x="15" y="22" width="21" height="68" />
+          <rect x="21" y="32" width="9" height="7" fill="white" fillOpacity="0.3" />
+          <rect x="21" y="48" width="9" height="7" fill="white" fillOpacity="0.3" />
+          <rect x="21" y="64" width="9" height="7" fill="white" fillOpacity="0.3" />
+          <rect x="21" y="80" width="9" height="7" fill="white" fillOpacity="0.3" />
+          <rect x="8" y="90" width="35" height="12" />
+          <rect x="2" y="102" width="47" height="8" />
+          <rect x="-4" y="110" width="59" height="6" />
+        </g>
+
+        {/* Small shrine (far right) */}
+        <g transform="translate(1240, 270)" fill="url(#ms-sky)">
+          <path d="M 0 20 Q -6 16 -2 12 L 25 6 Q 33 2 41 6 L 68 12 Q 72 16 66 20 Z" />
+          <rect x="4" y="20" width="58" height="25" />
+          <rect x="0" y="45" width="66" height="4" />
+          <path d="M 24 28 L 24 45 L 42 45 L 42 28 Q 33 22 24 28 Z" fill="white" fillOpacity="0.3" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
 /* ── Hero parallax wrapper ── */
 function HeroParallax({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -52,7 +177,7 @@ function HeroParallax({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div ref={ref} onMouseMove={handleMouse} className="relative">
+    <div ref={ref} onMouseMove={handleMouse} className="relative w-full">
       {/* Parallax background layer */}
       <div
         aria-hidden="true"
@@ -126,6 +251,8 @@ export default function HomePage() {
         />
         {/* Subtle azulejo pattern overlay */}
         <div aria-hidden="true" className="absolute inset-0 azulejo-pattern opacity-40" />
+        {/* Macau landmark skyline */}
+        <MacauSkyline />
         {/* Bottom fade */}
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
 
