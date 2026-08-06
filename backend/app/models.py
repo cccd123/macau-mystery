@@ -17,7 +17,7 @@ class GameMediaResponse(GameContractModel):
     video_url: str
     poster_url: str
     mime_type: str
-    duration_ms: int | None = None
+    duration_ms: Optional[int] = None
 
 
 class GamePreloadResponse(GameContractModel):
@@ -55,7 +55,7 @@ class GameClueResponse(GameContractModel):
     id: str
     title: str
     description: str
-    icon: str | None = None
+    icon: Optional[str] = None
     acquired_at: datetime
 
 
@@ -76,8 +76,8 @@ class GameSnapshot(GameContractModel):
     scene: GameSceneResponse
     clues: list[GameClueResponse]
     progress: GameProgressResponse
-    awarded_clues: list[GameClueResponse] | None = None
-    ending: GameEndingResponse | None = None
+    awarded_clues: Optional[list[GameClueResponse]] = None
+    ending: Optional[GameEndingResponse] = None
 
 
 class ChoiceRequest(GameContractModel):
@@ -120,6 +120,7 @@ class GenerateResponse(BaseModel):
     chapters: list
     style: str
     era: str
+    demo_mode: Optional[bool] = None
 
 
 class ScriptMeta(BaseModel):
