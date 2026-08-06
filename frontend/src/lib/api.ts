@@ -1,5 +1,25 @@
 import { API_BASE } from "./api-base";
 
+interface ApiErrorBody {
+  error?: {
+    code?: string;
+    message?: string;
+    details?: Record<string, unknown>;
+  };
+}
+
+export class ApiError extends Error {
+  constructor(
+    public readonly status: number,
+    message: string,
+    public readonly code?: string,
+    public readonly details?: Record<string, unknown>
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -10,54 +30,109 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
   const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-  if (!res.ok) throw new Error(`API Error: ${res.status} ${res.statusText}`);
-  return res.json();
+  if (!res.ok) {
+    let body: ApiErrorBody | undefined;
+    try {
+      body = (await res.json()) as ApiErrorBody;
+    } catch {
+      body = undefined;
+    }
+
+    throw new ApiError(
+      res.status,
+      body?.error?.message || `API Error: ${res.status} ${res.statusText}`,
+      body?.error?.code,
+      body?.error?.details
+    );
+  }
+
+  if (res.status === 204) return undefined as T;
+  return res.json() as Promise<T>;
 }
 
-// Game API - adapts backend snake_case flat response to frontend expected format
+export interface GameMedia {
+  video_url: string;
+  poster_url: string;
+  mime_type: string;
+  duration_ms?: number;
+}
+
+export interface GameChoice {
+  id: string;
+  text: string;
+  preload: {
+    scene_id: string;
+    media: GameMedia;
+  };
+}
+
+export interface GameClue {
+  id: string;
+  title: string;
+  description: string;
+  icon?: string;
+  acquired_at: string;
+}
+
+export interface GameSnapshot {
+  session_id: string;
+  status: "active" | "completed";
+  story: {
+    id: string;
+    title: string;
+    version: number;
+  };
+  scene: {
+    id: string;
+    type: "video" | "ending";
+    chapter: {
+      id: string;
+      title: string;
+      location: string;
+    };
+    media: GameMedia;
+    choices: GameChoice[];
+  };
+  clues: GameClue[];
+  progress: {
+    current_chapter: number;
+    total_chapters: number;
+  };
+  awarded_clues?: GameClue[];
+  ending?: {
+    id: string;
+    code: string;
+  };
+}
+
+export interface MakeChoiceInput {
+  sessionId: string;
+  sceneId: string;
+  choiceId: string;
+  requestId: string;
+}
+
+// Versioned immersive game API. Keep the backend's snake_case snapshot intact.
 export const gameApi = {
-  start: async (
-    scriptId: string
-  ): Promise<{ sessionId: string; scene: any }> => {
-    const res: any = await request("/game/start", {
+  start: (scriptId: string) =>
+    request<GameSnapshot>("/game/start", {
       method: "POST",
       body: JSON.stringify({ script_id: scriptId }),
-    });
-    return {
-      sessionId: res.session_id,
-      scene: {
-        id: "scene_" + res.session_id,
-        chapter: res.chapter,
-        location: res.location,
-        narration: res.narration,
-        dialogue: res.dialogue,
-        choices: res.choices,
-      },
-    };
-  },
+    }),
 
-  makeChoice: async (
-    sessionId: string,
-    choiceId: string
-  ): Promise<{ scene: any; clue?: any }> => {
-    const res: any = await request("/game/choice", {
+  makeChoice: ({ sessionId, sceneId, choiceId, requestId }: MakeChoiceInput) =>
+    request<GameSnapshot>("/game/choice", {
       method: "POST",
-      body: JSON.stringify({ session_id: sessionId, choice_id: choiceId }),
-    });
-    return {
-      scene: {
-        id: res.scene_id || "scene_next",
-        chapter: res.chapter,
-        location: res.location,
-        narration: res.narration,
-        dialogue: res.dialogue,
-        choices: res.choices,
-      },
-      clue: res.clue_reward || undefined,
-    };
-  },
+      body: JSON.stringify({
+        session_id: sessionId,
+        scene_id: sceneId,
+        choice_id: choiceId,
+        request_id: requestId,
+      }),
+    }),
 
-  getState: (sessionId: string) => request<any>(`/game/state/${sessionId}`),
+  getState: (sessionId: string) =>
+    request<GameSnapshot>(`/game/state/${sessionId}`),
 };
 
 // AI API

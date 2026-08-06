@@ -15,7 +15,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 
 const navItems = [
   { href: "/", labelKey: "nav.home" },
-  { href: "/game/demo", labelKey: "nav.play" },
+  { href: "/game/macau_mystery_02", labelKey: "nav.play" },
   { href: "/game/map", labelKey: "nav.map" },
   { href: "/create", labelKey: "nav.create" },
   { href: "/admin", labelKey: "nav.admin", adminOnly: true },
