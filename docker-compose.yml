@@ -23,6 +23,7 @@ services:
         required: false
     environment:
       DATABASE_URL: sqlite+aiosqlite:////app/data/macau_mystery.db
+      CHROMA_PERSIST_PATH: /app/data/chroma
       APP_ENV: development
       OBJECT_STORAGE_ENABLED: "true"
       S3_ENDPOINT_URL: http://minio:9000

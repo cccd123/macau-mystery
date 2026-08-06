@@ -1,18 +1,43 @@
-"""ChromaDB client"""
+"""Persistent ChromaDB collection management for Macau history knowledge."""
+from __future__ import annotations
+
+import hashlib
+from functools import lru_cache
+
 import chromadb
 
-_client = None
-_collection = None
+from app.config import get_settings
 
-def get_client():
-    global _client
-    if _client is None:
-        _client = chromadb.PersistentClient(path="./chroma_db")
-    return _client
+
+def collection_name(embedding_model: str) -> str:
+    model_hash = hashlib.sha256(embedding_model.encode("utf-8")).hexdigest()[:12]
+    return f"macau_history_{model_hash}"
+
+
+@lru_cache(maxsize=4)
+def _get_client(path: str):
+    return chromadb.PersistentClient(path=path)
+
+
+@lru_cache(maxsize=8)
+def _get_collection(path: str, embedding_model: str):
+    client = _get_client(path)
+    return client.get_or_create_collection(
+        name=collection_name(embedding_model),
+        embedding_function=None,
+        metadata={
+            "description": "澳门六处历史景点知识库",
+            "embedding_model": embedding_model,
+            "hnsw:space": "cosine",
+        },
+    )
+
 
 def get_collection():
-    global _collection
-    if _collection is None:
-        client = get_client()
-        _collection = client.get_or_create_collection(name="macau_history", metadata={"description": "澳门历史知识库"})
-    return _collection
+    settings = get_settings()
+    return _get_collection(settings.chroma_persist_path, settings.embedding_model)
+
+
+def clear_chroma_client_cache() -> None:
+    _get_collection.cache_clear()
+    _get_client.cache_clear()

@@ -60,6 +60,16 @@ class Settings:
     media_max_video_bytes: int
     media_max_poster_bytes: int
     media_cors_origins: tuple[str, ...]
+    siliconflow_api_key: str
+    siliconflow_base_url: str
+    llm_model: str
+    embedding_model: str
+    ai_timeout_seconds: int
+    llm_max_tokens: int
+    rag_enabled: bool
+    chroma_persist_path: str
+    rag_top_k: int
+    generated_script_cache_size: int
 
     @property
     def is_production(self) -> bool:
@@ -107,4 +117,24 @@ def get_settings() -> Settings:
             os.getenv("MEDIA_MAX_POSTER_BYTES"), default=10485760, name="MEDIA_MAX_POSTER_BYTES"
         ),
         media_cors_origins=_cors_origins(os.getenv("MEDIA_CORS_ORIGINS")),
+        siliconflow_api_key=os.getenv("SILICONFLOW_API_KEY", ""),
+        siliconflow_base_url=os.getenv(
+            "SILICONFLOW_BASE_URL", "https://api.siliconflow.cn/v1"
+        ).rstrip("/"),
+        llm_model=os.getenv("LLM_MODEL", "deepseek-ai/DeepSeek-V3"),
+        embedding_model=os.getenv("EMBEDDING_MODEL", "BAAI/bge-small-zh-v1.5"),
+        ai_timeout_seconds=_positive_int(
+            os.getenv("AI_TIMEOUT_SECONDS"), default=90, name="AI_TIMEOUT_SECONDS"
+        ),
+        llm_max_tokens=_positive_int(
+            os.getenv("LLM_MAX_TOKENS"), default=6000, name="LLM_MAX_TOKENS"
+        ),
+        rag_enabled=_as_bool(os.getenv("RAG_ENABLED"), default=True),
+        chroma_persist_path=os.getenv("CHROMA_PERSIST_PATH", "./chroma_db"),
+        rag_top_k=_positive_int(os.getenv("RAG_TOP_K"), default=4, name="RAG_TOP_K"),
+        generated_script_cache_size=_positive_int(
+            os.getenv("GENERATED_SCRIPT_CACHE_SIZE"),
+            default=256,
+            name="GENERATED_SCRIPT_CACHE_SIZE",
+        ),
     )

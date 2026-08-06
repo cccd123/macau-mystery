@@ -12,6 +12,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.config import get_settings
 from app.db import check_database
 from app.game_errors import GameError
+from app.generation_errors import ScriptGenerationError
 from app.object_storage import object_storage_health
 
 
@@ -116,6 +117,21 @@ def create_app() -> FastAPI:
         return JSONResponse(
             status_code=503,
             content=payload,
+        )
+
+    @application.exception_handler(ScriptGenerationError)
+    async def script_generation_error_handler(
+        _request: Request, exc: ScriptGenerationError
+    ) -> JSONResponse:
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={
+                "error": {
+                    "code": exc.code,
+                    "message": exc.message,
+                    "details": jsonable_encoder(exc.details),
+                }
+            },
         )
 
     return application

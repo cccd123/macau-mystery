@@ -4,13 +4,13 @@
 
 ## 项目定位
 
-“澳秘 / Macau Mystery”是一个澳门历史城区主题的沉浸式互动剧本平台原型。仓库仍保留 NPC 对话、一句话生成互动短剧、用户投稿和管理后台等早期设想及骨架，但它们不属于当前成员 C 的交付范围。
+“澳秘 / Macau Mystery”是一个澳门历史城区主题的沉浸式互动剧本平台原型。除预制视频分支游戏外，2026-08-06 已明确授权把原有一句话生成 mock 改为独立的中文澳门历史文字剧本生成接口；用户投稿和管理后台等其余旧路线仍不属于当前成员 C 的交付范围。
 
-当前仓库处于 v0.2 原型阶段。成员 C 负责的“沉浸式预制视频分支短剧游戏”后端最小闭环已经实现为可持久化的 SQLite / PostgreSQL 兼容链路；登录、注册与 Bearer 会话已获明确授权并改为持久化实现。2026-08-05 又明确授权增加 S3 兼容媒体上传和固定六景点介绍 API。AI、UGC 与管理后台等旧业务多数仍以进程内存或 mock 为主，整个产品尚非生产级部署。
+当前仓库处于 v0.2 原型阶段。成员 C 负责的“沉浸式预制视频分支短剧游戏”后端最小闭环已经实现为可持久化的 SQLite / PostgreSQL 兼容链路；登录、注册与 Bearer 会话、S3 兼容媒体上传和固定六景点介绍 API 均已获明确授权并实现。2026-08-06 又实现匿名一句话中文分幕剧本、SiliconFlow LLM/embedding 与 ChromaDB RAG；该生成记录按要求仅使用有界进程缓存。NPC AI、UGC 发布与管理后台等旧业务仍多为内存或 mock，整个产品尚非生产级部署。
 
 ## 当前冻结范围
 
-当前成员 C 的工作严格收敛为“沉浸式预制视频分支短剧游戏”后端：匿名玩家开始游戏后播放预制视频；视频结束后选择剧本配置的选项；后端记录选择和线索并返回下一个视频节点；分支可汇合并最终到达不同结局。正式内容规划为沿澳门六个景点破解历史悬案，共六章。
+当前成员 C 的主体范围仍是“沉浸式预制视频分支短剧游戏”后端；另有一项已确认的独立扩展：匿名用户输入一句话后生成强制澳门历史题材的中文分幕文字剧本。生成内容不进入游戏 StoryDocument，不连接视频、游戏会话、发布或 UGC 流程。
 
 本阶段边界：
 
@@ -19,16 +19,16 @@
 - 首版不依赖 GPS；章节坐标仅作未来扩展数据，不参与剧情解锁。
 - 视频内旁白、对白、文字和字幕由视频制作人员处理；后端仅保存媒体 URL、海报和元数据。
 - 前端负责视频末帧保持、选项覆盖层、候选视频预加载和播放器切换；成员 C 不修改页面视觉或播放器组件。
-- 已提供管理员预签名上传与上传完成校验，但不处理六章正式剧本创作、视频制作、视频转码、国际化、社区、密码重置/邮箱验证等扩展账号能力、UGC、真实 LLM/RAG/TTS 或其他成员任务。
+- 已提供管理员预签名上传与上传完成校验，但不处理六章正式游戏内容、视频制作、视频转码、国际化、社区、密码重置/邮箱验证等扩展账号能力、UGC、NPC 真实 LLM/RAG、TTS 或其他成员任务。
 - 固定六景点只读简体中文介绍与匿名 API 已实现；前端地图点击、弹框、当前位置和解锁状态仍由前端负责人处理。
-- “一句话短剧”延后到沉浸式游戏完成后再评估，可降级为只生成剧本或取消。
+- “一句话短剧”已按授权降级为独立文字剧本生成：匿名调用、中文分幕、强制澳门历史题材、Chroma RAG 可降级、进程缓存重新生成；不得把它并入游戏状态机。
 
 当前阶段的权威交付文档位于 `backend-deliverables/`：
 
-- `00-requirements-baseline.md` 1.1：已确认的需求基线。
+- `00-requirements-baseline.md` 1.2：已确认的需求基线。
 - `01-database-design.md` 1.0：已确认的数据库设计。
 - `02-story-data-contract.md` 1.0：已确认的剧情 JSON 数据契约。
-- `03-接口文档.md` 2.1：当前已注册项目接口的统一文档；游戏 v1、景点、媒体上传、认证、AI、UGC 和管理接口均以此为准。
+- `03-接口文档.md` 2.2：当前已注册项目接口的统一文档；游戏 v1、景点、媒体上传、认证、AI、文字剧本生成、UGC 和管理接口均以此为准。
 - `04-implementation-progress.md`：仅记录最新进度，完成每个执行批次后必须覆盖更新。
 - `05-minimal-backend-implementation-plan.md`：最小后端闭环实施计划与历史范围依据。
 
@@ -88,7 +88,7 @@ macau-mystery/
 - 剧情运行时支持 `video`、`router`、`ending` 三类节点，结构化线索条件、连续 router 解析、线索去重、分支汇合、结局和候选媒体预加载。
 - `backend/app/story/scripts/macau_mystery_demo.json` 是可运行的技术演示剧情，含分支、汇合、线索、router 和双结局；它使用占位媒体 URL。旧的 `macau_mystery_01.json` 仅可作迁移参考，不能作为正式运行内容。
 - 开发环境启动时可由 `BOOTSTRAP_DEMO_STORY=true` 自动导入/发布演示剧情；生产环境默认关闭。
-- 认证使用 `users` 与 `auth_sessions` 持久化用户、Argon2 密码哈希和带有效期的随机 Bearer token；开发环境可幂等创建 demo 管理员和访客。AI、UGC 与管理后台业务数据仍多为内存数据，重启会丢失，不能视为生产安全能力。
+- 认证使用 `users` 与 `auth_sessions` 持久化用户、Argon2 密码哈希和带有效期的随机 Bearer token；开发环境可幂等创建 demo 管理员和访客。一句话生成使用真实 LLM/RAG，但生成记录仅存进程缓存；NPC AI、UGC 与管理后台业务数据仍多为内存或 mock，不能视为生产安全能力。
 - `/api/v1/admin/media/uploads` 生成管理员专用预签名 PUT，`/uploads/complete` 通过 HEAD 校验对象并返回长期公开 URL；预签名 URL 不能写入剧情 JSON。
 - `/api/v1/locations` 和 `/api/v1/locations/{location_id}` 匿名返回固定六景点摘要与详情；旧 `/admin/route` 保留兼容。
 
@@ -106,7 +106,7 @@ macau-mystery/
 | 媒体上传      | `POST /admin/media/uploads*`              | 管理员预签名 PUT 与完成校验                       |
 | NPC 对话    | `POST /ai/chat`                          | `{ response, audio_url? }`，当前为 mock     |
 | TTS       | `GET /ai/tts`                            | `{ audio_url, text }`，当前 `audio_url` 为空 |
-| UGC 生成    | `POST /create/generate`                  | 固定模板响应                                  |
+| 文字剧本生成 | `POST /create/generate`                  | 真实中文分幕剧本；Chroma RAG 可降级；进程缓存       |
 | 登录/注册     | `POST /auth/login`、`POST /auth/register` | `{ token, user }`                       |
 | 当前用户      | `GET /auth/me`                           | Bearer token 认证                         |
 | 管理剧本      | `/admin/scripts`                         | 旧内存实现；写入与发布需要 admin token               |
@@ -139,7 +139,7 @@ macau-mystery/
 
 其他旧路线已知问题（不属于当前成员 C 范围）：
 
-- `/ai`、`/create` 路由仍使用 mock；RAG 未接入聊天链路。
+- `/ai` NPC 对话仍使用 mock，RAG 未接入聊天链路；`/create` 已是真实文字剧本生成，但缓存不跨重启或多实例共享。
 - UGC 的“生成 → 发布 → 投稿”未端到端打通；剧本编辑器和部分管理按钮只是 UI 演示，未持久化。
 - 登录页未复用 `API_BASE`；登录/注册错误未细分展示，401 未统一处理。
 - 首页路线预览、部分 i18n 和地图资源仍有原型级限制。
@@ -170,7 +170,9 @@ Swagger：`http://localhost:8000/docs`。
 - `BOOTSTRAP_DEMO_USERS`：开发环境默认开启，生产环境默认关闭；只创建缺失的 demo 用户，不覆盖已有用户。
 - `AUTH_TOKEN_TTL_HOURS`：随机 Bearer token 的有效期，默认 168 小时；`DEMO_*` 变量用于开发演示账号名和密码。
 - `OBJECT_STORAGE_ENABLED`、`S3_*`、`MEDIA_PUBLIC_BASE_URL`、`MEDIA_*`：MinIO/R2 endpoint、凭据、公开 URL、上传有效期/大小限制与媒体 CORS。
-- `SILICONFLOW_API_KEY`、`SILICONFLOW_BASE_URL`、`LLM_MODEL`、`EMBEDDING_MODEL`、`ADMIN_TOKEN`：旧预留能力的配置。
+- `SILICONFLOW_API_KEY`、`SILICONFLOW_BASE_URL`、`LLM_MODEL`、`EMBEDDING_MODEL`：文字剧本生成与 RAG 的模型配置；NPC AI 仍未接入真实链路。
+- `AI_TIMEOUT_SECONDS`、`LLM_MAX_TOKENS`、`RAG_ENABLED`、`CHROMA_PERSIST_PATH`、`RAG_TOP_K`、`GENERATED_SCRIPT_CACHE_SIZE`：生成超时/输出、知识索引和匿名缓存配置。
+- `ADMIN_TOKEN`：旧预留能力的配置。
 
 剧情工具：
 
@@ -224,7 +226,7 @@ npm run build
 3. `/openapi.json` 中 `ChoiceRequest` 必填四个请求标识字段。
 4. 容器停止并重启后，已有 `session_id` 仍能恢复进度。
 
-当前最新隔离环境后端测试为 `28 passed`；Compose 配置解析通过。本机 Docker daemon 未运行，真实 MinIO PUT、公开 GET 和 Range 206 仍需在启动 Docker 后冒烟。
+当前最新容器环境后端测试为 `41 passed`；Python 全量编译与 Compose 配置解析通过。此前两个 MP4/两个 JPG 的公开 HEAD 与 Range 206 冒烟已通过。
 
 ## 开发约定
 

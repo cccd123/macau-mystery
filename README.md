@@ -35,6 +35,13 @@ Compose 会自动执行对象存储初始化与 Alembic 迁移。默认开发账
 2. 填入 SiliconFlow API Key (免费注册: https://siliconflow.cn)
 3. 本地 MinIO 使用示例中的 S3 配置；公网部署时把 S3 endpoint、密钥和 `MEDIA_PUBLIC_BASE_URL` 换为 R2 配置
 
+### 一句话生成澳门历史剧本
+
+- `POST /api/v1/create/generate`：匿名输入一句话，生成中文 3/5/7 幕文字剧本；接口保留原有 `script_id/title/chapters/style/era` 字段，并增加完整 `content` 与 `rag` 检索状态。
+- 首次生成会在 Chroma 索引为空时自动导入内置六景点资料；也可提前执行 `python -m app.knowledge.ingest` 构建索引。
+- RAG/向量服务不可用时自动降级为纯 LLM；LLM 本身必须配置有效的 `SILICONFLOW_API_KEY`。
+- 匿名生成记录仅保存在有界进程内缓存，供 `/create/regenerate/{script_id}` 使用；服务重启或缓存淘汰后失效。
+
 ### 媒体上传流程
 
 1. 管理员登录并携带 Bearer token 请求 `POST /api/v1/admin/media/uploads`。

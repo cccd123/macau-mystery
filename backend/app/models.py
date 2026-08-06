@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Literal, Optional
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class GameContractModel(BaseModel):
@@ -108,19 +108,90 @@ class TtsResponse(BaseModel):
     text: str
 
 
+class GenerateOptions(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    era: Literal["qing", "ming", "modern", "fantasy"] = "qing"
+    acts: Literal[3, 5, 7] = 3
+    custom_prompt: Optional[str] = Field(default=None, max_length=1000)
+
+
 class GenerateRequest(BaseModel):
-    input: str
-    style: str = "suspense"
-    options: Optional[dict] = None
+    model_config = ConfigDict(extra="forbid")
+
+    input: str = Field(min_length=1, max_length=500)
+    style: Literal["suspense", "romance", "comedy", "tragedy"] = "suspense"
+    options: GenerateOptions = Field(default_factory=GenerateOptions)
+
+    @field_validator("input")
+    @classmethod
+    def require_non_blank_input(cls, value: str) -> str:
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("input cannot be blank")
+        return normalized
+
+    @field_validator("options", mode="before")
+    @classmethod
+    def default_null_options(cls, value):
+        return {} if value is None else value
+
+
+class GeneratedDialogue(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    character: str
+    line: str
+    stage_direction: Optional[str] = None
+
+
+class GeneratedScene(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    title: str
+    location: str
+    narration: str
+    dialogues: list[GeneratedDialogue]
+    choices: list = Field(default_factory=list)
+
+
+class GeneratedChapter(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    title: str
+    scenes: list[GeneratedScene]
+
+
+class RagSource(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    title: str
+    source_url: Optional[str] = None
+    location_id: Optional[str] = None
+    chunk_id: str
+
+
+class RagMetadata(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    used: bool
+    degraded: bool
+    sources: list[RagSource] = Field(default_factory=list)
 
 
 class GenerateResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     script_id: str
     title: str
-    chapters: list
+    content: str
+    chapters: list[GeneratedChapter]
     style: str
     era: str
-    demo_mode: Optional[bool] = None
+    rag: RagMetadata
+    demo_mode: bool = False
 
 
 class ScriptMeta(BaseModel):
