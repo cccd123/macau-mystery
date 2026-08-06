@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, FileText, Eye, EyeOff, LogIn } from "lucide-react";
+import { Loader2, FileText, Eye, EyeOff, LogIn, Pencil, PenTool } from "lucide-react";
 import { ugcApi } from "@/lib/api";
 import { useTranslation } from "@/lib/i18n/context";
 
@@ -63,7 +63,7 @@ export default function MyScriptsPage() {
           <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-2xl font-bold mb-2">{t("myScripts.title")}</h1>
           <p className="text-muted-foreground mb-6">{t("myScripts.subtitle")}</p>
-          <p className="text-sm text-muted-foreground mb-4">Please login to view your scripts.</p>
+          <p className="text-sm text-muted-foreground mb-4">{t("myScripts.loginPrompt")}</p>
           <Link href="/login">
             <Button>
               <LogIn className="h-4 w-4 mr-2" />
@@ -102,7 +102,7 @@ export default function MyScriptsPage() {
                 <CardTitle className="text-lg">{script.title}</CardTitle>
                 <div className="flex items-center gap-2 text-sm">
                   <Badge variant={script.is_public ? "default" : "secondary"}>
-                    {script.is_public ? t("common.public") : t("common.private")}
+                    {script.is_public ? t("common.public") : t("common.draft")}
                   </Badge>
                   <span className="text-muted-foreground">
                     {script.views_count || 0} {t("result.views")}
@@ -111,15 +111,24 @@ export default function MyScriptsPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                  {script.description || "No description"}
+                  {script.description || t("common.noDescription")}
                 </p>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <Button size="sm" variant="outline" onClick={() => togglePublish(script)}>
                     {script.is_public ? <EyeOff className="h-4 w-4 mr-1" /> : <Eye className="h-4 w-4 mr-1" />}
                     {script.is_public ? t("common.private") : t("common.public")}
                   </Button>
-                  <Link href={`/game/${script.id}`}>
-                    <Button size="sm">{t("result.play")}</Button>
+                  <Link href={`/my-scripts/${script.id}/edit`}>
+                    <Button size="sm" variant="outline" className="gap-1">
+                      <Pencil className="h-3.5 w-3.5" />
+                      {t("myScripts.edit")}
+                    </Button>
+                  </Link>
+                  <Link href={`/my-scripts/${script.id}/edit`}>
+                    <Button size="sm" className="gap-1">
+                      <PenTool className="h-3.5 w-3.5" />
+                      {t("myScripts.fineTune")}
+                    </Button>
                   </Link>
                 </div>
               </CardContent>

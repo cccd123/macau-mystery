@@ -30,7 +30,7 @@ export default function GamePage() {
     setLoading(true);
     setError("");
     try {
-      const res = await gameApi.start(sessionId);
+      const res = await gameApi.getState(sessionId);
       setSnapshot(res);
       setVideoEnded(false);
       setShowChoices(false);

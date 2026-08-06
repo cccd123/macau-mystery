@@ -1,0 +1,205 @@
+{
+  "schema_version": 1,
+  "story_id": "macau_mystery_4locs",
+  "title": "澳门秘录：四景追凶",
+  "description": "沿澳门四处世遗景点展开的精简探案演示，适合短时体验。",
+  "entry_scene": "ch1_start",
+  "chapters": [
+    {
+      "id": "chapter_01",
+      "title": "第一章：妈阁庙",
+      "location": "妈阁庙",
+      "gps": { "lat": 22.1867, "lng": 113.5318 },
+      "scenes": [
+        {
+          "id": "ch1_start",
+          "type": "video",
+          "media": {
+            "status": "placeholder",
+            "video_url": "https://media.example.com/4locs/ch1_start.mp4",
+            "poster_url": "https://media.example.com/4locs/ch1_start.jpg",
+            "mime_type": "video/mp4",
+            "duration_ms": 10000
+          },
+          "choices": [
+            {
+              "id": "ch1_search_altar",
+              "text": "仔细搜查神案",
+              "next_scene": "ch2_start",
+              "grant_clues": ["incense_ash"]
+            },
+            {
+              "id": "ch1_leave_quickly",
+              "text": "先离开去下一个地点",
+              "next_scene": "ch2_start",
+              "grant_clues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter_02",
+      "title": "第二章：郑家大屋",
+      "location": "郑家大屋",
+      "gps": { "lat": 22.1879, "lng": 113.5347 },
+      "scenes": [
+        {
+          "id": "ch2_start",
+          "type": "video",
+          "media": {
+            "status": "placeholder",
+            "video_url": "https://media.example.com/4locs/ch2_start.mp4",
+            "poster_url": "https://media.example.com/4locs/ch2_start.jpg",
+            "mime_type": "video/mp4",
+            "duration_ms": 9500
+          },
+          "choices": [
+            {
+              "id": "ch2_read_book",
+              "text": "翻阅《盛世危言》批注",
+              "next_scene": "ch3_start",
+              "grant_clues": ["book_note"]
+            },
+            {
+              "id": "ch2_ignore_book",
+              "text": "跳过书房，继续赶路",
+              "next_scene": "ch3_start",
+              "grant_clues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter_03",
+      "title": "第三章：议事亭前地",
+      "location": "议事亭前地",
+      "gps": { "lat": 22.1918, "lng": 113.5396 },
+      "scenes": [
+        {
+          "id": "ch3_start",
+          "type": "video",
+          "media": {
+            "status": "placeholder",
+            "video_url": "https://media.example.com/4locs/ch3_start.mp4",
+            "poster_url": "https://media.example.com/4locs/ch3_start.jpg",
+            "mime_type": "video/mp4",
+            "duration_ms": 9000
+          },
+          "choices": [
+            {
+              "id": "ch3_ask_elder",
+              "text": "向街头老人打听",
+              "next_scene": "ch4_start",
+              "grant_clues": ["old_rumor"]
+            },
+            {
+              "id": "ch3_walk_on",
+              "text": "径直穿广场而过",
+              "next_scene": "ch4_start",
+              "grant_clues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter_04",
+      "title": "第四章：大三巴牌坊",
+      "location": "大三巴牌坊",
+      "gps": { "lat": 22.1946, "lng": 113.5414 },
+      "scenes": [
+        {
+          "id": "ch4_start",
+          "type": "video",
+          "media": {
+            "status": "placeholder",
+            "video_url": "https://media.example.com/4locs/ch4_start.mp4",
+            "poster_url": "https://media.example.com/4locs/ch4_start.jpg",
+            "mime_type": "video/mp4",
+            "duration_ms": 10000
+          },
+          "choices": [
+            {
+              "id": "ch4_climb_up",
+              "text": "登上石阶查看铭文",
+              "next_scene": "final_router",
+              "grant_clues": ["stone_words"]
+            },
+            {
+              "id": "ch4_stay_below",
+              "text": "在广场原地思考",
+              "next_scene": "final_router",
+              "grant_clues": []
+            }
+          ]
+        },
+        {
+          "id": "final_router",
+          "type": "router",
+          "routes": [
+            {
+              "priority": 10,
+              "when": { "min_clue_count": 3 },
+              "next_scene": "ending_good"
+            },
+            {
+              "priority": 999,
+              "when": { "default": true },
+              "next_scene": "ending_bad"
+            }
+          ]
+        },
+        {
+          "id": "ending_good",
+          "type": "ending",
+          "ending_code": "good",
+          "media": {
+            "status": "placeholder",
+            "video_url": "https://media.example.com/4locs/ending_good.mp4",
+            "poster_url": "https://media.example.com/4locs/ending_good.jpg",
+            "mime_type": "video/mp4",
+            "duration_ms": 11000
+          },
+          "choices": []
+        },
+        {
+          "id": "ending_bad",
+          "type": "ending",
+          "ending_code": "bad",
+          "media": {
+            "status": "placeholder",
+            "video_url": "https://media.example.com/4locs/ending_bad.mp4",
+            "poster_url": "https://media.example.com/4locs/ending_bad.jpg",
+            "mime_type": "video/mp4",
+            "duration_ms": 11000
+          },
+          "choices": []
+        }
+      ]
+    }
+  ],
+  "clues": {
+    "incense_ash": {
+      "title": "香灰印记",
+      "description": "妈阁庙神案下发现的一撮香灰，形状与案发现场吻合。",
+      "icon": "flame"
+    },
+    "book_note": {
+      "title": "批注纸条",
+      "description": "夹在《盛世危言》中的纸条，写着一个葡文名字。",
+      "icon": "scroll"
+    },
+    "old_rumor": {
+      "title": "街头传闻",
+      "description": "议事亭前地的老人提到，案发当晚有人匆匆跑向大三巴。",
+      "icon": "message-circle"
+    },
+    "stone_words": {
+      "title": "石阶铭文",
+      "description": "大三巴石阶上刻着一串数字，正是失踪文件的日期。",
+      "icon": "shield"
+    }
+  }
+}

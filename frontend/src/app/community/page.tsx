@@ -52,9 +52,10 @@ export default function CommunityPage() {
         <Card>
           <CardContent className="py-12 text-center">
             <Users className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <p className="text-muted-foreground">
-              No public scripts yet. Be the first to publish!
-            </p>
+            <p className="text-muted-foreground mb-4">{t("community.empty")}</p>
+            <Link href="/create">
+              <Button>{t("home.createBtn")}</Button>
+            </Link>
           </CardContent>
         </Card>
       ) : (
@@ -73,13 +74,10 @@ export default function CommunityPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                  {script.description || "No description"}
+                  {script.description || t("common.noDescription")}
                 </p>
                 <div className="flex gap-2">
                   <Badge variant="outline">{script.style || "drama"}</Badge>
-                  <Link href={`/game/${script.id}`} className="ml-auto">
-                    <Button size="sm">{t("result.play")}</Button>
-                  </Link>
                 </div>
               </CardContent>
             </Card>

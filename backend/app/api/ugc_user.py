@@ -1,8 +1,9 @@
-"""UGC user scripts API - publish, list, submit to official"""
+"""UGC user scripts API - save, publish, list, submit to official"""
 import uuid
 from datetime import datetime
+from typing import Annotated, Any, Optional
+
 from fastapi import APIRouter, Depends, Header, HTTPException
-from typing import Annotated, Optional
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -17,6 +18,22 @@ user_scripts_db: dict[str, dict] = {}
 
 # Submissions for admin review
 submissions_db: dict[str, dict] = {}
+
+
+class SaveScriptRequest(BaseModel):
+    title: str
+    description: str = ""
+    chapters: list[dict[str, Any]] = []
+    style: str = "drama"
+    era: str = ""
+
+
+class UpdateScriptRequest(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    chapters: Optional[list[dict[str, Any]]] = None
+    is_public: Optional[bool] = None
+    status: Optional[str] = None
 
 
 class PublishRequest(BaseModel):
@@ -38,6 +55,63 @@ async def _get_user_id(authorization: Optional[str], db: AsyncSession) -> str:
 async def list_my_scripts(db: DbSession, authorization: Optional[str] = Header(None)):
     user_id = await _get_user_id(authorization, db)
     return [s for s in user_scripts_db.values() if s.get("user_id") == user_id]
+
+
+@router.post("/scripts")
+async def save_script(req: SaveScriptRequest, db: DbSession, authorization: Optional[str] = Header(None)):
+    user_id = await _get_user_id(authorization, db)
+    script_id = str(uuid.uuid4())[:8]
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    script = {
+        "id": script_id,
+        "user_id": user_id,
+        "title": req.title,
+        "description": req.description,
+        "chapters": req.chapters,
+        "style": req.style,
+        "era": req.era,
+        "is_public": False,
+        "status": "draft",
+        "views_count": 0,
+        "created_at": now,
+        "updated_at": now,
+    }
+    user_scripts_db[script_id] = script
+    return script
+
+
+@router.get("/scripts/{script_id}")
+async def get_script(script_id: str, db: DbSession, authorization: Optional[str] = Header(None)):
+    user_id = await _get_user_id(authorization, db)
+    script = user_scripts_db.get(script_id)
+    if not script:
+        raise HTTPException(status_code=404, detail="Script not found")
+    if script["user_id"] != user_id:
+        raise HTTPException(status_code=403, detail="Not your script")
+    return script
+
+
+@router.put("/scripts/{script_id}")
+async def update_script(script_id: str, req: UpdateScriptRequest, db: DbSession, authorization: Optional[str] = Header(None)):
+    user_id = await _get_user_id(authorization, db)
+    script = user_scripts_db.get(script_id)
+    if not script:
+        raise HTTPException(status_code=404, detail="Script not found")
+    if script["user_id"] != user_id:
+        raise HTTPException(status_code=403, detail="Not your script")
+    if req.title is not None:
+        script["title"] = req.title
+    if req.description is not None:
+        script["description"] = req.description
+    if req.chapters is not None:
+        script["chapters"] = req.chapters
+    if req.is_public is not None:
+        script["is_public"] = req.is_public
+        script["status"] = "public" if req.is_public else "private"
+    if req.status is not None:
+        script["status"] = req.status
+    script["updated_at"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+    return script
 
 
 @router.post("/publish/{script_id}")

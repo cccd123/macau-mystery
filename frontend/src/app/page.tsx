@@ -357,7 +357,7 @@ export default function HomePage() {
 
             {/* CTA Buttons */}
             <div className="animate-fade-in-up delay-300 flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/game/macau_mystery_demo">
+              <Link href="/game/select">
                 <Button
                   size="lg"
                   className="gap-2 text-lg px-8 btn-shimmer shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-shadow duration-300"

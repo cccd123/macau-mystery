@@ -138,6 +138,11 @@ export const gameApi = {
 export const locationApi = {
   list: () => request<{ items: LocationInfo[] }>("/locations"),
   get: (id: string) => request<LocationInfo>(`/locations/${id}`),
+  ask: (id: string, question: string) =>
+    request<{ answer: string; source: string }>(`/locations/${id}/ask`, {
+      method: "POST",
+      body: JSON.stringify({ question }),
+    }),
 };
 
 export interface UploadTarget {
@@ -214,6 +219,35 @@ export const ugcApi = {
   listMyScripts: () => request<any[]>("/ugc/my-scripts"),
 
   listPublicScripts: () => request<any[]>("/ugc/public"),
+
+  saveScript: (data: {
+    title: string;
+    description: string;
+    chapters: any[];
+    style: string;
+    era: string;
+  }) =>
+    request<any>("/ugc/scripts", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  getMyScript: (scriptId: string) => request<any>(`/ugc/scripts/${scriptId}`),
+
+  updateScript: (
+    scriptId: string,
+    data: {
+      title?: string;
+      description?: string;
+      chapters?: any[];
+      is_public?: boolean;
+      status?: string;
+    }
+  ) =>
+    request<any>(`/ugc/scripts/${scriptId}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
 
   publishScript: (scriptId: string, isPublic: boolean) =>
     request<any>(`/ugc/publish/${scriptId}`, {

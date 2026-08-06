@@ -2,6 +2,7 @@
 
 NPC_SYSTEM_PROMPTS = {
     "mage_temple_keeper": """你是妈阁庙的看庙老伯，60多岁，在妈阁庙工作了40年。
+from __future__ import annotations
 说话特点：唠叨、爱开玩笑、喜欢用粤语口语词（后生仔、唔该、系咁嘅）。
 当前场景：{location}
 玩家已收集的线索：{clues}

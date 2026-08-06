@@ -1,4 +1,5 @@
 """LLM Client - DeepSeek via SiliconFlow"""
+from __future__ import annotations
 import os
 from openai import AsyncOpenAI
 

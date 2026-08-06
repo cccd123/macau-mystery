@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Search, Heart, Laugh, Frown } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/context";
 
 interface StyleSelectorProps {
   style: string;
@@ -19,24 +20,15 @@ interface StyleSelectorProps {
 }
 
 const STYLES = [
-  { id: "suspense", label: "悬疑推理", icon: Search, desc: "谜团、线索、反转" },
-  { id: "romance", label: "爱情故事", icon: Heart, desc: "浪漫、纠葛、感动" },
-  { id: "comedy", label: "喜剧冒险", icon: Laugh, desc: "搞笑、误会、惊喜" },
-  { id: "tragedy", label: "悲剧史诗", icon: Frown, desc: "壮烈、牺牲、反思" },
+  { id: "suspense", icon: Search },
+  { id: "romance", icon: Heart },
+  { id: "comedy", icon: Laugh },
+  { id: "tragedy", icon: Frown },
 ];
 
-const ERAS = [
-  { id: "qing", label: "清代" },
-  { id: "ming", label: "民国" },
-  { id: "modern", label: "现代" },
-  { id: "fantasy", label: "架空" },
-];
+const ERAS = ["qing", "ming", "modern", "fantasy"];
 
-const ACT_OPTIONS = [
-  { id: "3", label: "3幕" },
-  { id: "5", label: "5幕" },
-  { id: "7", label: "7幕" },
-];
+const ACT_OPTIONS = ["3", "5", "7"];
 
 export function StyleSelector({
   style,
@@ -46,12 +38,14 @@ export function StyleSelector({
   onEraChange,
   onActsChange,
 }: StyleSelectorProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-6 mb-6">
       {/* Genre */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">选择风格</CardTitle>
+          <CardTitle className="text-base">{t("style.styleLabel")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-3">
@@ -64,9 +58,8 @@ export function StyleSelector({
               >
                 <div className="flex items-center gap-2">
                   <s.icon className="h-4 w-4" />
-                  <span className="font-medium">{s.label}</span>
+                  <span className="font-medium">{t(`style.${s.id}`)}</span>
                 </div>
-                <span className="text-xs opacity-70">{s.desc}</span>
               </Button>
             ))}
           </div>
@@ -77,18 +70,18 @@ export function StyleSelector({
       <div className="grid grid-cols-2 gap-4">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">时代背景</CardTitle>
+            <CardTitle className="text-base">{t("style.eraLabel")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
               {ERAS.map((e) => (
                 <Button
-                  key={e.id}
-                  variant={era === e.id ? "default" : "outline"}
+                  key={e}
+                  variant={era === e ? "default" : "outline"}
                   size="sm"
-                  onClick={() => onEraChange(e.id)}
+                  onClick={() => onEraChange(e)}
                 >
-                  {e.label}
+                  {t(`style.${e}`)}
                 </Button>
               ))}
             </div>
@@ -97,18 +90,18 @@ export function StyleSelector({
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">剧本长度</CardTitle>
+            <CardTitle className="text-base">{t("style.actsLabel")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
               {ACT_OPTIONS.map((a) => (
                 <Button
-                  key={a.id}
-                  variant={acts === a.id ? "default" : "outline"}
+                  key={a}
+                  variant={acts === a ? "default" : "outline"}
                   size="sm"
-                  onClick={() => onActsChange(a.id)}
+                  onClick={() => onActsChange(a)}
                 >
-                  {a.label}
+                  {t(`style.acts${a}`)}
                 </Button>
               ))}
             </div>

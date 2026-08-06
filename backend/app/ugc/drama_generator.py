@@ -1,3 +1,4 @@
+from __future__ import annotations
 """UGC Drama Generator"""
 from app.ai.llm_client import chat_with_llm
 from app.ugc.templates import get_template

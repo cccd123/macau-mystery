@@ -15,7 +15,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 
 const navItems = [
   { href: "/", labelKey: "nav.home" },
-  { href: "/game/demo", labelKey: "nav.play" },
+  { href: "/game/select", labelKey: "nav.play" },
   { href: "/game/map", labelKey: "nav.map" },
   { href: "/create", labelKey: "nav.create" },
   { href: "/community", labelKey: "nav.community" },

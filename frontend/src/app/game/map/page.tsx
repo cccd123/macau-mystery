@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +14,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Map, BookOpen, ChevronDown, Info } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Map, BookOpen, ChevronDown, Info, MessageCircle, Send, Loader2 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/context";
 import { gameApi, locationApi, StoryInfo, LocationInfo } from "@/lib/api";
 
@@ -36,6 +38,15 @@ const FALLBACK_STORY: StoryInfo = {
   ],
 };
 
+const SUGGESTED_QUESTIONS: Record<string, string[]> = {
+  a_ma_temple: ["妈阁庙始建于什么时候？", "Macau 这个名字和妈阁庙有关吗？"],
+  lilau_square: ["亚婆井的葡文意思是什么？", "为什么亚婆井对葡萄牙人很重要？"],
+  mandarins_house: ["郑家大屋是谁的故居？", "《盛世危言》是在哪里写成的？"],
+  dom_pedro_v_theatre: ["岗顶剧院建于哪一年？", "它为什么被称为中国第一所西式剧院？"],
+  senado_square: ["议事亭前地为什么又叫喷水池？", "广场地面的碎石有什么特色？"],
+  ruins_of_st_pauls: ["大三巴牌坊的前身是什么？", "圣保禄学院有什么历史地位？"],
+};
+
 export default function MapPage() {
   const { t } = useTranslation();
   const [stories, setStories] = useState<StoryInfo[]>([]);
@@ -43,6 +54,17 @@ export default function MapPage() {
   const [loading, setLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [locations, setLocations] = useState<LocationInfo[]>([]);
+  const [mobileTab, setMobileTab] = useState<"map" | "list">("map");
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (highlightedId) {
+      const el = document.getElementById(`loc-card-${highlightedId}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [highlightedId]);
 
   useEffect(() => {
     Promise.all([
@@ -52,7 +74,8 @@ export default function MapPage() {
       .then(([storyData, locationData]) => {
         const all = storyData.length > 0 ? storyData : [FALLBACK_STORY];
         setStories(all);
-        setSelectedSlug(all[0].slug);
+        const four = all.find((s) => s.chapters.length === 4);
+        setSelectedSlug(four?.slug || all[0].slug);
         setLocations(locationData.items || []);
       })
       .catch(() => {
@@ -74,7 +97,6 @@ export default function MapPage() {
     [stories, selectedSlug]
   );
 
-  /* Convert chapters to MapViewer format */
   const mapLocations = useMemo(() => {
     if (!currentStory) return [];
     return currentStory.chapters
@@ -100,14 +122,14 @@ export default function MapPage() {
   return (
     <div className="container mx-auto px-4 py-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-4">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <Map className="h-6 w-6 text-jade" />
             {t("map.title")}
           </h1>
-          <p className="text-muted-foreground mt-1">
-            {t("home.routeDesc")}
+          <p className="text-muted-foreground mt-1 text-sm">
+            {t("map.routeDesc")}
           </p>
         </div>
 
@@ -123,10 +145,13 @@ export default function MapPage() {
                 <BookOpen className="h-4 w-4 text-primary" />
                 <span className="truncate">{currentStory?.title}</span>
               </span>
+              <Badge variant="outline" className="ml-2 text-xs shrink-0">
+                {currentStory?.chapters.length} {t("admin.locations")}
+              </Badge>
               <ChevronDown className={`h-4 w-4 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
             </Button>
             {dropdownOpen && (
-              <div className="absolute right-0 top-full mt-1 bg-popover border rounded-md shadow-md py-1 z-50 min-w-[240px]">
+              <div className="absolute right-0 top-full mt-1 bg-popover border rounded-md shadow-md py-1 z-50 min-w-[260px]">
                 {stories.map((s) => (
                   <button
                     key={s.slug}
@@ -138,13 +163,15 @@ export default function MapPage() {
                       setDropdownOpen(false);
                     }}
                   >
-                    <div className="font-medium">{s.title}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{s.title}</span>
+                      <Badge variant="outline" className="text-xs">
+                        {s.chapters.length} {t("admin.locations")}
+                      </Badge>
+                    </div>
                     {s.description && (
                       <div className="text-xs text-muted-foreground truncate mt-0.5">{s.description}</div>
                     )}
-                    <div className="text-xs text-muted-foreground mt-0.5">
-                      {s.chapters.length} {t("admin.chapters")}
-                    </div>
                   </button>
                 ))}
               </div>
@@ -157,20 +184,48 @@ export default function MapPage() {
       {currentStory && (
         <div className="mb-4 p-3 rounded-lg bg-primary/5 border border-primary/10 flex items-center gap-3">
           <BookOpen className="h-5 w-5 text-primary shrink-0" />
-          <div>
+          <div className="min-w-0">
             <span className="font-semibold">{currentStory.title}</span>
             <span className="text-muted-foreground text-sm ml-2">
-              {currentStory.chapters.length} {t("admin.chapters")}
+              {currentStory.chapters.length} {t("admin.locations")}
             </span>
           </div>
         </div>
       )}
 
+      {/* Mobile tab switcher */}
+      <div className="md:hidden mb-4">
+        <div className="inline-flex rounded-lg border bg-muted p-1">
+          <button
+            className={`px-4 py-1.5 text-sm rounded-md transition-colors ${
+              mobileTab === "map" ? "bg-background shadow-sm" : "text-muted-foreground"
+            }`}
+            onClick={() => setMobileTab("map")}
+          >
+            {t("map.mapTab")}
+          </button>
+          <button
+            className={`px-4 py-1.5 text-sm rounded-md transition-colors ${
+              mobileTab === "list" ? "bg-background shadow-sm" : "text-muted-foreground"
+            }`}
+            onClick={() => setMobileTab("list")}
+          >
+            {t("map.listTab")}
+          </button>
+        </div>
+      </div>
+
       <div className="grid md:grid-cols-2 gap-6">
         {/* Map */}
-        <div className="h-[400px] md:h-[600px] rounded-lg overflow-hidden border shadow-sm">
+        <div className={`h-[320px] md:h-[600px] rounded-lg overflow-hidden border shadow-sm ${mobileTab !== "map" ? "hidden md:block" : ""}`}>
           {mapLocations.length > 0 ? (
-            <MapViewer locations={mapLocations} />
+            <MapViewer
+              locations={mapLocations}
+              onLocationClick={(id) => {
+                setHighlightedId(id);
+                setMobileTab("list");
+              }}
+            />
           ) : (
             <div className="flex items-center justify-center h-full text-muted-foreground">
               <p>{t("map.locked")} - GPS coordinates not available</p>
@@ -179,74 +234,143 @@ export default function MapPage() {
         </div>
 
         {/* Location list */}
-        <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
-          {currentStory?.chapters.map((ch, i) => (
-            <Card key={ch.id} className={i > 0 ? "opacity-75" : ""}>
-              <CardHeader className="pb-2">
-                <div className="flex items-center gap-2">
-                  <Badge variant={i === 0 ? "default" : "outline"}>
-                    {i + 1}
-                  </Badge>
-                  <div className="flex-1 min-w-0">
-                    <CardTitle className="text-base leading-tight">{ch.location}</CardTitle>
-                    {ch.title && ch.title !== ch.location && (
-                      <CardDescription className="text-xs mt-0.5">{ch.title}</CardDescription>
+        <div className={`space-y-3 md:max-h-[600px] md:overflow-y-auto md:pr-1 ${mobileTab !== "list" ? "hidden md:block" : ""}`}>
+          {currentStory?.chapters.map((ch, i) => {
+            const loc = locationByName(ch.location);
+            return (
+              <Card
+                id={`loc-card-${ch.id}`}
+                key={ch.id}
+                className={`transition-all ${i > 0 ? "opacity-75" : ""} ${
+                  highlightedId === ch.id ? "ring-2 ring-primary" : ""
+                }`}
+              >
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-2">
+                    <Badge variant={i === 0 ? "default" : "outline"}>{i + 1}</Badge>
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-base leading-tight">{ch.location}</CardTitle>
+                      {ch.title && ch.title !== ch.location && (
+                        <CardDescription className="text-xs mt-0.5">{ch.title}</CardDescription>
+                      )}
+                    </div>
+                    {i === 0 && (
+                      <Badge variant="secondary" className="shrink-0">{t("map.currentLocation")}</Badge>
                     )}
                   </div>
-                  {i === 0 && (
-                    <Badge variant="secondary" className="shrink-0">{t("map.currentLocation")}</Badge>
-                  )}
-                </div>
-              </CardHeader>
-              {ch.gps && (
-                <CardContent className="pt-0">
-                  <p className="text-xs text-muted-foreground font-mono mb-2">
-                    {ch.gps.lat.toFixed(4)}°N, {ch.gps.lng.toFixed(4)}°E
-                  </p>
-                  {(() => {
-                    const loc = locationByName(ch.location);
-                    if (!loc) return null;
-                    return (
-                      <Dialog>
-                        <DialogTrigger
-                          render={
-                            <button className="text-left text-sm text-primary hover:underline flex items-start gap-1.5 mt-1">
-                              <Info className="h-4 w-4 shrink-0 mt-0.5" />
-                              <span>
-                                <span className="font-medium">{t("map.locationIntro")}:</span>{" "}
-                                {loc.summary}
-                              </span>
-                            </button>
-                          }
-                        />
-                        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
-                          <DialogHeader>
-                            <DialogTitle>{loc.name}</DialogTitle>
-                            <DialogDescription>{loc.summary}</DialogDescription>
-                          </DialogHeader>
-                          <div className="space-y-3 mt-2 text-sm text-muted-foreground leading-relaxed">
-                            <p>{loc.description}</p>
-                            {loc.source_url && (
-                              <a
-                                href={loc.source_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-primary hover:underline text-xs"
-                              >
-                                {t("map.readMore")}: {loc.source_title}
-                              </a>
-                            )}
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    );
-                  })()}
-                </CardContent>
-              )}
-            </Card>
-          ))}
+                </CardHeader>
+                {ch.gps && (
+                  <CardContent className="pt-0">
+                    <p className="text-xs text-muted-foreground font-mono mb-2">
+                      {ch.gps.lat.toFixed(4)}°N, {ch.gps.lng.toFixed(4)}°E
+                    </p>
+                    {loc && <LocationDialog loc={loc} />}
+                  </CardContent>
+                )}
+              </Card>
+            );
+          })}
         </div>
       </div>
     </div>
+  );
+}
+
+function LocationDialog({ loc }: { loc: LocationInfo }) {
+  const { t } = useTranslation();
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
+  const [asking, setAsking] = useState(false);
+  const suggestions = SUGGESTED_QUESTIONS[loc.id] || [];
+
+  const handleAsk = async (q: string) => {
+    if (!q.trim()) return;
+    setQuestion(q);
+    setAsking(true);
+    setAnswer("");
+    try {
+      const res = await locationApi.ask(loc.id, q);
+      setAnswer(res.answer);
+    } catch (e: any) {
+      setAnswer(t("map.askError") + (e.message || ""));
+    }
+    setAsking(false);
+  };
+
+  return (
+    <Dialog>
+      <DialogTrigger
+        render={
+          <button className="text-left text-sm text-primary hover:underline flex items-start gap-1.5 mt-1">
+            <Info className="h-4 w-4 shrink-0 mt-0.5" />
+            <span>
+              <span className="font-medium">{t("map.locationIntro")}:</span>{" "}
+              {loc.summary}
+            </span>
+          </button>
+        }
+      />
+      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{loc.name}</DialogTitle>
+          <DialogDescription>{loc.summary}</DialogDescription>
+        </DialogHeader>
+        <Tabs defaultValue="history" className="mt-2">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="history">{t("map.historyTab")}</TabsTrigger>
+            <TabsTrigger value="ask">{t("map.askTab")}</TabsTrigger>
+          </TabsList>
+          <TabsContent value="history" className="space-y-3 mt-4 text-sm text-muted-foreground leading-relaxed">
+            <p>{loc.description}</p>
+            {loc.source_url && (
+              <a
+                href={loc.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline text-xs"
+              >
+                {t("map.readMore")}: {loc.source_title}
+              </a>
+            )}
+          </TabsContent>
+          <TabsContent value="ask" className="mt-4 space-y-4">
+            <p className="text-sm text-muted-foreground">{t("map.askDesc")}</p>
+            {suggestions.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {suggestions.map((q) => (
+                  <button
+                    key={q}
+                    className="text-xs px-2.5 py-1 rounded-full border bg-muted hover:bg-accent transition-colors"
+                    onClick={() => handleAsk(q)}
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="flex gap-2">
+              <Input
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                placeholder={t("map.askPlaceholder")}
+                onKeyDown={(e) => e.key === "Enter" && handleAsk(question)}
+              />
+              <Button size="icon" onClick={() => handleAsk(question)} disabled={asking || !question.trim()}>
+                {asking ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              </Button>
+            </div>
+            {answer && (
+              <div className="rounded-lg border bg-muted/40 p-3 text-sm">
+                <div className="flex items-center gap-1.5 text-primary font-medium mb-1">
+                  <MessageCircle className="h-4 w-4" />
+                  {t("map.aiAnswer")}
+                </div>
+                <p className="text-muted-foreground leading-relaxed">{answer}</p>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+      </DialogContent>
+    </Dialog>
   );
 }

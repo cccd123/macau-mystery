@@ -15,42 +15,55 @@ interface Location {
 
 interface MapViewerProps {
   locations: Location[];
+  onLocationClick?: (id: string) => void;
 }
 
-export default function MapViewer({ locations }: MapViewerProps) {
+export default function MapViewer({ locations, onLocationClick }: MapViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
+  const observerRef = useRef<ResizeObserver | null>(null);
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
+    if (!container || container.clientWidth === 0) return;
 
-    // Clean up any existing map instance (handles React Strict Mode double-mount)
+    // Defensive cleanup of any previous instance (Strict Mode double-mount).
     if (mapRef.current) {
       try {
         mapRef.current.remove();
       } catch {
-        // Ignore cleanup errors from stale Leaflet internals
+        // ignore
       }
       mapRef.current = null;
     }
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+      observerRef.current = null;
+    }
 
-    // Defensive cleanup: remove stale Leaflet DOM to prevent _leaflet_pos errors
+    // Only clear the DOM after the previous map instance has been removed.
     container.innerHTML = "";
 
     const map = L.map(container, {
       center: [22.19, 113.536],
       zoom: 15,
       scrollWheelZoom: false,
+      zoomControl: false,
     });
+    L.control.zoom({ position: "topright" }).addTo(map);
     mapRef.current = map;
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    }).addTo(map);
+    // CartoDB Voyager tiles load faster and look cleaner than default OSM.
+    L.tileLayer(
+      "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+      {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: "abcd",
+        maxZoom: 19,
+      }
+    ).addTo(map);
 
-    // Add markers
     const markers: L.LatLngExpression[] = [];
     locations.forEach((loc) => {
       const pos: L.LatLngExpression = [loc.lat, loc.lng];
@@ -64,12 +77,15 @@ export default function MapViewer({ locations }: MapViewerProps) {
         iconAnchor: [14, 14],
       });
 
-      L.marker(pos, { icon })
+      const marker = L.marker(pos, { icon })
         .addTo(map)
         .bindPopup(`<strong>${loc.name}</strong><br/>${loc.description}`);
+
+      if (onLocationClick) {
+        marker.on("click", () => onLocationClick(loc.id));
+      }
     });
 
-    // Draw route line
     if (markers.length > 1) {
       L.polyline(markers, {
         color: "#1a6fa0",
@@ -77,37 +93,56 @@ export default function MapViewer({ locations }: MapViewerProps) {
         dashArray: "10, 10",
         opacity: 0.6,
       }).addTo(map);
+      const bounds = L.latLngBounds(markers as L.LatLng[]);
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 });
+    } else if (markers.length === 1) {
+      map.setView(markers[0], 16);
     }
 
-    // Fit bounds to show all markers
-    if (markers.length > 0) {
-      const bounds = L.latLngBounds(markers as L.LatLngExpression[]);
-      map.fitBounds(bounds, { padding: [40, 40] });
-    }
-
-    // Fix rendering after layout settles (dynamic import + container sizing)
+    // Invalidate size when the container is resized (e.g. mobile tab switch).
     const timer = setTimeout(() => {
-      map.invalidateSize();
-    }, 100);
+      try {
+        map.invalidateSize();
+      } catch {
+        // ignore
+      }
+    }, 150);
+
+    if (typeof ResizeObserver !== "undefined") {
+      observerRef.current = new ResizeObserver(() => {
+        if (mapRef.current) {
+          try {
+            mapRef.current.invalidateSize();
+          } catch {
+            // ignore
+          }
+        }
+      });
+      observerRef.current.observe(container);
+    }
 
     return () => {
       clearTimeout(timer);
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
       if (mapRef.current) {
         try {
           mapRef.current.remove();
         } catch {
-          // Ignore cleanup errors (e.g. _leaflet_pos undefined in Strict Mode)
+          // ignore cleanup errors such as _leaflet_pos undefined
         }
         mapRef.current = null;
       }
     };
-  }, [locations]);
+  }, [locations, onLocationClick]);
 
   return (
     <div
       ref={containerRef}
-      className="w-full h-full"
-      style={{ minHeight: "400px" }}
+      className="w-full h-full relative"
+      style={{ minHeight: "320px", zIndex: 0 }}
     />
   );
 }

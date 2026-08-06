@@ -1,3 +1,4 @@
+from __future__ import annotations
 """NPC Router - Routes to correct NPC persona"""
 NPC_PERSONAS = {
     "mage_temple_keeper": {"name": "妈阁庙看庙老伯", "location": "妈阁庙", "voice": "zh-HK-WanLungNeural"},

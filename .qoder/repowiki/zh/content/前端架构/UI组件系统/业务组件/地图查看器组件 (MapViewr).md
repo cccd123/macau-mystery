@@ -11,6 +11,13 @@
 - [macau_mystery_01.json](file://backend/app/story/scripts/macau_mystery_01.json)
 </cite>
 
+## 更新摘要
+**已完成的变更**   
+- 更新了样式依赖分析部分，详细说明 Leaflet CSS 导入的重要性
+- 增强了故障排查指南，包含样式相关问题的解决方案
+- 更新了依赖关系分析，明确 Leaflet CSS 的正确引入方式
+- 完善了移动端适配说明，包含样式兼容性考虑
+
 ## 目录
 1. [简介](#简介)
 2. [项目结构](#项目结构)
@@ -24,10 +31,12 @@
 10. [附录：使用示例与扩展指南](#附录使用示例与扩展指南)
 
 ## 简介
-本文件面向“澳门历史城区”探案游戏的前端地图查看器组件 MapViewer，基于 Leaflet.js 实现。文档将系统阐述地图初始化、标记点管理、路径绘制、状态管理与事件处理机制，以及与游戏场景坐标映射关系；并给出交互能力（缩放、平移、点击、路线规划）的实现说明，以及自定义图层、热力图效果与移动端适配的实践建议。同时提供集成澳门历史城区景点数据的实际使用方式与代码片段路径指引。
+本文件面向"澳门历史城区"探案游戏的前端地图查看器组件 MapViewer，基于 Leaflet.js 实现。文档将系统阐述地图初始化、标记点管理、路径绘制、状态管理与事件处理机制，以及与游戏场景坐标映射关系；并给出交互能力（缩放、平移、点击、路线规划）的实现说明，以及自定义图层、热力图效果与移动端适配的实践建议。同时提供集成澳门历史城区景点数据的实际使用方式与代码片段路径指引。
+
+**重要更新**：组件现已包含完整的 Leaflet CSS 导入，确保地图控件、标记点和弹窗样式的正确显示。
 
 ## 项目结构
-MapViewer 位于前端 Next.js 应用中，作为客户端组件动态加载，避免服务端渲染 Leaflet 导致的兼容问题。页面层负责数据准备与布局，组件层封装 Leaflet 的初始化与渲染逻辑。样式通过全局 CSS 引入 Leaflet 默认样式，并结合 TailwindCSS 进行主题化。
+MapViewer 位于前端 Next.js 应用中，作为客户端组件动态加载，避免服务端渲染 Leaflet 导致的兼容问题。页面层负责数据准备与布局，组件层封装 Leaflet 的初始化与渲染逻辑。样式通过组件内直接导入 Leaflet 默认样式，并结合 TailwindCSS 进行主题化。
 
 ```mermaid
 graph TB
@@ -35,25 +44,26 @@ subgraph "前端应用"
 A["game/map/page.tsx<br/>页面层"] --> B["components/map-viewer.tsx<br/>MapViewer 组件"]
 B --> C["Leaflet.js<br/>地图引擎"]
 B --> D["OpenStreetMap<br/>瓦片图层"]
-A --> E["TailwindCSS + globals.css<br/>样式与主题"]
+B --> E["leaflet/dist/leaflet.css<br/>Leaflet 样式"]
+A --> F["TailwindCSS + globals.css<br/>样式与主题"]
 end
 subgraph "后端知识数据"
-F["macau_docs/*.txt<br/>景点文本资料"]
-G["story/scripts/*.json<br/>剧本与GPS坐标"]
+G["macau_docs/*.txt<br/>景点文本资料"]
+H["story/scripts/*.json<br/>剧本与GPS坐标"]
 end
-A -.-> F
 A -.-> G
+A -.-> H
 ```
 
-图表来源 
+**图表来源** 
 - [page.tsx:1-59](file://frontend/src/app/game/map/page.tsx#L1-L59)
-- [map-viewer.tsx:1-102](file://frontend/src/components/map-viewer.tsx#L1-L102)
+- [map-viewer.tsx:1-103](file://frontend/src/components/map-viewer.tsx#L1-L103)
 - [globals.css:1-5](file://frontend/src/app/globals.css#L1-L5)
 - [package.json:11-25](file://frontend/package.json#L11-L25)
 
-章节来源
+**章节来源**
 - [page.tsx:1-59](file://frontend/src/app/game/map/page.tsx#L1-L59)
-- [map-viewer.tsx:1-102](file://frontend/src/components/map-viewer.tsx#L1-L102)
+- [map-viewer.tsx:1-103](file://frontend/src/components/map-viewer.tsx#L1-L103)
 - [globals.css:1-5](file://frontend/src/app/globals.css#L1-L5)
 - [package.json:11-25](file://frontend/package.json#L11-L25)
 
@@ -77,12 +87,12 @@ MapViewer 是一个纯客户端 React 组件，职责包括：
 组件对外暴露 props：
 - locations: Location[]
 
-章节来源
-- [map-viewer.tsx:6-17](file://frontend/src/components/map-viewer.tsx#L6-L17)
-- [map-viewer.tsx:19-92](file://frontend/src/components/map-viewer.tsx#L19-L92)
+**章节来源**
+- [map-viewer.tsx:7-18](file://frontend/src/components/map-viewer.tsx#L7-L18)
+- [map-viewer.tsx:20-93](file://frontend/src/components/map-viewer.tsx#L20-L93)
 
 ## 架构总览
-MapViewer 采用“页面层数据准备 + 组件层渲染”的分层模式。页面层提供景点坐标与状态，组件层专注地图渲染与交互。地图引擎为 Leaflet，瓦片服务为 OpenStreetMap。样式通过全局 CSS 引入 Leaflet 样式，并使用 TailwindCSS 构建界面。
+MapViewer 采用"页面层数据准备 + 组件层渲染"的分层模式。页面层提供景点坐标与状态，组件层专注地图渲染与交互。地图引擎为 Leaflet，瓦片服务为 OpenStreetMap。样式通过组件内直接导入 Leaflet 样式，并使用 TailwindCSS 构建界面。
 
 ```mermaid
 classDiagram
@@ -107,16 +117,17 @@ class Page {
 }
 Page --> MapViewer : "传递 locations"
 MapViewer --> Location : "读取"
+MapViewer --> LeafletCSS : "导入样式"
 ```
 
-图表来源 
-- [map-viewer.tsx:6-17](file://frontend/src/components/map-viewer.tsx#L6-L17)
-- [map-viewer.tsx:19-92](file://frontend/src/components/map-viewer.tsx#L19-L92)
+**图表来源** 
+- [map-viewer.tsx:7-18](file://frontend/src/components/map-viewer.tsx#L7-L18)
+- [map-viewer.tsx:20-93](file://frontend/src/components/map-viewer.tsx#L20-L93)
 - [page.tsx:11-18](file://frontend/src/app/game/map/page.tsx#L11-L18)
 
-章节来源
+**章节来源**
 - [page.tsx:1-59](file://frontend/src/app/game/map/page.tsx#L1-L59)
-- [map-viewer.tsx:1-102](file://frontend/src/components/map-viewer.tsx#L1-L102)
+- [map-viewer.tsx:1-103](file://frontend/src/components/map-viewer.tsx#L1-L103)
 
 ## 详细组件分析
 
@@ -149,11 +160,11 @@ InvalidateSize --> Cleanup["注册清理函数"]
 Cleanup --> End
 ```
 
-图表来源 
-- [map-viewer.tsx:23-92](file://frontend/src/components/map-viewer.tsx#L23-L92)
+**图表来源** 
+- [map-viewer.tsx:24-93](file://frontend/src/components/map-viewer.tsx#L24-L93)
 
-章节来源
-- [map-viewer.tsx:23-92](file://frontend/src/components/map-viewer.tsx#L23-L92)
+**章节来源**
+- [map-viewer.tsx:24-93](file://frontend/src/components/map-viewer.tsx#L24-L93)
 
 ### 标记点管理与弹窗
 - 每个地点生成一个 L.marker，使用 L.divIcon 自定义圆形图标，颜色由 status 决定（当前点绿色，锁定点灰色）
@@ -172,11 +183,11 @@ MapViewer->>Leaflet : bindPopup(名称+描述)
 Leaflet-->>MapViewer : 渲染标记点
 ```
 
-图表来源 
-- [map-viewer.tsx:45-62](file://frontend/src/components/map-viewer.tsx#L45-L62)
+**图表来源** 
+- [map-viewer.tsx:48-63](file://frontend/src/components/map-viewer.tsx#L48-L63)
 
-章节来源
-- [map-viewer.tsx:45-62](file://frontend/src/components/map-viewer.tsx#L45-L62)
+**章节来源**
+- [map-viewer.tsx:48-63](file://frontend/src/components/map-viewer.tsx#L48-L63)
 
 ### 路径绘制与视图适配
 - 当标记点数量大于 1 时，使用 L.polyline 按顺序连接各点，形成虚线路径
@@ -192,11 +203,11 @@ NoPolyline --> Bounds
 Bounds --> Fit["fitBounds 适配视图"]
 ```
 
-图表来源 
-- [map-viewer.tsx:64-78](file://frontend/src/components/map-viewer.tsx#L64-L78)
+**图表来源** 
+- [map-viewer.tsx:66-79](file://frontend/src/components/map-viewer.tsx#L66-L79)
 
-章节来源
-- [map-viewer.tsx:64-78](file://frontend/src/components/map-viewer.tsx#L64-L78)
+**章节来源**
+- [map-viewer.tsx:66-79](file://frontend/src/components/map-viewer.tsx#L66-L79)
 
 ### 事件处理与交互能力
 - 当前实现未显式监听地图事件（如 click、moveend），但具备基础交互能力：
@@ -205,16 +216,16 @@ Bounds --> Fit["fitBounds 适配视图"]
   - 标记点点击：弹出名称与描述信息
 - 如需增强交互（如点击标记跳转剧情、路线规划），可在组件内添加事件监听并在回调中触发业务逻辑
 
-章节来源
-- [map-viewer.tsx:33-37](file://frontend/src/components/map-viewer.tsx#L33-L37)
-- [map-viewer.tsx:59-62](file://frontend/src/components/map-viewer.tsx#L59-L62)
+**章节来源**
+- [map-viewer.tsx:34-38](file://frontend/src/components/map-viewer.tsx#L34-L38)
+- [map-viewer.tsx:60-63](file://frontend/src/components/map-viewer.tsx#L60-L63)
 
 ### 与游戏场景的坐标映射关系
 - 页面层 LOCATIONS 直接提供经纬度坐标，对应真实地理坐标（WGS84）
 - 后端故事脚本 macau_mystery_01.json 中包含各章节的 GPS 坐标，可用于驱动地图定位与剧情推进
 - 景点文本资料（如 a_ma_temple.txt、ruins_of_st_paul.txt）提供背景信息，可与弹窗内容或侧边列表结合展示
 
-章节来源
+**章节来源**
 - [page.tsx:11-18](file://frontend/src/app/game/map/page.tsx#L11-L18)
 - [macau_mystery_01.json:1-33](file://backend/app/story/scripts/macau_mystery_01.json#L1-L33)
 - [a_ma_temple.txt:1-7](file://backend/app/knowledge/macau_docs/a_ma_temple.txt#L1-L7)
@@ -226,7 +237,7 @@ Bounds --> Fit["fitBounds 适配视图"]
   - @types/leaflet: TypeScript 类型定义
   - react / react-dom: 组件框架
 - 样式依赖：
-  - globals.css 引入 Leaflet 默认样式
+  - **重要更新**：组件内直接导入 `leaflet/dist/leaflet.css` 确保样式正确加载
   - TailwindCSS 用于 UI 布局与主题变量
 
 ```mermaid
@@ -234,16 +245,18 @@ graph LR
 P["package.json<br/>依赖声明"] --> L["leaflet"]
 P --> T["@types/leaflet"]
 P --> R["react / react-dom"]
-S["globals.css"] --> LS["Leaflet 默认样式"]
-S --> TW["TailwindCSS 主题"]
+M["map-viewer.tsx"] --> LC["leaflet/dist/leaflet.css<br/>Leaflet 样式导入"]
+S["globals.css"] --> TW["TailwindCSS 主题"]
 ```
 
-图表来源 
+**图表来源** 
 - [package.json:11-25](file://frontend/package.json#L11-L25)
+- [map-viewer.tsx:4](file://frontend/src/components/map-viewer.tsx#L4)
 - [globals.css:1-5](file://frontend/src/app/globals.css#L1-L5)
 
-章节来源
+**章节来源**
 - [package.json:11-25](file://frontend/package.json#L11-L25)
+- [map-viewer.tsx:4](file://frontend/src/components/map-viewer.tsx#L4)
 - [globals.css:1-5](file://frontend/src/app/globals.css#L1-L5)
 
 ## 性能考量
@@ -252,8 +265,7 @@ S --> TW["TailwindCSS 主题"]
 - 仅在 locations 变化时重新渲染地图，降低不必要的重绘
 - 使用 setTimeout 延迟 invalidateSize，确保容器尺寸稳定后再刷新，避免布局抖动
 - 禁用滚轮缩放可减少频繁重绘，提升滚动体验
-
-[本节为通用指导，无需引用具体文件]
+- **新增优化**：组件内直接导入 Leaflet CSS，避免全局样式冲突，提高样式加载效率
 
 ## 故障排查指南
 - 地图空白或尺寸异常：
@@ -264,18 +276,20 @@ S --> TW["TailwindCSS 主题"]
   - 确认瓦片图层成功加载（网络与跨域）
 - 弹窗内容为空：
   - 检查 location.name 与 description 字段是否正确传入
-- 样式错乱：
-  - 确认 globals.css 引入了 Leaflet 样式
-  - 检查 Tailwind 配置与主题变量
+- **样式相关问题**：
+  - **重要更新**：确认组件内已导入 `leaflet/dist/leaflet.css`
+  - 检查 Leaflet 样式是否正确加载（浏览器开发者工具中查看 Network 标签）
+  - 验证标记点图标、地图控件和弹窗样式是否正常显示
+  - 如果样式仍然异常，检查是否有其他 CSS 覆盖 Leaflet 默认样式
+- Tailwind 配置与主题变量冲突
 
-章节来源
-- [map-viewer.tsx:80-92](file://frontend/src/components/map-viewer.tsx#L80-L92)
+**章节来源**
+- [map-viewer.tsx:82-93](file://frontend/src/components/map-viewer.tsx#L82-L93)
+- [map-viewer.tsx:4](file://frontend/src/components/map-viewer.tsx#L4)
 - [globals.css:1-5](file://frontend/src/app/globals.css#L1-L5)
 
 ## 结论
-MapViewer 组件以简洁清晰的职责划分实现了基于 Leaflet 的地图可视化功能，涵盖初始化、标记点管理、路径绘制与视图适配等核心能力。通过与页面层的数据协作及后端故事脚本的坐标支撑，能够很好地服务于“澳门历史城区”探案游戏的地图展示需求。后续可在此基础上扩展事件处理、自定义图层、热力图与移动端优化，进一步提升用户体验。
-
-[本节为总结性内容，无需引用具体文件]
+MapViewer 组件以简洁清晰的职责划分实现了基于 Leaflet 的地图可视化功能，涵盖初始化、标记点管理、路径绘制与视图适配等核心能力。**最新改进**包括完整的 Leaflet CSS 导入，确保地图控件、标记点和弹窗样式的正确显示。通过与页面层的数据协作及后端故事脚本的坐标支撑，能够很好地服务于"澳门历史城区"探案游戏的地图展示需求。后续可在此基础上扩展事件处理、自定义图层、热力图与移动端优化，进一步提升用户体验。
 
 ## 附录：使用示例与扩展指南
 
@@ -286,7 +300,7 @@ MapViewer 组件以简洁清晰的职责划分实现了基于 Leaflet 的地图�
 
 参考路径：
 - [page.tsx:11-18](file://frontend/src/app/game/map/page.tsx#L11-L18)
-- [map-viewer.tsx:15-17](file://frontend/src/components/map-viewer.tsx#L15-L17)
+- [map-viewer.tsx:16-18](file://frontend/src/components/map-viewer.tsx#L16-L18)
 
 ### 与故事脚本坐标联动
 - 从 macau_mystery_01.json 中读取章节的 GPS 坐标，驱动地图定位与剧情推进
@@ -300,26 +314,37 @@ MapViewer 组件以简洁清晰的职责划分实现了基于 Leaflet 的地图�
 - 添加叠加图层（如卫星图、地形图）
 
 参考路径：
-- [map-viewer.tsx:40-43](file://frontend/src/components/map-viewer.tsx#L40-L43)
+- [map-viewer.tsx:41-44](file://frontend/src/components/map-viewer.tsx#L41-L44)
 
 ### 热力图效果
 - 引入 leaflet.heat 插件，将热点数据转换为热力图层叠加到地图
 - 注意性能优化，按需更新热点数据
 
 参考路径：
-- [map-viewer.tsx:40-43](file://frontend/src/components/map-viewer.tsx#L40-L43)
+- [map-viewer.tsx:41-44](file://frontend/src/components/map-viewer.tsx#L41-L44)
 
 ### 移动端适配
 - 启用触摸缩放与平移（默认支持）
 - 调整 marker 大小与弹窗样式以适应小屏幕
 - 考虑禁用滚轮缩放，避免误触
+- **样式兼容性**：确保 Leaflet CSS 在移动设备上正确加载和显示
 
 参考路径：
-- [map-viewer.tsx:33-37](file://frontend/src/components/map-viewer.tsx#L33-L37)
+- [map-viewer.tsx:34-38](file://frontend/src/components/map-viewer.tsx#L34-L38)
+- [map-viewer.tsx:4](file://frontend/src/components/map-viewer.tsx#L4)
 
 ### 事件处理增强
 - 为标记点添加点击事件，跳转到对应剧情或展示详情
 - 监听地图移动/缩放事件，记录用户浏览轨迹
 
 参考路径：
-- [map-viewer.tsx:59-62](file://frontend/src/components/map-viewer.tsx#L59-L62)
+- [map-viewer.tsx:60-63](file://frontend/src/components/map-viewer.tsx#L60-L63)
+
+### 样式优化最佳实践
+- **推荐做法**：在组件内直接导入 Leaflet CSS，避免全局样式污染
+- 确保样式导入在组件顶部，保证优先加载
+- 检查与其他 CSS 框架的兼容性
+- 使用浏览器开发者工具调试样式问题
+
+参考路径：
+- [map-viewer.tsx:4](file://frontend/src/components/map-viewer.tsx#L4)

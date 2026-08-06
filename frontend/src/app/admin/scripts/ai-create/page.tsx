@@ -12,11 +12,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, PenTool, Loader2, ArrowLeft } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Sparkles, PenTool, Loader2, ArrowLeft, Info } from "lucide-react";
 import Link from "next/link";
 import { adminApi } from "@/lib/api";
+import { useTranslation } from "@/lib/i18n/context";
 
 export default function AICreatePage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [mode, setMode] = useState("quick");
   const [input, setInput] = useState("");
@@ -28,25 +31,33 @@ export default function AICreatePage() {
     setLoading(true);
     setError("");
     try {
-      const res = await adminApi.aiGenerateScript(input, mode);
-      // Redirect to admin page after creation
+      await adminApi.aiGenerateScript(input, mode);
       router.push("/admin");
     } catch (e: any) {
-      setError("Generation failed: " + e.message);
+      setError(t("aiCreate.error") + ": " + e.message);
     }
     setLoading(false);
   };
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-2xl">
-      <Link href="/admin" className="inline-flex items-center gap-1 text-sm text-muted-foreground mb-6 hover:text-foreground">
-        <ArrowLeft className="h-4 w-4" /> Back to Admin
+      <Link
+        href="/admin"
+        className="inline-flex items-center gap-1 text-sm text-muted-foreground mb-6 hover:text-foreground"
+      >
+        <ArrowLeft className="h-4 w-4" /> {t("aiCreate.backToAdmin")}
       </Link>
 
-      <h1 className="text-2xl font-bold mb-2">AI Script Creator</h1>
-      <p className="text-muted-foreground mb-8">
-        Two modes: Quick AI generation or polish your detailed idea
-      </p>
+      <h1 className="text-2xl font-bold mb-2">{t("aiCreate.title")}</h1>
+      <p className="text-muted-foreground mb-6">{t("aiCreate.subtitle")}</p>
+
+      <Alert className="mb-6 border-jade/30 bg-jade/5">
+        <Info className="h-4 w-4 text-jade" />
+        <AlertDescription>
+          <span className="font-medium">{t("aiCreate.relationTitle")}</span> ·{" "}
+          {t("aiCreate.relationDesc")}
+        </AlertDescription>
+      </Alert>
 
       {error && (
         <div className="bg-destructive/10 text-destructive p-3 rounded-lg mb-4 text-sm">
@@ -58,32 +69,31 @@ export default function AICreatePage() {
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="quick" className="gap-2">
             <Sparkles className="h-4 w-4" />
-            Quick Generate
+            {t("aiCreate.quickTab")}
           </TabsTrigger>
           <TabsTrigger value="polish" className="gap-2">
             <PenTool className="h-4 w-4" />
-            Polish My Idea
+            {t("aiCreate.polishTab")}
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="quick" className="mt-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">One-sentence Quick Create</CardTitle>
-              <CardDescription>
-                AI generates a complete script from a single sentence. Great for
-                brainstorming and exploration.
-              </CardDescription>
+              <CardTitle className="text-base">
+                {t("aiCreate.quickTitle")}
+              </CardTitle>
+              <CardDescription>{t("aiCreate.quickDesc")}</CardDescription>
             </CardHeader>
             <CardContent>
               <Textarea
-                placeholder="e.g. 'A treasure hunt across Macau's Portuguese and Chinese communities'"
+                placeholder={t("aiCreate.quickPlaceholder")}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 className="min-h-[100px]"
               />
               <p className="text-xs text-muted-foreground mt-2">
-                High randomness - AI will create the full story, characters, and choices
+                {t("aiCreate.quickNote")}
               </p>
             </CardContent>
           </Card>
@@ -92,21 +102,20 @@ export default function AICreatePage() {
         <TabsContent value="polish" className="mt-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Polish My Detailed Idea</CardTitle>
-              <CardDescription>
-                You provide the full concept, AI refines and structures it into a
-                playable script. Best for clear visions or client requirements.
-              </CardDescription>
+              <CardTitle className="text-base">
+                {t("aiCreate.polishTitle")}
+              </CardTitle>
+              <CardDescription>{t("aiCreate.polishDesc")}</CardDescription>
             </CardHeader>
             <CardContent>
               <Textarea
-                placeholder="Describe your complete idea here: characters, plot, locations, endings... AI will structure it into chapters, scenes, and choices."
+                placeholder={t("aiCreate.polishPlaceholder")}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 className="min-h-[200px]"
               />
               <p className="text-xs text-muted-foreground mt-2">
-                Low randomness - AI respects your vision and adds structure + polish
+                {t("aiCreate.polishNote")}
               </p>
             </CardContent>
           </Card>
@@ -122,12 +131,12 @@ export default function AICreatePage() {
         {loading ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin" />
-            Generating...
+            {t("aiCreate.generating")}
           </>
         ) : (
           <>
             <Sparkles className="h-4 w-4" />
-            {mode === "quick" ? "AI Quick Generate" : "AI Polish & Structure"}
+            {mode === "quick" ? t("aiCreate.quickBtn") : t("aiCreate.polishBtn")}
           </>
         )}
       </Button>
