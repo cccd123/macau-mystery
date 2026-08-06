@@ -1,0 +1,13 @@
+schema_version: 1
+module_path: ""
+title: 澳秘 Macau Mystery 全栈项目根
+scope:
+    - README.md
+    - GITHUB_GUIDE.md
+    - TASK_BREAKDOWN.md
+    - docker-compose.yml
+    - .gitignore
+    - AGENTS.md
+source_files: []
+depends_on: []
+related_to: []

@@ -1,0 +1,43 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: zh-CN
+branch: master
+nodes_managed: true
+exported_at: "2026-08-05T12:53:42Z"
+modules:
+    "":
+        dir_name: 澳秘 Macau Mystery 全栈项目根
+        title: 澳秘 Macau Mystery 全栈项目根
+        scope:
+            - README.md
+            - GITHUB_GUIDE.md
+            - TASK_BREAKDOWN.md
+            - docker-compose.yml
+            - .gitignore
+            - AGENTS.md
+        source_files: []
+        children:
+            - backend
+            - frontend
+        depends_on: []
+        related_to: []
+    backend:
+        dir_name: 澳门迷踪 FastAPI 后端服务
+        title: 澳门迷踪 FastAPI 后端服务
+        scope:
+            - backend/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: frontend
+    frontend:
+        dir_name: Macau Mystery 前端应用（Next.js 游戏与创作平台）
+        title: Macau Mystery 前端应用（Next.js 游戏与创作平台）
+        scope:
+            - frontend/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: backend

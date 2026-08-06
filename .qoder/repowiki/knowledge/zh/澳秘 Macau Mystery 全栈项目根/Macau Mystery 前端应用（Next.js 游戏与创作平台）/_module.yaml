@@ -1,0 +1,9 @@
+schema_version: 1
+module_path: frontend
+title: Macau Mystery 前端应用（Next.js 游戏与创作平台）
+scope:
+    - frontend/
+source_files: []
+depends_on: []
+related_to:
+    - path: backend
