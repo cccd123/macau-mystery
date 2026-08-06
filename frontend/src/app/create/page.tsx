@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -12,11 +12,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { StyleSelector } from "@/components/style-selector";
-import { Sparkles, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
+import { Sparkles, RefreshCw, ChevronDown, ChevronUp, Info } from "lucide-react";
 import { ugcApi } from "@/lib/api";
+import { useTranslation } from "@/lib/i18n/context";
 
 export default function CreatePage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [input, setInput] = useState("");
   const [style, setStyle] = useState("suspense");
@@ -48,10 +51,20 @@ export default function CreatePage() {
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-2xl">
-      <h1 className="text-2xl font-bold mb-2">一句话写短剧</h1>
-      <p className="text-muted-foreground mb-8">
-        输入一句话描述，AI自动生成完整的互动短剧剧本
+      <div className="flex items-center gap-3 mb-2">
+        <h1 className="text-2xl font-bold">{t("create.title")}</h1>
+        <Badge variant="outline" className="text-xs gap-1 border-amber-300 text-amber-600">
+          <Info className="h-3 w-3" />
+          {t("create.demoMode")}
+        </Badge>
+      </div>
+      <p className="text-muted-foreground mb-2">
+        {t("create.subtitle")}
       </p>
+      <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 mb-8 text-sm text-amber-700 dark:text-amber-400">
+        <Info className="h-4 w-4 mt-0.5 shrink-0" />
+        <span>{t("create.demoNotice")}</span>
+      </div>
 
       {error && (
         <div className="bg-destructive/10 text-destructive p-3 rounded-lg mb-4 text-sm">

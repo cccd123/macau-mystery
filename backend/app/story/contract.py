@@ -1,7 +1,7 @@
 """Strict runtime contract for version 1 story JSON documents."""
 from __future__ import annotations
 
-from typing import Annotated, Literal, Union
+from typing import Annotated, Literal, Optional, Union
 from urllib.parse import urlparse
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -27,7 +27,7 @@ class Media(StrictModel):
     video_url: str = Field(min_length=1)
     poster_url: str = Field(min_length=1)
     mime_type: str = Field(min_length=1)
-    duration_ms: int | None = Field(default=None, gt=0)
+    duration_ms: Optional[int] = Field(default=None, gt=0)
 
     @field_validator("video_url", "poster_url")
     @classmethod
@@ -46,10 +46,10 @@ class Choice(StrictModel):
 
 
 class RouteCondition(StrictModel):
-    default: bool | None = None
-    min_clue_count: int | None = Field(default=None, ge=1)
-    all_clues: list[Identifier] | None = None
-    any_clues: list[Identifier] | None = None
+    default: Optional[bool] = None
+    min_clue_count: Optional[int] = Field(default=None, ge=1)
+    all_clues: Optional[list[Identifier]] = None
+    any_clues: Optional[list[Identifier]] = None
 
     @model_validator(mode="after")
     def validate_condition_shape(self) -> "RouteCondition":
@@ -107,21 +107,21 @@ class Chapter(StrictModel):
     id: Identifier
     title: str = Field(min_length=1)
     location: str = Field(min_length=1)
-    gps: Gps | None = None
+    gps: Optional[Gps] = None
     scenes: list[Scene]
 
 
 class ClueDefinition(StrictModel):
     title: str = Field(min_length=1)
     description: str = Field(min_length=1)
-    icon: str | None = Field(default=None, min_length=1)
+    icon: Optional[str] = Field(default=None, min_length=1)
 
 
 class StoryDocument(StrictModel):
     schema_version: Literal[1]
     story_id: Identifier
     title: str = Field(min_length=1)
-    description: str | None = None
+    description: Optional[str] = None
     entry_scene: Identifier
     chapters: list[Chapter] = Field(min_length=1)
     clues: dict[Identifier, ClueDefinition]

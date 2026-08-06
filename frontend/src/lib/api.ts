@@ -66,6 +66,20 @@ export interface GameEnding {
   code: string;
 }
 
+export interface StoryLocation {
+  id: string;
+  title: string;
+  location: string;
+  gps: { lat: number; lng: number } | null;
+}
+
+export interface StoryInfo {
+  slug: string;
+  title: string;
+  description: string;
+  chapters: StoryLocation[];
+}
+
 export interface GameSnapshot {
   session_id: string;
   status: "active" | "completed";
@@ -106,6 +120,8 @@ export const gameApi = {
   },
 
   getState: (sessionId: string) => request<GameSnapshot>(`/game/state/${sessionId}`),
+
+  getStories: () => request<StoryInfo[]>("/game/stories"),
 };
 
 /* ============================

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Optional
 
 from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Integer, JSON, String, Text, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -27,9 +27,9 @@ class Story(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
     slug: Mapped[str] = mapped_column(String(64), unique=True, index=True, nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
-    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     status: Mapped[str] = mapped_column(String(16), nullable=False, default="draft")
-    active_version_id: Mapped[str | None] = mapped_column(
+    active_version_id: Mapped[Optional[str]] = mapped_column(
         String(36), ForeignKey("story_versions.id", ondelete="SET NULL"), nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
@@ -40,7 +40,7 @@ class Story(Base):
     versions: Mapped[list["StoryVersion"]] = relationship(
         back_populates="story", foreign_keys="StoryVersion.story_id"
     )
-    active_version: Mapped["StoryVersion | None"] = relationship(
+    active_version: Mapped[Optional["StoryVersion"]] = relationship(
         foreign_keys=[active_version_id], post_update=True
     )
 
@@ -60,7 +60,7 @@ class StoryVersion(Base):
     content_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
     content_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
-    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    published_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
     story: Mapped[Story] = relationship(back_populates="versions", foreign_keys=[story_id])
 
@@ -80,10 +80,10 @@ class GameSession(Base):
     )
     current_scene_key: Mapped[str] = mapped_column(String(64), nullable=False)
     status: Mapped[str] = mapped_column(String(16), nullable=False, default="active")
-    ending_scene_key: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    ending_scene_key: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
     last_active_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
-    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
     __table_args__ = (
         CheckConstraint("status IN ('active', 'completed', 'abandoned')", name="ck_game_sessions_status"),
@@ -99,11 +99,11 @@ class GameEvent(Base):
     )
     sequence_number: Mapped[int] = mapped_column(Integer, nullable=False)
     event_type: Mapped[str] = mapped_column(String(32), nullable=False)
-    scene_key: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    choice_key: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    next_scene_key: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    request_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
-    payload_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    scene_key: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    choice_key: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    next_scene_key: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    request_id: Mapped[Optional[str]] = mapped_column(String(36), nullable=True)
+    payload_json: Mapped[Optional[dict[str, Any]]] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
 
     __table_args__ = (
@@ -119,7 +119,7 @@ class SessionClue(Base):
         String(36), ForeignKey("game_sessions.id", ondelete="CASCADE"), primary_key=True
     )
     clue_key: Mapped[str] = mapped_column(String(64), primary_key=True)
-    source_event_id: Mapped[int | None] = mapped_column(
+    source_event_id: Mapped[Optional[int]] = mapped_column(
         Integer, ForeignKey("game_events.id", ondelete="SET NULL"), nullable=True
     )
     acquired_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)

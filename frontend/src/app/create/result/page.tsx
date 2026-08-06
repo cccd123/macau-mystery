@@ -19,8 +19,10 @@ import {
   Eye,
   EyeOff,
   Loader2,
+  Info,
 } from "lucide-react";
 import { ugcApi } from "@/lib/api";
+import { useTranslation } from "@/lib/i18n/context";
 
 interface GeneratedScript {
   script_id: string;
@@ -28,9 +30,11 @@ interface GeneratedScript {
   chapters: any[];
   style: string;
   era: string;
+  demo_mode?: boolean;
 }
 
 export default function CreateResultPage() {
+  const { t } = useTranslation();
   const [script, setScript] = useState<GeneratedScript | null>(null);
   const [regenerating, setRegenerating] = useState(false);
   const [published, setPublished] = useState(false);
@@ -101,6 +105,14 @@ export default function CreateResultPage() {
           ID: {script.script_id} | {script.chapters?.length || 0} chapters
         </p>
       </div>
+
+      {/* Demo mode notice */}
+      {script.demo_mode && (
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 mb-6 text-sm text-amber-700 dark:text-amber-400">
+          <Info className="h-4 w-4 mt-0.5 shrink-0" />
+          <span>{t("create.demoNotice")}</span>
+        </div>
+      )}
 
       {/* Script Preview Card */}
       <div className="space-y-3 mb-8">

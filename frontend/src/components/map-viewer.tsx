@@ -27,9 +27,16 @@ export default function MapViewer({ locations }: MapViewerProps) {
 
     // Clean up any existing map instance (handles React Strict Mode double-mount)
     if (mapRef.current) {
-      mapRef.current.remove();
+      try {
+        mapRef.current.remove();
+      } catch {
+        // Ignore cleanup errors from stale Leaflet internals
+      }
       mapRef.current = null;
     }
+
+    // Defensive cleanup: remove stale Leaflet DOM to prevent _leaflet_pos errors
+    container.innerHTML = "";
 
     const map = L.map(container, {
       center: [22.19, 113.536],
@@ -86,7 +93,11 @@ export default function MapViewer({ locations }: MapViewerProps) {
     return () => {
       clearTimeout(timer);
       if (mapRef.current) {
-        mapRef.current.remove();
+        try {
+          mapRef.current.remove();
+        } catch {
+          // Ignore cleanup errors (e.g. _leaflet_pos undefined in Strict Mode)
+        }
         mapRef.current = null;
       }
     };

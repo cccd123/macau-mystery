@@ -3,6 +3,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from typing import Union
+
 from app.story.contract import Choice, EndingScene, RouterScene, Scene, StoryDocument, VideoScene
 
 
@@ -10,7 +12,7 @@ class StoryRuntimeError(ValueError):
     pass
 
 
-PlayableScene = VideoScene | EndingScene
+PlayableScene = Union[VideoScene, EndingScene]
 
 
 @dataclass(frozen=True)
