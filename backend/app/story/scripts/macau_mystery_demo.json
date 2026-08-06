@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "story_id": "macau_mystery_demo",
-  "title": "澳门悬案技术演示",
+  "title": "澳门秘录：中葡悬案",
   "description": "用于验证预制视频分支、汇合、线索与多结局的最小剧情。",
   "entry_scene": "scene_start",
   "chapters": [

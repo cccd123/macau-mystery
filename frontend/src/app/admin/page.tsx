@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Eye, EyeOff, Loader2, Sparkles, PenTool } from "lucide-react";
+import { Edit, Trash2, Eye, EyeOff, Loader2, Sparkles, PenTool, HardDrive } from "lucide-react";
 import { adminApi } from "@/lib/api";
 
 interface Script {
@@ -29,20 +29,20 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetchScripts();
-  }, []);
-
-  const fetchScripts = async () => {
+  async function fetchScripts() {
     setLoading(true);
     try {
       const data = await adminApi.listScripts();
       setScripts(Array.isArray(data) ? data : []);
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Failed to load scripts");
     }
     setLoading(false);
-  };
+  }
+
+  useEffect(() => {
+    fetchScripts();
+  }, []);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Confirm delete?")) return;
@@ -93,6 +93,12 @@ export default function AdminPage() {
             <Button className="gap-2">
               <PenTool className="h-4 w-4" />
               Manual Create
+            </Button>
+          </Link>
+          <Link href="/admin/media">
+            <Button variant="outline" className="gap-2">
+              <HardDrive className="h-4 w-4" />
+              Media Storage
             </Button>
           </Link>
         </div>

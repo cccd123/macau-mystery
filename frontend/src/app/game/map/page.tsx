@@ -5,9 +5,17 @@ import dynamic from "next/dynamic";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Map, BookOpen, ChevronDown } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Map, BookOpen, ChevronDown, Info } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/context";
-import { gameApi, StoryInfo, StoryLocation } from "@/lib/api";
+import { gameApi, locationApi, StoryInfo, LocationInfo } from "@/lib/api";
 
 const MapViewer = dynamic(() => import("@/components/map-viewer"), {
   ssr: false,
@@ -34,21 +42,32 @@ export default function MapPage() {
   const [selectedSlug, setSelectedSlug] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [locations, setLocations] = useState<LocationInfo[]>([]);
 
   useEffect(() => {
-    gameApi
-      .getStories()
-      .then((data) => {
-        const all = data.length > 0 ? data : [FALLBACK_STORY];
+    Promise.all([
+      gameApi.getStories(),
+      locationApi.list().catch(() => ({ items: [] })),
+    ])
+      .then(([storyData, locationData]) => {
+        const all = storyData.length > 0 ? storyData : [FALLBACK_STORY];
         setStories(all);
         setSelectedSlug(all[0].slug);
+        setLocations(locationData.items || []);
       })
       .catch(() => {
         setStories([FALLBACK_STORY]);
         setSelectedSlug(FALLBACK_STORY.slug);
+        setLocations([]);
       })
       .finally(() => setLoading(false));
   }, []);
+
+  const locationByName = (name: string): LocationInfo | undefined => {
+    return locations.find(
+      (loc) => loc.name === name || loc.name.includes(name) || name.includes(loc.name)
+    );
+  };
 
   const currentStory = useMemo(
     () => stories.find((s) => s.slug === selectedSlug) ?? stories[0],
@@ -181,9 +200,47 @@ export default function MapPage() {
               </CardHeader>
               {ch.gps && (
                 <CardContent className="pt-0">
-                  <p className="text-xs text-muted-foreground font-mono">
+                  <p className="text-xs text-muted-foreground font-mono mb-2">
                     {ch.gps.lat.toFixed(4)}°N, {ch.gps.lng.toFixed(4)}°E
                   </p>
+                  {(() => {
+                    const loc = locationByName(ch.location);
+                    if (!loc) return null;
+                    return (
+                      <Dialog>
+                        <DialogTrigger
+                          render={
+                            <button className="text-left text-sm text-primary hover:underline flex items-start gap-1.5 mt-1">
+                              <Info className="h-4 w-4 shrink-0 mt-0.5" />
+                              <span>
+                                <span className="font-medium">{t("map.locationIntro")}:</span>{" "}
+                                {loc.summary}
+                              </span>
+                            </button>
+                          }
+                        />
+                        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle>{loc.name}</DialogTitle>
+                            <DialogDescription>{loc.summary}</DialogDescription>
+                          </DialogHeader>
+                          <div className="space-y-3 mt-2 text-sm text-muted-foreground leading-relaxed">
+                            <p>{loc.description}</p>
+                            {loc.source_url && (
+                              <a
+                                href={loc.source_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary hover:underline text-xs"
+                              >
+                                {t("map.readMore")}: {loc.source_title}
+                              </a>
+                            )}
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    );
+                  })()}
                 </CardContent>
               )}
             </Card>

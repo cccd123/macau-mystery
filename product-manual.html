@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>澳秘 Macau Mystery - 产品使用手册</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --jade: #1a8a6e;
+      --jade-light: #e3f0eb;
+      --azulejo: #1a6fa0;
+      --azulejo-light: #e0edf6;
+      --brass: #b89a6a;
+      --lacquer: #9b2c2c;
+      --bg: #f7f6f2;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --radius: 20px;
+      --shadow: 0 20px 60px rgba(26, 138, 110, 0.12);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 1.5rem;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(26,138,110,0.08) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(26,111,160,0.08) 0%, transparent 40%),
+        linear-gradient(135deg, #f7f6f2 0%, #e3f0eb 50%, #f0e8d8 100%);
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 90% 10%, rgba(184,154,106,0.08) 0%, transparent 25%),
+        radial-gradient(circle at 10% 90%, rgba(26,138,110,0.08) 0%, transparent 25%);
+      pointer-events: none;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 880px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(26,138,110,0.2);
+      color: var(--jade);
+      padding: 0.5rem 1.25rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      backdrop-filter: blur(8px);
+      margin-bottom: 1.5rem;
+      animation: fadeInUp 0.8s ease both;
+    }
+    .hero h1 {
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 900;
+      margin: 0 0 0.5rem;
+      background: linear-gradient(135deg, var(--jade) 0%, var(--azulejo) 50%, var(--brass) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: fadeInUp 0.8s 0.1s ease both;
+    }
+    .hero .subtitle {
+      font-size: clamp(1.25rem, 3vw, 1.75rem);
+      color: var(--muted);
+      margin-bottom: 2rem;
+      animation: fadeInUp 0.8s 0.2s ease both;
+    }
+    .highlight-box {
+      background: rgba(255,255,255,0.85);
+      border-left: 5px solid var(--jade);
+      padding: 1.5rem 2rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      font-size: 1.35rem;
+      font-weight: 500;
+      color: var(--text);
+      margin: 0 auto 2rem;
+      max-width: 720px;
+      animation: fadeInUp 0.8s 0.3s ease both;
+    }
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--muted);
+      font-size: 0.85rem;
+      animation: bounce 2s infinite;
+    }
+
+    /* ── Sections ── */
+    section { padding: 5rem 1.5rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .section-title h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      margin: 0 0 0.75rem;
+      color: var(--text);
+    }
+    .section-title p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ── Flow steps ── */
+    .flow {
+      display: grid;
+      gap: 4rem;
+    }
+    .step {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .step:nth-child(even) .step-text { order: 2; }
+    .step:nth-child(even) .shot-wrap { order: 1; }
+    @media (max-width: 900px) {
+      .step { grid-template-columns: 1fr; gap: 2rem; }
+      .step:nth-child(even) .step-text,
+      .step:nth-child(even) .shot-wrap { order: unset; }
+    }
+    .step-number {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--jade), var(--azulejo));
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 8px 24px rgba(26,138,110,0.25);
+    }
+    .step-text h3 {
+      font-size: 1.75rem;
+      margin: 0 0 1rem;
+      color: var(--jade);
+    }
+    .step-text p { color: var(--muted); margin-bottom: 1rem; }
+    .feature-list { list-style: none; padding: 0; margin: 0; }
+    .feature-list li {
+      padding: 0.5rem 0;
+      padding-left: 1.75rem;
+      position: relative;
+      color: var(--text);
+    }
+    .feature-list li::before {
+      content: "✦";
+      position: absolute;
+      left: 0;
+      color: var(--brass);
+    }
+
+    /* ── Interactive screenshot ── */
+    .shot-wrap {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      background: var(--card);
+      border: 1px solid rgba(0,0,0,0.06);
+      transition: transform 0.4s ease;
+    }
+    .shot-wrap:hover { transform: translateY(-6px); }
+    .shot-wrap img { width: 100%; display: block; }
+    .hotspot {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(26,138,110,0.9);
+      border: 3px solid white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      cursor: pointer;
+      animation: pulse 2s infinite;
+      z-index: 5;
+    }
+    .hotspot::after {
+      content: "?";
+      color: white;
+      font-weight: 800;
+      font-size: 0.85rem;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .hotspot .tooltip {
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%) scale(0.9);
+      width: 220px;
+      background: rgba(31,41,55,0.95);
+      color: white;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .hotspot .tooltip::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 8px solid transparent;
+      border-top-color: rgba(31,41,55,0.95);
+    }
+    .hotspot:hover .tooltip,
+    .hotspot.active .tooltip {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+
+    /* ── Feature grid ── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .feature-card {
+      background: var(--card);
+      padding: 2rem;
+      border-radius: var(--radius);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+      border-top: 4px solid var(--jade);
+      transition: transform 0.3s ease;
+    }
+    .feature-card:hover { transform: translateY(-6px); }
+    .feature-card h4 { margin: 0 0 0.75rem; font-size: 1.25rem; color: var(--jade); }
+    .feature-card p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+
+    /* ── Tech / CTA ── */
+    .cta {
+      background: linear-gradient(135deg, var(--jade), var(--azulejo));
+      color: white;
+      text-align: center;
+      border-radius: 32px;
+      padding: 4rem 2rem;
+      margin: 2rem auto;
+      max-width: 900px;
+      box-shadow: var(--shadow);
+    }
+    .cta h2 { font-size: 2.25rem; margin: 0 0 1rem; }
+    .cta p { opacity: 0.9; margin-bottom: 1.5rem; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: white;
+      color: var(--jade);
+      padding: 0.9rem 2rem;
+      border-radius: 999px;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      transition: transform 0.2s ease;
+    }
+    .btn:hover { transform: scale(1.05); }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+      40% { transform: translateX(-50%) translateY(-10px); }
+      60% { transform: translateX(-50%) translateY(-5px); }
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(26,138,110,0.5); }
+      70% { box-shadow: 0 0 0 12px rgba(26,138,110,0); }
+      100% { box-shadow: 0 0 0 0 rgba(26,138,110,0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-content">
+      <div class="badge">🎭 AI × 澳门文游 · 沉浸式互动剧本</div>
+      <h1>澳秘 Macau Mystery</h1>
+      <p class="subtitle">不是听导览，是亲临澳门历史城区当主角</p>
+      <div class="highlight-box">
+        <strong>一句话亮点：</strong>漫步澳门原生历史城区，在预制视频分支剧情中做出关键抉择，于真实景点间解锁多线剧情，沉浸式读懂鲜活的澳门历史。
+      </div>
+      <p class="scroll-hint">↓ 向下滚动，开启你的探案之旅</p>
+    </div>
+  </header>
+
+  <!-- PRODUCT OVERVIEW -->
+  <section id="overview">
+    <div class="container">
+      <div class="section-title reveal">
+        <h2>产品核心能力</h2>
+        <p>从“看风景”到“演故事”，澳秘把澳门历史城区变成一座开放式沉浸式剧场。</p>
+      </div>
+      <div class="feature-grid reveal">
+        <div class="feature-card">
+          <h4>🗺️ 实景路线引擎</h4>
+          <p>剧本章节与真实 GPS 坐标绑定，首页与地图页均随当前发布剧本自动切换探索路线。</p>
+        </div>
+        <div class="feature-card">
+          <h4>🎬 预制视频分支叙事</h4>
+          <p>每幕采用预制视频 + 选项覆盖层的沉浸形式，视频末帧保持、选项浮现、线索预加载，推进到下一节点。</p>
+        </div>
+        <div class="feature-card">
+          <h4>🔀 多线分支与多结局</h4>
+          <p>选择影响剧情分支，关键线索决定最终结局；支持分支汇合与 router 条件跳转。</p>
+        </div>
+        <div class="feature-card">
+          <h4>✍️ 一句话生短剧（演示）</h4>
+          <p>输入一句创意描述即可生成含多幕、多选择的互动短剧结构，并可预览未来理想玩家效果。</p>
+        </div>
+        <div class="feature-card">
+          <h4>🏛️ 景点知识库</h4>
+          <p>地图页接入澳门六大名胜介绍接口，点击即可查看景点历史、文化背景与官方来源。</p>
+        </div>
+        <div class="feature-card">
+          <h4>☁️ 对象存储媒体上传</h4>
+          <p>管理后台支持请求 S3 兼容对象存储的预签名上传 URL，直接上传视频与海报并注册入库。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- USER JOURNEY -->
+  <section id="journey" style="background: linear-gradient(180deg, #fff 0%, var(--jade-light) 100%);">
+    <div class="container">
+      <div class="section-title reveal">
+        <h2>用户体验流程</h2>
+        <p>从打开首页到深入剧情，每一步都有清晰的视觉引导。</p>
+      </div>
+
+      <div class="flow">
+        <!-- Step 1 -->
+        <div class="step reveal">
+          <div class="step-text">
+            <div class="step-number">1</div>
+            <h3>进入首页</h3>
+            <p>淡雅的澳门地标天际线背景，搭配一句话定位，让用户 3 秒明白产品价值。</p>
+            <ul class="feature-list">
+              <li>“开始探案”直接进入主线剧本</li>
+              <li>“一句话写短剧”开启 UGC 创作</li>
+              <li>下方三大核心体验卡片快速建立信任</li>
+            </ul>
+          </div>
+          <div class="shot-wrap">
+            <img src="01_homepage_hero.png" alt="首页" />
+            <div class="hotspot" style="top: 63%; left: 28%;" onclick="toggleTip(this)">
+              <div class="tooltip">“开始探案”按钮：点击后进入当前发布剧本的游戏会话，开始沉浸式视频剧情。</div>
+            </div>
+            <div class="hotspot" style="top: 63%; left: 68%;" onclick="toggleTip(this)">
+              <div class="tooltip">“一句话写短剧”按钮：跳转创作页，用一句话生成自己的互动剧本。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step reveal">
+          <div class="step-text">
+            <div class="step-number">2</div>
+            <h3>了解核心体验</h3>
+            <p>三大卡片分别展示：沉浸式剧本杀、一句话短剧、真实历史地图。每张卡片用 3 个要点降低理解成本。</p>
+            <ul class="feature-list">
+              <li>明确标注“演示项目”避免误导</li>
+              <li>地图能力诚实表述为“路线预览”</li>
+              <li>短剧功能提示“演示模式”与 API Key 配置说明</li>
+              <li>当前示例剧本为《澳门秘录：中葡悬案》</li>
+            </ul>
+          </div>
+          <div class="shot-wrap">
+            <img src="02_three_core_experiences.png" alt="三大核心体验" />
+            <div class="hotspot" style="top: 30%; left: 12%;" onclick="toggleTip(this)">
+              <div class="tooltip">沉浸式剧本杀卡片：说明多套剧情可选，当前示例为《澳门秘录：中葡悬案》。</div>
+            </div>
+            <div class="hotspot" style="top: 70%; left: 12%;" onclick="toggleTip(this)">
+              <div class="tooltip">一句话短剧卡片：提示当前为演示模式，配置 API Key 后可体验真实 AI 生成。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step reveal">
+          <div class="step-text">
+            <div class="step-number">3</div>
+            <h3>预览探索路线</h3>
+            <p>“当前剧本探索路线”区域用时间轴形式展示当前剧本会经过的澳门名胜，让用户对行程有直观预期。</p>
+            <ul class="feature-list">
+              <li>路线随所选剧本动态变化</li>
+              <li>标注“不同剧本将展示不同的探索路线”</li>
+              <li>与真实历史城区游览动线一致</li>
+            </ul>
+          </div>
+          <div class="shot-wrap">
+            <img src="03_route_section.png" alt="探索路线" />
+            <div class="hotspot" style="top: 78%; left: 25%;" onclick="toggleTip(this)">
+              <div class="tooltip">路线节点：第 1 站妈阁庙，后续会经过亚婆井前地、郑家大屋等真实景点。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step reveal">
+          <div class="step-text">
+            <div class="step-number">4</div>
+            <h3>探案地图</h3>
+            <p>地图页从后端动态拉取已发布剧本。用户可在下拉框切换不同故事，地图会立即重绘对应的路线与标记。</p>
+            <ul class="feature-list">
+              <li>左侧 Leaflet 交互地图显示章节位置</li>
+              <li>右侧列表展示章节标题与 GPS 坐标</li>
+              <li>多剧本切换时路线自动更新</li>
+            </ul>
+          </div>
+          <div class="shot-wrap">
+            <img src="04_map_page.png" alt="地图页" />
+            <div class="hotspot" style="top: 18%; left: 82%;" onclick="toggleTip(this)">
+              <div class="tooltip">剧本选择器：点击可切换不同已发布剧本，每个剧本对应不同探索路线。</div>
+            </div>
+            <div class="hotspot" style="top: 66%; left: 50%;" onclick="toggleTip(this)">
+              <div class="tooltip">地图标记：绿色“1”表示当前章节位置，点击可查看景点弹窗。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="step reveal">
+          <div class="step-text">
+            <div class="step-number">5</div>
+            <h3>切换剧本，路线随之改变</h3>
+            <p>选择《跨越中葡的悬案》后，地图立即展示 4 个章节组成的完整路线，虚线串联起妈阁庙到岗顶剧院的探索路径。</p>
+            <ul class="feature-list">
+              <li>路线由剧本 JSON 中的 gps 字段驱动</li>
+              <li>同伴导入新剧本后无需改前端代码</li>
+              <li>右侧卡片同步显示各章节状态</li>
+            </ul>
+          </div>
+          <div class="shot-wrap">
+            <img src="05_map_second_story.png" alt="切换剧本后的地图" />
+            <div class="hotspot" style="top: 48%; left: 35%;" onclick="toggleTip(this)">
+              <div class="tooltip">动态路线：4 个标记由虚线连接，直观呈现该剧情的实地探索顺序。</div>
+            </div>
+            <div class="hotspot" style="top: 18%; left: 80%;" onclick="toggleTip(this)">
+              <div class="tooltip">当前选中剧本：显示“跨越中葡的悬案 · 4 章”。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 6 -->
+        <div class="step reveal">
+          <div class="step-text">
+            <div class="step-number">6</div>
+            <h3>一句话创作短剧</h3>
+            <p>在创作页输入一句话描述，选择风格、时代、长度，即可生成一份结构完整的互动短剧。当前为演示模式，结果可直接预览。</p>
+            <ul class="feature-list">
+              <li>橙色“演示模式”徽章明确告知用户当前状态</li>
+              <li>提示配置 SILICONFLOW_API_KEY 开启真实 AI</li>
+              <li>支持悬疑、爱情、喜剧、悲剧四大风格</li>
+            </ul>
+          </div>
+          <div class="shot-wrap">
+            <img src="06_create_page.png" alt="创作页" />
+            <div class="hotspot" style="top: 14%; left: 35%;" onclick="toggleTip(this)">
+              <div class="tooltip">演示模式标识：提醒用户当前为 Mock 生成，配置 API Key 后可调用真实模型。</div>
+            </div>
+            <div class="hotspot" style="top: 52%; left: 25%;" onclick="toggleTip(this)">
+              <div class="tooltip">风格选择：悬疑推理 / 爱情故事 / 喜剧冒险 / 悲剧史诗，决定生成短剧基调。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 7 -->
+        <div class="step reveal">
+          <div class="step-text">
+            <div class="step-number">7</div>
+            <h3>查看生成结果与理想效果</h3>
+            <p>生成结果页展示多幕剧情、每幕场景旁白与选择分支。点击“预览剧本结构”可查看结构弹窗，并切换到“理想效果演示”提前体验未来视频播放器的优化方向。</p>
+            <ul class="feature-list">
+              <li>“剧本结构”展示每幕景点、旁白与选择</li>
+              <li>“理想效果演示”模拟视频末帧保持、选项覆盖层与线索动效</li>
+              <li>底部支持重新生成、发布与投稿官方</li>
+            </ul>
+          </div>
+          <div class="shot-wrap">
+            <img src="07_create_result.png" alt="创作结果页" />
+            <div class="hotspot" style="top: 66%; left: 78%;" onclick="toggleTip(this)">
+              <div class="tooltip">“预览剧本结构”：查看生成的互动剧本结构，并切换到“理想效果演示”提前感受未来优化方向。</div>
+            </div>
+            <div class="hotspot" style="top: 50%; left: 50%;" onclick="toggleTip(this)">
+              <div class="tooltip">理想效果演示：模拟预制视频播放结束后的选项覆盖层、线索解锁动画与下一段视频预加载效果。</div>
+            </div>
+            <div class="hotspot" style="top: 90%; left: 82%;" onclick="toggleTip(this)">
+              <div class="tooltip">发布设置：可设为公开或私有，公开后可投稿官方审核。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 8 -->
+        <div class="step reveal">
+          <div class="step-text">
+            <div class="step-number">8</div>
+            <h3>登录解锁更多</h3>
+            <p>游客可体验首页、地图和基础剧情；登录后可保存进度、投稿作品、进入管理后台。支持注册与演示账号快速体验。</p>
+            <ul class="feature-list">
+              <li>清晰的登录/注册切换</li>
+              <li>演示账号提示降低试用门槛</li>
+              <li>Bearer Token 持久化会话</li>
+            </ul>
+          </div>
+          <div class="shot-wrap">
+            <img src="08_login_page.png" alt="登录页" />
+            <div class="hotspot" style="top: 72%; left: 50%;" onclick="toggleTip(this)">
+              <div class="tooltip">登录按钮：提交后后端验证 Argon2 密码哈希并返回 Bearer Token。</div>
+            </div>
+            <div class="hotspot" style="top: 88%; left: 50%;" onclick="toggleTip(this)">
+              <div class="tooltip">演示账号：admin/admin123 或 guest/guest123，方便快速体验完整功能。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 9 -->
+        <div class="step reveal">
+          <div class="step-text">
+            <div class="step-number">9</div>
+            <h3>对象存储媒体上传</h3>
+            <p>管理后台新增“Media Storage”入口，管理员可请求 S3/MinIO/R2 的预签名 PUT URL，直接上传视频与海报资源，完成后注册到后端以便剧本引用。</p>
+            <ul class="feature-list">
+              <li>后端校验文件类型、大小与媒体种类</li>
+              <li>返回临时上传 URL 与公开访问地址</li>
+              <li>生产环境关闭演示账号后可安全启用</li>
+            </ul>
+          </div>
+          <div class="shot-wrap" style="padding: 2rem; display: grid; place-items: center; min-height: 260px;">
+            <div style="width: 100%; max-width: 320px; background: var(--card); border: 1px dashed var(--jade); border-radius: 16px; padding: 1.5rem; text-align: center;">
+              <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">☁️</div>
+              <h4 style="margin: 0 0 0.5rem; color: var(--jade);">Media Object Storage</h4>
+              <p style="margin: 0 0 1rem; font-size: 0.9rem; color: var(--muted);">Request presigned upload URL</p>
+              <div style="background: var(--jade-light); color: var(--jade); padding: 0.5rem 1rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600;">PUT → S3/MinIO/R2</div>
+            </div>
+            <div class="hotspot" style="top: 25%; left: 75%;" onclick="toggleTip(this)">
+              <div class="tooltip">管理后台 Media Storage：请求预签名 URL，前端可直接把视频/海报上传到对象存储。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section>
+    <div class="container">
+      <div class="cta reveal">
+        <h2>准备好开启澳门探案之旅了吗？</h2>
+        <p>打开浏览器，访问 localhost:3000，选择你的第一个剧本，走进澳门历史城区的迷雾中。</p>
+        <a class="btn" href="http://localhost:3000" target="_blank">立即体验 →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 Macau Mystery | AI × Macau Cultural Heritage</p>
+    <p style="margin-top: 0.5rem; opacity: 0.7;">本手册由项目实时截图生成 · 按钮可交互悬停查看说明</p>
+  </footer>
+
+  <script>
+    // Reveal on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Hotspot toggle (also works on touch)
+    function toggleTip(el) {
+      document.querySelectorAll('.hotspot').forEach(h => {
+        if (h !== el) h.classList.remove('active');
+      });
+      el.classList.toggle('active');
+    }
+
+    // Close tooltip when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.hotspot')) {
+        document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('active'));
+      }
+    });
+  </script>
+</body>
+</html>

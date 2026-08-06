@@ -13,8 +13,10 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, LogIn, UserPlus } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/context";
 
 export default function LoginPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -79,9 +81,9 @@ export default function LoginPage() {
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Welcome to Macau Mystery</CardTitle>
+          <CardTitle className="text-2xl">{t("login.title")}</CardTitle>
           <CardDescription>
-            Login or create an account to get started
+            {t("login.subtitle")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -93,24 +95,24 @@ export default function LoginPage() {
 
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-4">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Register</TabsTrigger>
+              <TabsTrigger value="login">{t("login.loginTab")}</TabsTrigger>
+              <TabsTrigger value="register">{t("login.registerTab")}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login" className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Username</label>
+                <label className="text-sm font-medium">{t("login.username")}</label>
                 <Input
-                  placeholder="admin / your username"
+                  placeholder={t("login.username")}
                   value={loginUser}
                   onChange={(e) => setLoginUser(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Password</label>
+                <label className="text-sm font-medium">{t("login.password")}</label>
                 <Input
                   type="password"
-                  placeholder="password"
+                  placeholder={t("login.password")}
                   value={loginPass}
                   onChange={(e) => setLoginPass(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleLogin()}
@@ -126,35 +128,35 @@ export default function LoginPage() {
                 ) : (
                   <LogIn className="h-4 w-4" />
                 )}
-                Login
+                {t("login.loginBtn")}
               </Button>
               <p className="text-xs text-center text-muted-foreground">
-                Demo: admin / admin123 or guest / guest123
+                {t("login.demoHint")}
               </p>
             </TabsContent>
 
             <TabsContent value="register" className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Nickname</label>
+                <label className="text-sm font-medium">{t("login.nickname")}</label>
                 <Input
-                  placeholder="Display name"
+                  placeholder={t("login.nickname")}
                   value={regNick}
                   onChange={(e) => setRegNick(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Username</label>
+                <label className="text-sm font-medium">{t("login.username")}</label>
                 <Input
-                  placeholder="Choose a username"
+                  placeholder={t("login.username")}
                   value={regUser}
                   onChange={(e) => setRegUser(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Password</label>
+                <label className="text-sm font-medium">{t("login.password")}</label>
                 <Input
                   type="password"
-                  placeholder="Choose a password"
+                  placeholder={t("login.password")}
                   value={regPass}
                   onChange={(e) => setRegPass(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleRegister()}
@@ -170,7 +172,7 @@ export default function LoginPage() {
                 ) : (
                   <UserPlus className="h-4 w-4" />
                 )}
-                Create Account
+                {t("login.registerBtn")}
               </Button>
             </TabsContent>
           </Tabs>

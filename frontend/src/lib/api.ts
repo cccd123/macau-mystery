@@ -80,6 +80,17 @@ export interface StoryInfo {
   chapters: StoryLocation[];
 }
 
+export interface LocationInfo {
+  id: string;
+  order: number;
+  name: string;
+  summary: string;
+  description: string;
+  coordinates: { lat: number; lng: number };
+  source_title: string;
+  source_url: string;
+}
+
 export interface GameSnapshot {
   session_id: string;
   status: "active" | "completed";
@@ -122,6 +133,51 @@ export const gameApi = {
   getState: (sessionId: string) => request<GameSnapshot>(`/game/state/${sessionId}`),
 
   getStories: () => request<StoryInfo[]>("/game/stories"),
+};
+
+export const locationApi = {
+  list: () => request<{ items: LocationInfo[] }>("/locations"),
+  get: (id: string) => request<LocationInfo>(`/locations/${id}`),
+};
+
+export interface UploadTarget {
+  object_key: string;
+  method: "PUT";
+  upload_url: string;
+  headers: Record<string, string>;
+  public_url: string;
+  expires_at: string;
+}
+
+export interface StoredObject {
+  object_key: string;
+  public_url: string;
+  content_type: string;
+  size_bytes: number;
+  etag: string;
+  status: "ready";
+}
+
+export const mediaApi = {
+  requestUpload: (body: {
+    kind: "video" | "poster";
+    filename: string;
+    content_type: string;
+    size_bytes: number;
+  }) =>
+    request<UploadTarget>("/admin/media/uploads", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  completeUpload: (body: {
+    object_key: string;
+    kind: "video" | "poster";
+    expected_size_bytes: number;
+  }) =>
+    request<StoredObject>("/admin/media/uploads/complete", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
 };
 
 /* ============================

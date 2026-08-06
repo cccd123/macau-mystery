@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { BookOpen, PenTool, Map, ArrowRight, Sparkles, Loader2 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/context";
-import { adminApi } from "@/lib/api";
+import { gameApi } from "@/lib/api";
 
 /* ── Floating decorative elements (pure CSS shapes) ── */
 function FloatingDecor() {
@@ -267,32 +267,48 @@ function HeroParallax({ children }: { children: React.ReactNode }) {
 export default function HomePage() {
   const { t, locale } = useTranslation();
   const [route, setRoute] = useState<string[]>([]);
+  const [currentStoryTitle, setCurrentStoryTitle] = useState<string>("");
   const [loadingRoute, setLoadingRoute] = useState(true);
 
   useEffect(() => {
-    adminApi
-      .getRoute()
-      .then((data) => setRoute(Array.isArray(data) ? data : []))
+    gameApi
+      .getStories()
+      .then((stories) => {
+        const first = stories[0];
+        if (first) {
+          setCurrentStoryTitle(first.title);
+          setRoute(first.chapters.map((ch) => ch.location));
+        } else {
+          setRoute([
+            "\u5988\u9601\u5e99",
+            "\u4e9a\u5a46\u4e95\u524d\u5730",
+            "\u90d1\u5bb6\u5927\u5c4b",
+            "\u5c97\u9876\u5267\u9662",
+            "\u8bae\u4e8b\u4ead\u524d\u5730",
+            "\u5927\u4e09\u5df4\u724c\u574a",
+          ]);
+        }
+      })
       .catch(() =>
         setRoute([
-          "Barra Temple",
-          "Lilau Square",
-          "Mandarin House",
-          "Dom Pedro V Theatre",
-          "Senado Square",
-          "Ruins of St Paul",
+          "\u5988\u9601\u5e99",
+          "\u4e9a\u5a46\u4e95\u524d\u5730",
+          "\u90d1\u5bb6\u5927\u5c4b",
+          "\u5c97\u9876\u5267\u9662",
+          "\u8bae\u4e8b\u4ead\u524d\u5730",
+          "\u5927\u4e09\u5df4\u724c\u574a",
         ])
       )
       .finally(() => setLoadingRoute(false));
   }, []);
 
   const routeNames: Record<string, Record<string, string>> = {
-    "Barra Temple": { en: "A-Ma Temple", "zh-CN": "\u5988\u9601\u5e99", "zh-TW": "\u5abd\u95a3\u5edf" },
-    "Lilau Square": { en: "Lilau Square", "zh-CN": "\u4e9a\u5a46\u4e95\u524d\u5730", "zh-TW": "\u4e9e\u5a46\u4e95\u524d\u5730" },
-    "Mandarin House": { en: "Mandarin's House", "zh-CN": "\u90d1\u5bb6\u5927\u5c4b", "zh-TW": "\u912d\u5bb6\u5927\u5c4b" },
-    "Dom Pedro V Theatre": { en: "Dom Pedro V Theatre", "zh-CN": "\u5c97\u9876\u5267\u9662", "zh-TW": "\u5d97\u9802\u5287\u9662" },
-    "Senado Square": { en: "Senado Square", "zh-CN": "\u8bae\u4e8b\u4ead\u524d\u5730", "zh-TW": "\u8b70\u4e8b\u4ead\u524d\u5730" },
-    "Ruins of St Paul": { en: "Ruins of St. Paul's", "zh-CN": "\u5927\u4e09\u5df4\u724c\u574a", "zh-TW": "\u5927\u4e09\u5df4\u724c\u574a" },
+    "\u5988\u9601\u5e99": { en: "A-Ma Temple", "zh-CN": "\u5988\u9601\u5e99", "zh-TW": "\u5abd\u95a3\u5edf" },
+    "\u4e9a\u5a46\u4e95\u524d\u5730": { en: "Lilau Square", "zh-CN": "\u4e9a\u5a46\u4e95\u524d\u5730", "zh-TW": "\u4e9e\u5a46\u4e95\u524d\u5730" },
+    "\u90d1\u5bb6\u5927\u5c4b": { en: "Mandarin's House", "zh-CN": "\u90d1\u5bb6\u5927\u5c4b", "zh-TW": "\u912d\u5bb6\u5927\u5c4b" },
+    "\u5c97\u9876\u5267\u9662": { en: "Dom Pedro V Theatre", "zh-CN": "\u5c97\u9876\u5267\u9662", "zh-TW": "\u5d97\u9802\u5287\u9662" },
+    "\u8bae\u4e8b\u4ead\u524d\u5730": { en: "Senado Square", "zh-CN": "\u8bae\u4e8b\u4ead\u524d\u5730", "zh-TW": "\u8b70\u4e8b\u4ead\u524d\u5730" },
+    "\u5927\u4e09\u5df4\u724c\u574a": { en: "Ruins of St. Paul's", "zh-CN": "\u5927\u4e09\u5df4\u724c\u574a", "zh-TW": "\u5927\u4e09\u5df4\u724c\u574a" },
   };
 
   return (
@@ -441,9 +457,14 @@ export default function HomePage() {
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 tracking-tight">
             {t("home.routeTitle")}
           </h2>
-          <p className="text-muted-foreground text-center mb-14 max-w-xl mx-auto">
+          <p className="text-muted-foreground text-center mb-2 max-w-xl mx-auto">
             {t("home.routeDesc")}
           </p>
+          {currentStoryTitle && (
+            <p className="text-primary font-medium text-center mb-10">
+              {t("home.routeCurrent")}: {currentStoryTitle}
+            </p>
+          )}
           {loadingRoute ? (
             <div className="flex justify-center py-4">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />

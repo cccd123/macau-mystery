@@ -61,6 +61,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "home.feature3c": "\u2022 Online mode for full experience",
     "home.routeTitle": "Current Script Route",
     "home.routeDesc": "Route shown for current script. Different scripts feature different exploration paths.",
+    "home.routeCurrent": "Current script",
     "home.guestInfo": "Guests can preview homepage, map, and script info",
     "home.loginPrompt": "Login / Register to unlock more",
     "home.unlock1": "\u2713 Game experience",
@@ -102,6 +103,12 @@ export const translations: Record<Locale, Record<string, string>> = {
     "result.submitted": "Submitted for review! Admin will notify you if adopted.",
     "result.views": "Views",
     "result.plays": "Plays",
+    "result.previewStructure": "Preview Script Structure",
+    "result.idealPreview": "Ideal Preview",
+    "result.noScript": "No script found",
+    "result.createNew": "Create New",
+    "result.scenes": "scenes",
+    "result.choices": "choices",
 
     // My Scripts
     "myScripts.title": "My Scripts",
@@ -162,6 +169,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     "map.title": "Investigation Map",
     "map.currentLocation": "Current Location",
     "map.locked": "Locked",
+    "map.locationIntro": "Heritage Introduction",
+    "map.readMore": "Read more",
     "create.demoMode": "Demo Mode",
     "create.demoNotice": "Currently in demo mode. Configure SILICONFLOW_API_KEY to enable real AI generation.",
 
@@ -225,6 +234,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "home.feature3c": "\u2022 \u7ebf\u4e0a\u6a21\u5f0f\u4e5f\u80fd\u5b8c\u6574\u4f53\u9a8c",
     "home.routeTitle": "\u5f53\u524d\u5267\u672c\u63a2\u7d22\u8def\u7ebf",
     "home.routeDesc": "\u5f53\u524d\u5267\u672c\u63a2\u7d22\u8def\u7ebf\u3002\u4e0d\u540c\u5267\u672c\u5c06\u5c55\u793a\u4e0d\u540c\u7684\u63a2\u7d22\u8def\u7ebf\u3002",
+    "home.routeCurrent": "\u5f53\u524d\u5267\u672c",
     "home.guestInfo": "\u672a\u767b\u5f55\u7528\u6237\u53ef\u4ee5\u9884\u89c8\u9996\u9875\u3001\u5730\u56fe\u548c\u5267\u672c\u4fe1\u606f",
     "home.loginPrompt": "\u767b\u5f55/\u6ce8\u518c\u4ee5\u89e3\u9501\u66f4\u591a\u529f\u80fd",
     "home.unlock1": "\u2713 \u6e38\u620f\u4f53\u9a8c",
@@ -266,6 +276,12 @@ export const translations: Record<Locale, Record<string, string>> = {
     "result.submitted": "\u5df2\u63d0\u4ea4\u5ba1\u6838\uff01\u7ba1\u7406\u5458\u91c7\u7528\u540e\u4f1a\u901a\u77e5\u4f60\u3002",
     "result.views": "\u6d4f\u89c8",
     "result.plays": "\u64ad\u653e",
+    "result.previewStructure": "\u9884\u89c8\u5267\u672c\u7ed3\u6784",
+    "result.idealPreview": "\u7406\u60f3\u6548\u679c\u6f14\u793a",
+    "result.noScript": "\u6ca1\u6709\u627e\u5230\u5267\u672c",
+    "result.createNew": "\u65b0\u5efa\u5267\u672c",
+    "result.scenes": "\u573a\u666f",
+    "result.choices": "\u9009\u62e9",
 
     // My Scripts
     "myScripts.title": "\u6211\u7684\u5267\u672c",
@@ -326,6 +342,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     "map.title": "\u63a2\u6848\u5730\u56fe",
     "map.currentLocation": "\u5f53\u524d\u4f4d\u7f6e",
     "map.locked": "\u672a\u89e3\u9501",
+    "map.locationIntro": "\u666f\u70b9\u4ecb\u7ecd",
+    "map.readMore": "\u67e5\u770b\u8be6\u60c5",
     "create.demoMode": "\u6f14\u793a\u6a21\u5f0f",
     "create.demoNotice": "\u5f53\u524d\u4e3a\u6f14\u793a\u6a21\u5f0f\uff0c\u914d\u7f6e SILICONFLOW_API_KEY \u540e\u53ef\u4f53\u9a8c\u771f\u5b9e AI \u751f\u6210\u3002",
 
@@ -389,6 +407,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "home.feature3c": "\u2022 \u7dda\u4e0a\u6a21\u5f0f\u4e5f\u80fd\u5b8c\u6574\u9ad4\u9a57",
     "home.routeTitle": "\u7576\u524d\u5287\u672c\u63a2\u7d22\u8def\u7dda",
     "home.routeDesc": "\u7576\u524d\u5287\u672c\u63a2\u7d22\u8def\u7dda\u3002\u4e0d\u540c\u5287\u672c\u5c07\u5c55\u793a\u4e0d\u540c\u7684\u63a2\u7d22\u8def\u7dda\u3002",
+    "home.routeCurrent": "\u7576\u524d\u5287\u672c",
     "home.guestInfo": "\u672a\u767b\u5165\u7528\u6236\u53ef\u4ee5\u9810\u89bd\u9996\u9801\u3001\u5730\u5716\u548c\u5287\u672c\u8cc7\u8a0a",
     "home.loginPrompt": "\u767b\u5165/\u8a3b\u518a\u4ee5\u89e3\u9396\u66f4\u591a\u529f\u80fd",
     "home.unlock1": "\u2713 \u904a\u6232\u9ad4\u9a57",
@@ -430,6 +449,12 @@ export const translations: Record<Locale, Record<string, string>> = {
     "result.submitted": "\u5df2\u63d0\u4ea4\u5be9\u6838\uff01\u7ba1\u7406\u54e1\u63a1\u7528\u5f8c\u6703\u901a\u77e5\u4f60\u3002",
     "result.views": "\u700f\u89bd",
     "result.plays": "\u64ad\u653e",
+    "result.previewStructure": "\u9810\u89bd\u5287\u672c\u7d50\u69cb",
+    "result.idealPreview": "\u7406\u60f3\u6548\u679c\u6f14\u793a",
+    "result.noScript": "\u6c92\u6709\u627e\u5230\u5287\u672c",
+    "result.createNew": "\u65b0\u5efa\u5287\u672c",
+    "result.scenes": "\u5834\u666f",
+    "result.choices": "\u9078\u64c7",
 
     // My Scripts
     "myScripts.title": "\u6211\u7684\u5287\u672c",
@@ -490,6 +515,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     "map.title": "\u63a2\u6848\u5730\u5716",
     "map.currentLocation": "\u7576\u524d\u4f4d\u7f6e",
     "map.locked": "\u672a\u89e3\u9396",
+    "map.locationIntro": "\u666f\u9ede\u4ecb\u7d39",
+    "map.readMore": "\u67e5\u770b\u8a73\u60c5",
     "create.demoMode": "\u6f14\u793a\u6a21\u5f0f",
     "create.demoNotice": "\u7576\u524d\u70ba\u6f14\u793a\u6a21\u5f0f\uff0c\u914d\u7f6e SILICONFLOW_API_KEY \u5f8c\u53ef\u9ad4\u9a57\u771f\u5be6 AI \u751f\u6210\u3002",
 
