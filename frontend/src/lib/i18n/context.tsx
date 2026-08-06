@@ -16,22 +16,18 @@ const I18nContext = createContext<I18nContextType>({
 });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("zh-CN");
+  const [locale, setLocaleState] = useState<Locale>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("locale") as Locale | null;
+      if (saved && translations[saved]) return saved;
+    }
+    return "zh-CN";
+  });
 
   const setLocale = useCallback((newLocale: Locale) => {
     setLocaleState(newLocale);
     localStorage.setItem("locale", newLocale);
   }, []);
-
-  // Restore locale from localStorage on mount
-  useState(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("locale") as Locale | null;
-      if (saved && translations[saved]) {
-        setLocaleState(saved);
-      }
-    }
-  });
 
   const t = useCallback(
     (key: string): string => {

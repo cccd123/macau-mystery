@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 interface Location {
@@ -17,22 +18,32 @@ interface MapViewerProps {
 }
 
 export default function MapViewer({ locations }: MapViewerProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<L.Map | null>(null);
+
   useEffect(() => {
-    // Fix leaflet default icon issue
-    delete (L.Icon.Default.prototype as any)._getIconUrl;
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-      iconUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-      shadowUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Clean up any existing map instance (handles React Strict Mode double-mount)
+    if (mapRef.current) {
+      try {
+        mapRef.current.remove();
+      } catch {
+        // Ignore cleanup errors from stale Leaflet internals
+      }
+      mapRef.current = null;
+    }
+
+    // Defensive cleanup: remove stale Leaflet DOM to prevent _leaflet_pos errors
+    container.innerHTML = "";
+
+    const map = L.map(container, {
+      center: [22.19, 113.536],
+      zoom: 15,
+      scrollWheelZoom: false,
     });
-
-    const mapEl = document.getElementById("map-container");
-    if (!mapEl || (mapEl as any)._leaflet_id) return;
-
-    const map = L.map("map-container").setView([22.19, 113.536], 15);
+    mapRef.current = map;
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
@@ -45,8 +56,7 @@ export default function MapViewer({ locations }: MapViewerProps) {
       const pos: L.LatLngExpression = [loc.lat, loc.lng];
       markers.push(pos);
 
-      const color =
-        loc.status === "current" ? "#2563eb" : "#9ca3af";
+      const color = loc.status === "current" ? "#1a8a6e" : "#9ca3af";
       const icon = L.divIcon({
         html: `<div style="background:${color};width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:12px;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3)">${loc.id}</div>`,
         className: "",
@@ -56,29 +66,46 @@ export default function MapViewer({ locations }: MapViewerProps) {
 
       L.marker(pos, { icon })
         .addTo(map)
-        .bindPopup(
-          `<strong>${loc.name}</strong><br/>${loc.description}`
-        );
+        .bindPopup(`<strong>${loc.name}</strong><br/>${loc.description}`);
     });
 
     // Draw route line
     if (markers.length > 1) {
       L.polyline(markers, {
-        color: "#2563eb",
+        color: "#1a6fa0",
         weight: 3,
         dashArray: "10, 10",
         opacity: 0.6,
       }).addTo(map);
     }
 
+    // Fit bounds to show all markers
+    if (markers.length > 0) {
+      const bounds = L.latLngBounds(markers as L.LatLngExpression[]);
+      map.fitBounds(bounds, { padding: [40, 40] });
+    }
+
+    // Fix rendering after layout settles (dynamic import + container sizing)
+    const timer = setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
+
     return () => {
-      map.remove();
+      clearTimeout(timer);
+      if (mapRef.current) {
+        try {
+          mapRef.current.remove();
+        } catch {
+          // Ignore cleanup errors (e.g. _leaflet_pos undefined in Strict Mode)
+        }
+        mapRef.current = null;
+      }
     };
   }, [locations]);
 
   return (
     <div
-      id="map-container"
+      ref={containerRef}
       className="w-full h-full"
       style={{ minHeight: "400px" }}
     />

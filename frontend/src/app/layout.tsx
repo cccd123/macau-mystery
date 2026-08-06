@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { Providers } from "@/components/providers";
+import { MouseFollower } from "@/components/mouse-follower";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,6 +20,12 @@ export const metadata: Metadata = {
   description:
     "Transform Macau's disappearing oral history into an immersive walking mystery along the real heritage trail",
   keywords: ["Macau", "mystery", "AI", "tourism", "immersive"],
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "32x32" },
+    ],
+  },
 };
 
 export const viewport: Viewport = {
@@ -39,6 +46,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <Providers>
+          <MouseFollower />
           <Navbar />
           <main className="flex-1">{children}</main>
           <footer className="border-t py-6 text-center text-sm text-muted-foreground">

@@ -1,277 +1,250 @@
 # Macau Mystery Platform - Task Breakdown & Team Assignment
 
-## v0.2 Current State (Completed)
+> 分支基线：`master` 为主分支，`feat/d` 为 D 当前开发分支。
+> 状态更新时间：2026-08-02
+
+---
+
+## v0.2-v0.4 当前状态（已合并到 master / feat/d）
 
 ### Frontend (Next.js 14 + TypeScript + shadcn/ui)
-| Page/Component | File | Status |
-|---|---|---|
-| Homepage (i18n + dynamic route) | `frontend/src/app/page.tsx` | Done |
-| Login/Register | `frontend/src/app/login/page.tsx` | Done |
-| Game (API connected) | `frontend/src/app/game/[sessionId]/page.tsx` | Done |
-| Map (Leaflet) | `frontend/src/app/game/map/page.tsx` | Done |
-| Clue Inventory | `frontend/src/app/game/clues/page.tsx` | Done |
-| Create Drama (API connected) | `frontend/src/app/create/page.tsx` | Done |
-| Create Result (publish/submit) | `frontend/src/app/create/result/page.tsx` | Done |
-| Admin Dashboard (API connected) | `frontend/src/app/admin/page.tsx` | Done |
-| Admin Manual Create | `frontend/src/app/admin/scripts/new/page.tsx` | Done |
-| Admin AI Create (dual mode) | `frontend/src/app/admin/scripts/ai-create/page.tsx` | Done |
-| Admin Script Editor | `frontend/src/app/admin/scripts/[id]/page.tsx` | Done |
-| Navbar (i18n + auth state) | `frontend/src/components/navbar.tsx` | Done |
-| Language Switcher (en/zh-CN/zh-TW) | `frontend/src/components/language-switcher.tsx` | Done |
-| Dialogue Box (typewriter effect) | `frontend/src/components/dialogue-box.tsx` | Done |
-| Choice Panel | `frontend/src/components/choice-panel.tsx` | Done |
-| Clue Card | `frontend/src/components/clue-card.tsx` | Done |
-| Map Viewer | `frontend/src/components/map-viewer.tsx` | Done |
-| Style Selector | `frontend/src/components/style-selector.tsx` | Done |
-| Script Editor | `frontend/src/components/script-editor.tsx` | Done |
-| API Client (format adapter) | `frontend/src/lib/api.ts` | Done |
-| i18n Translations (3 languages) | `frontend/src/lib/i18n/translations.ts` | Done |
-| i18n Context Provider | `frontend/src/lib/i18n/context.tsx` | Done |
-
-### Backend (FastAPI + Python)
-| Module | File | Status |
-|---|---|---|
-| Main entry + router registration | `backend/app/main.py` | Done |
-| Auth (login/register/token) | `backend/app/api/auth.py` | Done |
-| Game (start/choice/state) | `backend/app/api/game.py` | Done |
-| AI Chat (NPC mock) | `backend/app/api/ai.py` | Done |
-| UGC Generate (mock) | `backend/app/api/ugc.py` | Done |
-| UGC User (publish/submit) | `backend/app/api/ugc_user.py` | Done |
-| Admin (CRUD/stats/submissions/AI-gen/route) | `backend/app/api/admin.py` | Done |
-| Pydantic Models | `backend/app/models.py` | Done |
-| LLM Client (SiliconFlow stub) | `backend/app/ai/llm_client.py` | Done |
-| NPC Router (5 NPCs) | `backend/app/ai/npc_router.py` | Done |
-| Prompt Templates (5 NPCs) | `backend/app/ai/prompt_templates.py` | Done |
-| TTS Service (edge-tts stub) | `backend/app/ai/tts_service.py` | Done |
-| Story Engine | `backend/app/story/engine.py` | Done |
-| Script Loader | `backend/app/story/script_loader.py` | Done |
-| Example Script JSON | `backend/app/story/scripts/macau_mystery_01.json` | Done |
-| Knowledge Docs (6 landmarks) | `backend/app/knowledge/docs/` | Done |
-
----
-
-## Iteration Plan
-
-### v0.3 - Connect Real AI (Priority: HIGH)
-- [ ] Get SiliconFlow API Key, fill in `backend/.env`
-- [ ] Activate `llm_client.py` real API calls (replace mock)
-- [ ] UGC generate use real DeepSeek
-- [ ] AI chat responses use real DeepSeek with NPC prompts
-
-### v0.4 - UI Polish (Priority: HIGH)
-- [ ] Homepage hero visual upgrade (background, animations)
-- [ ] Game page scene illustrations
-- [ ] Macau cultural theme (Azulejo blue+gold palette)
-- [ ] Scene transition animations
-
-### v0.5 - Complete Script Content (Priority: MEDIUM)
-- [ ] Write full 6-chapter script JSON
-- [ ] Each chapter = 1 landmark, 3-5 scenes, branching choices
-- [ ] Multiple endings based on choices
-
-### v0.6 - Voice + GPS (Priority: MEDIUM)
-- [ ] edge-tts integration (Cantonese/Mandarin voices)
-- [ ] Browser Geolocation API for map navigation
-- [ ] Landmark detail popups with images
-
-### v0.7 - User Features (Priority: MEDIUM)
-- [ ] "My Scripts" page for users
-- [ ] Public script gallery/community page
-- [ ] View counts and likes on UGC scripts
-
-### v0.8 - Admin + Deploy (Priority: MEDIUM)
-- [ ] SQLite persistent storage (replace in-memory dicts)
-- [ ] Admin chart dashboard (recharts)
-- [ ] Docker deployment config
-- [ ] Deploy to Vercel + Railway
-
-### v1.0 - Demo Ready (Priority: LOW)
-- [ ] AI scene illustrations (Stable Diffusion API)
-- [ ] Complete e2e demo flow
-- [ ] Presentation slides
-
----
-
-## Team Assignment (4 People)
-
-### Person A: UI Design + Content Polish
-**Role:** Visual design + AI drama quality control
-
-| Task | Version | Files | Details |
+| Page/Component | File | Status | 说明 |
 |---|---|---|---|
-| Homepage hero redesign | v0.4 | `frontend/src/app/page.tsx` | Add background image/gradient, Azulejo texture overlay, entrance animation |
-| Game page scene art | v0.4 | `frontend/src/app/game/[sessionId]/page.tsx` | Add scene illustration area (img tag above narration), fade-in transition |
-| Theme color update | v0.4 | `frontend/src/app/globals.css` | Change `--primary` from purple to Azulejo blue (#1a4b8c), add gold accent (#c9a84c) |
-| Test + polish AI dramas | v0.3 | `frontend/src/app/create/result/page.tsx` | Generate 20+ dramas, note quality issues, suggest prompt improvements to B |
-| Landmark popups | v0.6 | `frontend/src/components/map-viewer.tsx` | Add image + description popup for each marker |
-| Scene transition animation | v0.4 | `frontend/src/app/game/[sessionId]/page.tsx` | CSS fade-in when scene changes (use useEffect + CSS class toggle) |
-| AI scene illustrations | v1.0 | New component | Integrate image generation API, display in narration area |
+| Homepage (i18n + dynamic route) | `frontend/src/app/page.tsx` | Done | 三语言切换、动态路线加载 |
+| Login/Register | `frontend/src/app/login/page.tsx` | Done | 登录/注册 UI |
+| Game (video/router 新协议) | `frontend/src/app/game/[sessionId]/page.tsx` | Done | 已适配 C 后端 snapshot 格式：视频、选项、结局 |
+| Map (Leaflet) | `frontend/src/app/game/map/page.tsx` | Done | 基础地图展示 |
+| Clue Inventory | `frontend/src/app/game/clues/page.tsx` | Done | 线索列表 |
+| Create Drama (API connected) | `frontend/src/app/create/page.tsx` | Done | AI 生成剧本输入页 |
+| Create Result (publish/submit) | `frontend/src/app/create/result/page.tsx` | Done | 发布/投递官方 |
+| Admin Dashboard (API connected) | `frontend/src/app/admin/page.tsx` | Done | 管理后台首页 |
+| Admin Manual Create | `frontend/src/app/admin/scripts/new/page.tsx` | Done | 手动创建剧本 |
+| Admin AI Create (dual mode) | `frontend/src/app/admin/scripts/ai-create/page.tsx` | Done | AI 双模式创建 |
+| Admin Script Editor | `frontend/src/app/admin/scripts/[id]/page.tsx` | Done | 剧本编辑 |
+| Navbar (i18n + auth state) | `frontend/src/components/navbar.tsx` | Done | 导航栏 |
+| Language Switcher | `frontend/src/components/language-switcher.tsx` | Done | 语言切换 |
+| Dialogue Box | `frontend/src/components/dialogue-box.tsx` | Done | NPC 对话框 |
+| Choice Panel | `frontend/src/components/choice-panel.tsx` | Done | 选项面板 |
+| Clue Card | `frontend/src/components/clue-card.tsx` | Done | 线索卡片 |
+| Map Viewer | `frontend/src/components/map-viewer.tsx` | Done | Leaflet 地图组件 |
+| Style Selector | `frontend/src/components/style-selector.tsx` | Done | 风格选择器 |
+| Script Editor | `frontend/src/components/script-editor.tsx` | Done | 剧本编辑器 |
+| API Client | `frontend/src/lib/api.ts` | Done | 已适配游戏 API v1 snapshot 协议 |
+| Video Player | `frontend/src/components/video-player.tsx` | Done | 视频播放、poster、错误回退、播放控制 |
+| i18n Translations | `frontend/src/lib/i18n/translations.ts` | Done | 三语言字典，已补 game/nav/myScripts/community 键 |
+| i18n Context | `frontend/src/lib/i18n/context.tsx` | Done | 语言上下文 |
+| My Scripts | `frontend/src/app/my-scripts/page.tsx` | Done | 未登录提示、列表、公开/私有切换 |
+| Community | `frontend/src/app/community/page.tsx` | Done | 公开 UGC 剧本列表 |
 
-**Interface Rules for A:**
-- CSS changes go in `globals.css` or component-level Tailwind classes
-- Use existing shadcn/ui components; add new ones via `npx shadcn@latest add <name>`
-- All user-facing text must use `t("key")` from `useTranslation()` hook
-- New translation keys must be added to ALL 3 languages in `translations.ts`
+### Backend (FastAPI + SQLAlchemy + SQLite / async)
+| Module | File | Status | 说明 |
+|---|---|---|---|
+| FastAPI 入口 + 路由注册 | `backend/app/main.py` | Done | 含 lifespan、错误处理、CORS |
+| 数据库配置 & 迁移 | `backend/app/config.py`, `backend/app/db.py`, `alembic/` | Done | SQLite + aiosqlite |
+| Auth（登录/注册/密码加密） | `backend/app/api/auth.py` | Done | 密码已加密 |
+| Game API v1（video/router/ending） | `backend/app/api/game.py` | Done | 新协议：返回 snapshot、media、preload |
+| Game Service & State Machine | `backend/app/game_service.py` | Done | 会话恢复、线索去重、幂等控制 |
+| Story Contract & Validation | `backend/app/models.py`, `backend/app/story/` | Done | 严格 Pydantic 剧情契约 |
+| Story Importer / CLI | `backend/app/story/importer.py`, `backend/app/story/cli.py` | Done | 导入剧本、校验剧情 |
+| Demo Story Bootstrap | `backend/app/story/scripts/` | Done | 启动时自动导入 demo 剧情 |
+| AI Chat (NPC) | `backend/app/api/ai.py` | Done | NPC 对话接口 |
+| UGC Generate | `backend/app/api/ugc.py` | Done | 一句话生成剧本 |
+| UGC User（publish/submit） | `backend/app/api/ugc_user.py` | Done | 发布/投递官方 |
+| Admin（CRUD/stats/submissions） | `backend/app/api/admin.py` | Done | 管理接口 |
+| LLM Client (SiliconFlow) | `backend/app/ai/llm_client.py` | Done | DeepSeek 接入 |
+| TTS Service (edge-tts) | `backend/app/ai/tts_service.py` | Done | 语音合成 |
+| Health Check | `/api/v1/health` | Done | 数据库健康检查 |
 
 ---
 
-### Person B: Business Plan + AI Drama Quality
-**Role:** Business strategy + content curation + non-tech tasks
+## Iteration Plan（更新后）
 
-| Task | Version | Files | Details |
-|---|---|---|---|
-| Business plan document | -- | `docs/BUSINESS_PLAN.md` (new) | Market analysis, revenue model (UGC submission fees, tourism partnerships), competitive landscape |
-| Test AI drama quality | v0.3 | N/A (manual testing) | Generate 30+ dramas across all 4 styles, document quality issues |
-| NPC character bible | v0.5 | `backend/app/ai/prompt_templates.py` | Write detailed personality backstories for all 5 NPCs (in Chinese, I'll help format) |
-| Script content writing | v0.5 | `backend/app/story/scripts/macau_mystery_01.json` | Write chapters 2-6 JSON (I'll provide template format) |
-| Presentation slides | v1.0 | `docs/PRESENTATION/` (new) | Demo flow script, key talking points |
-| Competitive analysis | -- | `docs/COMPETITIVE_ANALYSIS.md` (new) | Compare with existing tourism apps, escape rooms, script games |
-| UGC prompt optimization | v0.3 | `backend/app/ugc/templates.py` | Based on testing results, improve generation prompts |
+### v0.3 - 前端适配 C 的新游戏协议（Priority: HIGH，D 负责）✅ 已完成
+- [x] 更新 `frontend/src/lib/api.ts` 中 `gameApi` 以适配新 snapshot 格式
+- [x] 重构 `frontend/src/app/game/[sessionId]/page.tsx`
+  - 播放 `scene.media.video_url` 视频
+  - 视频停在末帧显示选项
+  - 预加载候选视频 (`choice.preload.media`)
+  - 选择后切换到下一视频场景
+  - 显示已获得的线索
+  - 处理 `ending` 结局场景
+- [x] 新增 `VideoPlayer` 组件：`frontend/src/components/video-player.tsx`
 
-**Interface Rules for B:**
-- Business docs in Markdown format in `docs/` folder
-- Script JSON must follow the schema in `macau_mystery_01.json` (chapters > scenes > choices + clue_rewards)
-- NPC prompts must use `{location}` and `{clues}` placeholders
-- Submit all content changes as PRs (Person D will review)
+### v0.4 - 补齐 i18n & 用户页面（Priority: HIGH，D 负责）✅ 已完成
+- [x] 检查所有前端页面，将剩余硬编码中文替换为 `t("key")`
+- [x] 新增翻译键到 `translations.ts` 的三语言版本
+- [x] 新增「我的剧本」页面：`frontend/src/app/my-scripts/page.tsx`
+- [x] 新增「剧本广场/社区」页面：`frontend/src/app/community/page.tsx`
+
+### v0.5 - A/B 内容合入 & 管理后台增强（Priority: MEDIUM）
+- [ ] A：将 `feat/a-ui-theme` 的 UI 主题合入（PR 到 master）
+- [ ] B：将 `feat/b-story-json` 的完整剧情 JSON 合入（PR 到 master）
+- [ ] D：review 并合并 A/B 的 PR
+- [ ] D：管理后台数据图表（recharts 展示真实 stats）
+
+### v0.6 - 地图 GPS & 语音（Priority: MEDIUM）
+- [ ] 浏览器 Geolocation API 实时定位
+- [ ] edge-tts 多语言语音播放
+- [ ] 地图标记点详情弹窗
+
+### v0.7 - Admin + Deploy（Priority: MEDIUM）
+- [ ] Docker 部署配置
+- [ ] 前端部署到 Vercel
+- [ ] 后端部署到 Railway / 服务器
+
+### v0.8 - Demo Ready（Priority: LOW）
+- [ ] 完整端到端 demo 流程
+- [ ] 演示 PPT
 
 ---
 
-### Person C: Backend AI + Integration
-**Role:** Connect real AI, complete backend features
+## 团队分工（更新后）
 
-| Task | Version | Files | Details |
+### 曹丹（队长）- Person D: 前端功能 + DevOps + GitHub 管理
+**学校**：华南理工大学  
+**Role**：全栈开发，负责前端与 C 后端协议对接、Vercel 部署、GitHub 管理、PR Review
+
+| 优先级 | 任务 | 文件 | 说明 |
 |---|---|---|---|
-| SiliconFlow API integration | v0.3 | `backend/app/ai/llm_client.py` | Uncomment real API code, test with different models |
-| UGC real AI generation | v0.3 | `backend/app/api/ugc.py` | Replace mock `generate_drama()` with real DeepSeek call using templates |
-| NPC chat real responses | v0.3 | `backend/app/api/ai.py` | Connect chat endpoint to `llm_client.chat_with_npc()` |
-| ChromaDB installation + RAG | v0.5 | `backend/app/knowledge/` | `pip install chromadb sentence-transformers`, run `seed_knowledge.py` |
-| edge-tts voice synthesis | v0.6 | `backend/app/ai/tts_service.py` | Uncomment real TTS code, test voice IDs |
-| SQLite persistent storage | v0.8 | New: `backend/app/database.py` | Create SQLite tables, replace `scripts_db`/`users_db` dicts |
-| Real view/play counters | v0.7 | `backend/app/api/ugc_user.py` | Track views and plays in database |
+| P0 | 前端适配新游戏 API | `frontend/src/lib/api.ts`, `frontend/src/app/game/[sessionId]/page.tsx` | 视频播放、选项、预加载、结局 |
+| P0 | 补齐 i18n | 所有 `frontend/src/app/**/page.tsx` | 替换硬编码文字 |
+| P1 | 我的剧本页 | `frontend/src/app/my-scripts/page.tsx` | 用户查看自己生成/发布的剧本 |
+| P1 | 剧本广场 | `frontend/src/app/community/page.tsx` | 浏览公开 UGC 剧本 |
+| P2 | 地图 GPS | `frontend/src/components/map-viewer.tsx` | 浏览器实时定位 |
+| P2 | 管理图表 | `frontend/src/app/admin/page.tsx` | recharts 展示 stats |
+| P3 | Vercel 部署 | Vercel Dashboard | 前端自动部署 |
+| Ongoing | PR Review | GitHub | review A/B/C 的 PR 并合并 |
 
-**Interface Rules for C:**
-- All API endpoints return JSON with snake_case field names
-- Frontend adapter in `api.ts` handles snake_case to camelCase conversion
-- New endpoints must be registered in `main.py` with proper prefix
-- Test all endpoints with `Invoke-RestMethod` before committing
-- Python files: NO Chinese full-width punctuation in code (SyntaxError risk)
-- Use `D:\Anaconda3\envs\macau-mystery\python.exe` for all pip/uvicorn commands
+**Interface Rules for D：**
+- 新页面统一使用 `<div className="container mx-auto px-4 py-6">` 包裹
+- 所有用户可见文字必须走 `useTranslation()` 的 `t("key")`
+- 新增翻译键必须同时补充英语、简体中文、繁体中文
+- 游戏 API 新协议返回 snapshot，前端 adapter 需要转换为组件可用的 scene 结构
+- 提交前必须 `npm run build` 通过、无 console 报错
 
-**API Response Format Contract:**
+---
+
+### 邹依霖 - Person A: UI 设计 + AI 短剧质控
+**学校**：武汉大学  
+**Role**：视觉设计 + AI 生成内容质量把控
+
+| 任务 | 分支 | 文件 | 状态 | 说明 |
+|---|---|---|---|---|
+| Macau 视觉主题刷新 | `feat/a-ui-theme` | `frontend/src/app/globals.css`, 游戏页 | 待 PR | Azulejo 蓝金配色 |
+| 游戏场景风格图 | `feat/a-ui-theme` | `frontend/src/app/game/[sessionId]/page.tsx` | 待 PR | 场景插图、过渡动画 |
+| AI 短剧质量测试 | - | `frontend/src/app/create/result/page.tsx` | 待执行 | 生成 20+ 测试并反馈 |
+| 地图标记弹窗 | - | `frontend/src/components/map-viewer.tsx` | 待执行 | 图片+描述弹窗 |
+
+---
+
+### 陈晓蔚 - Person B: 商业策划 + AI 短剧质控
+**学校**：广东工业大学  
+**Role**：商业计划 + 剧本内容 + NPC 设定
+
+| 任务 | 分支 | 文件 | 状态 | 说明 |
+|---|---|---|---|---|
+| 完整剧情 JSON | `feat/b-story-json` | `backend/app/story/scripts/` | 待 PR | 六章剧情、多结局 |
+| NPC 角色设定 | - | `backend/app/ai/prompt_templates.py` | 待执行 | 五名 NPC 性格小传 |
+| 商业计划书 | - | `docs/BUSINESS_PLAN.md` | 待执行 | 市场分析、商业模式 |
+| 竞品分析 | - | `docs/COMPETITIVE_ANALYSIS.md` | 待执行 | 与现有产品对比 |
+
+---
+
+### 曾建文 - Person C: 后端 AI + 集成
+**学校**：武汉大学  
+**Role**：后端开发、AI 集成、数据库与游戏引擎
+
+| 任务 | 文件 | 状态 | 说明 |
+|---|---|---|---|
+| 游戏 API v1（已合并） | `backend/app/api/game.py`, `backend/app/game_service.py` | Done | 数据库事务、视频协议、状态机 |
+| 剧情契约与校验（已合并） | `backend/app/models.py`, `backend/app/story/` | Done | 严格 Pydantic、CLI 工具 |
+| 数据库迁移（已合并） | `backend/app/db.py`, `alembic/` | Done | SQLite + aiosqlite |
+| SiliconFlow API 接入 | `backend/app/ai/llm_client.py` | 待测试 | 接入真实 DeepSeek |
+| UGC 真实 AI 生成 | `backend/app/api/ugc.py` | 待测试 | 替换 mock |
+| NPC 真实对话 | `backend/app/api/ai.py` | 待测试 | 接入 llm_client |
+| ChromaDB RAG | `backend/app/knowledge/` | 待执行 | 知识库检索 |
+| edge-tts 语音 | `backend/app/ai/tts_service.py` | 待测试 | 粤语/普通话语音 |
+
+**Interface Rules for C：**
+- 所有 API 返回 snake_case 字段
+- 新端点必须在 `main.py` 注册并加前缀
+- Python 文件中禁止中文全角标点
+- 提交前用 `Invoke-RestMethod` 或 curl 测试端点
+
+---
+
+## API 协议更新（C 后端 v1）
+
 ```
-Game:     POST /api/v1/game/start     -> { session_id, chapter, location, narration, dialogue, choices }
-          POST /api/v1/game/choice    -> { scene_id, chapter, location, narration, dialogue, choices, clue_reward? }
-AI:       POST /api/v1/ai/chat       -> { response, audio_url? }
-UGC:      POST /api/v1/create/generate -> { script_id, title, chapters, style, era }
-Admin:    GET  /api/v1/admin/scripts  -> [{ id, title, status, chapters_count, players_count, views_count, created_at }]
-Auth:     POST /api/v1/auth/login    -> { token, user: { id, username, nickname, role } }
+POST /api/v1/game/start
+  Body:  { "script_id": "broken_hairpin" }
+  Resp:  GameSnapshot
+          { session_id, status, story, scene, clues, progress, ending? }
+
+POST /api/v1/game/choice
+  Body:  { "session_id", "scene_id", "choice_id", "request_id" }
+  Resp:  GameSnapshot
+
+GET  /api/v1/game/state/{session_id}
+  Resp:  GameSnapshot
+
+GameSnapshot.scene:
+  { id, type: "video" | "ending",
+    chapter: { id, title, location },
+    media: { video_url, poster_url, mime_type, duration_ms },
+    choices: [ { id, text, preload: { scene_id, media } } ] }
 ```
+
+旧版 `narration/dialogue/choices` 格式已废弃，前端必须按新 snapshot 结构渲染。
 
 ---
 
-### Person D: Frontend Features + DevOps + GitHub Admin
-**Role:** User-facing features, deployment, PR reviewer
+## 分支状态总览
 
-| Task | Version | Files | Details |
+| 分支 | 负责人 | 状态 | 说明 |
 |---|---|---|---|
-| "My Scripts" user page | v0.7 | New: `frontend/src/app/my-scripts/page.tsx` | List user's generated scripts with publish status |
-| Community/gallery page | v0.7 | New: `frontend/src/app/community/page.tsx` | Browse public UGC scripts, play, like |
-| Browser geolocation | v0.6 | `frontend/src/components/map-viewer.tsx` | Add `navigator.geolocation.watchPosition()` for real-time tracking |
-| Complete i18n for remaining pages | v0.4 | All pages under `frontend/src/app/` | Replace hardcoded strings with `t()` calls |
-| Admin chart dashboard | v0.8 | `frontend/src/app/admin/page.tsx` | Add recharts line/bar charts for player stats |
-| Deploy to Vercel | v0.8 | Vercel dashboard | Connect repo, auto-deploy on push to main |
-| PR review + merge | Ongoing | GitHub | Review all team PRs, ensure no conflicts |
-| Script editor enhancement | v0.5 | `frontend/src/components/script-editor.tsx` | Improve UX, add drag-to-reorder scenes |
-
-**Interface Rules for D:**
-- New pages must follow existing layout: `<div className="container mx-auto px-4 py-6">` wrapper
-- Use `useTranslation()` hook for ALL user-visible text
-- New routes auto-detected by Next.js App Router (just create `page.tsx` in folder)
-- PR review checklist: build passes, no console errors, i18n keys exist in all 3 languages
-- Deployment: frontend auto-deploys via Vercel; backend needs manual Railway deploy
-
-**GitHub Admin Duties:**
-- Protect `main` branch (require PR + 1 review)
-- Create labels: `ui`, `backend`, `content`, `bug`, `feature`
-- Merge PRs after review
-- Tag releases: `v0.3`, `v0.4`, etc.
+| `master` | - | 主分支 | 已合并 C 后端 PR #2，含最新后端 |
+| `feat/d` | 曹丹 | 开发中 | 基于 master，D 在此完成前端适配与用户功能 |
+| `feat/a-ui-theme` | 邹依霖 | 待 PR | UI 主题与游戏场景优化 |
+| `feat/b-story-json` | 陈晓蔚 | 待 PR | 完整剧情 JSON |
+| `feat/c` | 曾建文 | 已合并 | 后端核心功能 |
 
 ---
 
 ## Daily Workflow
 
-```
-1. git pull origin main          (get latest)
-2. git checkout -b my-feature    (create branch)
-3. ... make changes ...
-4. git add -A && git commit -m "feat: description"
-5. git push origin my-feature
-6. Create PR on GitHub
-7. Request review from D (or any teammate)
-8. After review + approval, D merges
+```powershell
+# 1. 切换到 master 并拉取最新
+cd D:\macau-mystery
+git checkout master
+git pull origin master
+
+# 2. 切到自己的功能分支（若已有则 rebase）
+git checkout feat/d          # D
+git rebase master            # 保持线性历史
+
+# 3. 修改代码...
+
+# 4. 提交并推送
+git add -A
+git commit -m "feat: 描述"
+git push origin feat/d
+
+# 5. 在 GitHub 创建 PR 到 master，请求 D review
+
+# 6. D review 通过后在 GitHub 合并
 ```
 
-## Startup Commands (Daily)
+## Startup Commands
 
 ```powershell
-# Backend (Terminal 1)
+# 后端（首次需迁移）
 cd D:\macau-mystery\backend
 conda activate macau-mystery
+alembic upgrade head
 uvicorn app.main:app --reload --port 8000
 
-# Frontend (Terminal 2)
+# 前端
 cd D:\macau-mystery\frontend
 npm run dev
-```
-
-## Project Structure Quick Reference
-
-```
-D:\macau-mystery/
-  frontend/                      # Next.js 14
-    src/app/                     # Pages (App Router)
-      page.tsx                   # Homepage (i18n)
-      login/page.tsx             # Login/Register
-      game/[sessionId]/page.tsx  # Game session
-      game/map/page.tsx          # Map
-      game/clues/page.tsx        # Clues
-      create/page.tsx            # Create drama
-      create/result/page.tsx     # Result + publish
-      admin/page.tsx             # Admin dashboard
-      admin/scripts/ai-create/   # AI dual-mode create
-      admin/scripts/new/         # Manual create
-      admin/scripts/[id]/        # Edit script
-    src/components/              # Shared components
-      navbar.tsx                 # Nav (i18n + auth)
-      language-switcher.tsx      # Language dropdown
-      dialogue-box.tsx           # NPC dialogue
-      choice-panel.tsx           # Game choices
-      map-viewer.tsx             # Leaflet map
-      script-editor.tsx          # Admin editor
-    src/lib/
-      api.ts                     # API client (all endpoints)
-      api-base.ts                # API base URL
-      i18n/translations.ts       # 3-language dictionary
-      i18n/context.tsx           # Language provider + hook
-  backend/                       # FastAPI
-    app/
-      main.py                    # Entry point + routers
-      models.py                  # Pydantic schemas
-      api/
-        auth.py                  # Login/register/token
-        game.py                  # Game start/choice/state
-        ai.py                    # NPC chat/TTS
-        ugc.py                   # Drama generation
-        ugc_user.py              # User publish/submit
-        admin.py                 # Admin CRUD/stats/review
-      ai/
-        llm_client.py            # SiliconFlow DeepSeek
-        npc_router.py            # NPC assignments
-        prompt_templates.py      # NPC personalities
-        tts_service.py           # edge-tts wrapper
-      story/
-        engine.py                # Game state machine
-        scripts/                 # Script JSON files
-      knowledge/
-        docs/                    # Landmark text files
 ```
