@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>澳秘 Macau Mystery 商业计划书</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .serif { font-family: 'Noto Serif SC', serif; }
+    .slide {
+      display: none;
+      min-height: 100vh;
+      animation: fadeIn 0.6s ease;
+    }
+    .slide.active { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #064e3b 100%); }
+    .card { background: rgba(255,255,255,0.08); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+    .accent { color: #34d399; }
+    .accent-bg { background-color: #34d399; }
+    .nav-dot { transition: all 0.3s ease; }
+    .nav-dot.active { background-color: #34d399; transform: scale(1.3); }
+    .stat-card { background: rgba(255,255,255,0.06); border-left: 4px solid #34d399; }
+  </style>
+</head>
+<body class="gradient-bg text-white overflow-hidden">
+  <div id="app" class="relative w-full h-screen">
+    <!-- Slide 1: Cover -->
+    <section class="slide active flex-col items-center justify-center text-center px-6" data-index="0">
+      <div class="max-w-4xl">
+        <p class="text-emerald-400 tracking-[0.3em] text-sm mb-6 uppercase">Macau Mystery</p>
+        <h1 class="serif text-6xl md:text-8xl font-bold mb-8 leading-tight">澳秘</h1>
+        <p class="text-2xl md:text-3xl text-gray-200 mb-6 font-light">澳门世遗景点的沉浸式互动剧本平台</p>
+        <div class="inline-block px-6 py-3 rounded-full bg-white/10 border border-emerald-400/30 mt-8">
+          <span class="text-emerald-300 font-medium">产业创新赛道：澳门「1+4」综合旅游休闲业</span>
+        </div>
+      </div>
+      <div class="absolute bottom-12 text-gray-400 text-sm animate-pulse">按 → 或点击圆点翻页</div>
+    </section>
+
+    <!-- Slide 2: Market & Opportunity -->
+    <section class="slide flex-col justify-center px-6 md:px-20" data-index="1">
+      <div class="max-w-6xl mx-auto w-full">
+        <h2 class="serif text-4xl md:text-5xl font-bold mb-4">市场背景与机会</h2>
+        <p class="text-gray-300 text-lg mb-12">澳门「1+4」战略下，综合旅游休闲业亟需从「观光打卡」向「深度体验」升级。</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div class="stat-card p-6 rounded-xl">
+            <p class="text-4xl font-bold accent mb-2">3,493万</p>
+            <p class="text-gray-300">2024年澳门入境旅客人次</p>
+            <p class="text-xs text-gray-400 mt-2">数据来源：澳门统计暨普查局</p>
+          </div>
+          <div class="stat-card p-6 rounded-xl">
+            <p class="text-4xl font-bold accent mb-2">1.23km²</p>
+            <p class="text-gray-300">澳门历史城区世界文化遗产面积</p>
+            <p class="text-xs text-gray-400 mt-2">中国第31处世界遗产</p>
+          </div>
+          <div class="stat-card p-6 rounded-xl">
+            <p class="text-4xl font-bold accent mb-2">60万+</p>
+            <p class="text-gray-300">泉州AI剧本游互动次数</p>
+            <p class="text-xs text-gray-400 mt-2">带动商户营收约200万元</p>
+          </div>
+        </div>
+        <div class="card p-8 rounded-2xl">
+          <h3 class="text-2xl font-bold mb-4 text-emerald-300">核心痛点</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+            <div>
+              <span class="text-2xl mb-2 block">📸</span>
+              <p class="font-medium mb-1">停留时间短</p>
+              <p class="text-sm text-gray-400">游客多为拍照打卡，缺乏深度停留动机</p>
+            </div>
+            <div>
+              <span class="text-2xl mb-2 block">🗺️</span>
+              <p class="font-medium mb-1">文化理解浅</p>
+              <p class="text-sm text-gray-400">世遗历史信息碎片化，难以形成情感连接</p>
+            </div>
+            <div>
+              <span class="text-2xl mb-2 block">🛍️</span>
+              <p class="font-medium mb-1">二次消费弱</p>
+              <p class="text-sm text-gray-400">景点与周边商户联动不足，消费转化低</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 3: Product & Core Highlights -->
+    <section class="slide flex-col justify-center px-6 md:px-20" data-index="2">
+      <div class="max-w-6xl mx-auto w-full">
+        <h2 class="serif text-4xl md:text-5xl font-bold mb-4">产品方案与核心亮点</h2>
+        <p class="text-gray-300 text-lg mb-10">以澳门历史城区为舞台，让游客从「旁观者」变为「剧中人」。</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="card p-8 rounded-2xl hover:bg-white/10 transition">
+            <div class="w-12 h-12 rounded-full accent-bg text-slate-900 flex items-center justify-center text-xl font-bold mb-6">1</div>
+            <h3 class="text-2xl font-bold mb-3 text-emerald-300">技术创新</h3>
+            <p class="text-gray-200 font-medium mb-2">AI+RAG 驱动的沉浸式分支叙事引擎</p>
+            <p class="text-sm text-gray-400">预制视频 + 分支选择 + RAG 知识问答，让游客在剧情中自然学习澳门历史。</p>
+          </div>
+          <div class="card p-8 rounded-2xl hover:bg-white/10 transition">
+            <div class="w-12 h-12 rounded-full accent-bg text-slate-900 flex items-center justify-center text-xl font-bold mb-6">2</div>
+            <h3 class="text-2xl font-bold mb-3 text-emerald-300">模式创新</h3>
+            <p class="text-gray-200 font-medium mb-2">UGC 一句话生成短剧 + 官方景点认证</p>
+            <p class="text-sm text-gray-400">游客可输入一句话生成个人短剧，经审核后可发布共享，形成内容生态。</p>
+          </div>
+          <div class="card p-8 rounded-2xl hover:bg-white/10 transition">
+            <div class="w-12 h-12 rounded-full accent-bg text-slate-900 flex items-center justify-center text-xl font-bold mb-6">3</div>
+            <h3 class="text-2xl font-bold mb-3 text-emerald-300">体验创新</h3>
+            <p class="text-gray-200 font-medium mb-2">从「观光打卡」到「剧情沉浸」</p>
+            <p class="text-sm text-gray-400">每个景点都是剧情节点，游客的选择决定故事走向与结局。</p>
+          </div>
+        </div>
+        <div class="mt-10 flex flex-wrap gap-4 justify-center">
+          <span class="px-4 py-2 rounded-full bg-emerald-500/20 text-emerald-300 text-sm">预制视频</span>
+          <span class="px-4 py-2 rounded-full bg-emerald-500/20 text-emerald-300 text-sm">分支剧情</span>
+          <span class="px-4 py-2 rounded-full bg-emerald-500/20 text-emerald-300 text-sm">RAG 知识问答</span>
+          <span class="px-4 py-2 rounded-full bg-emerald-500/20 text-emerald-300 text-sm">UGC 短剧生成</span>
+          <span class="px-4 py-2 rounded-full bg-emerald-500/20 text-emerald-300 text-sm">商户联动</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 4: Competitive Analysis -->
+    <section class="slide flex-col justify-center px-6 md:px-20" data-index="3">
+      <div class="max-w-6xl mx-auto w-full">
+        <h2 class="serif text-4xl md:text-5xl font-bold mb-4">竞品分析与差异化</h2>
+        <p class="text-gray-300 text-lg mb-10">我们有他们没有的核心能力。</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="card p-6 rounded-2xl">
+            <h3 class="text-xl font-bold mb-2">泉州 AI 剧本游</h3>
+            <p class="text-emerald-300 text-sm mb-4">亮点：城市探员、地图寻宝、打卡解谜</p>
+            <ul class="text-sm text-gray-300 space-y-2 list-disc list-inside">
+              <li>12万人参与，60万次互动</li>
+              <li>带动商户营收约200万元</li>
+              <li>以任务驱动游览</li>
+            </ul>
+          </div>
+          <div class="card p-6 rounded-2xl">
+            <h3 class="text-xl font-bold mb-2">澳门「麦麦」</h3>
+            <p class="text-emerald-300 text-sm mb-4">亮点：官方旅游吉祥物、IP 体验馆、AI 客服</p>
+            <ul class="text-sm text-gray-300 space-y-2 list-disc list-inside">
+              <li>官方背书，认知度高</li>
+              <li>以互动体验和形象传播为主</li>
+              <li>缺乏深度剧情化沉浸体验</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mt-8 card p-8 rounded-2xl border-emerald-400/50">
+          <h3 class="text-2xl font-bold mb-6 text-emerald-300">澳秘的差异化优势</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center">
+              <p class="text-3xl mb-2">🎬</p>
+              <p class="font-bold mb-1">电影级沉浸</p>
+              <p class="text-sm text-gray-400">预制视频替代文字/图片，沉浸感远超打卡解谜</p>
+            </div>
+            <div class="text-center">
+              <p class="text-3xl mb-2"></p>
+              <p class="font-bold mb-1">智能问答</p>
+              <p class="text-sm text-gray-400">RAG 让游客与历史对话，回答简洁准确</p>
+            </div>
+            <div class="text-center">
+              <p class="text-3xl mb-2">✍️</p>
+              <p class="font-bold mb-1">用户共创</p>
+              <p class="text-sm text-gray-400">一句话生成短剧，降低内容生产门槛</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 5: Business Model & Feasibility -->
+    <section class="slide flex-col justify-center px-6 md:px-20" data-index="4">
+      <div class="max-w-6xl mx-auto w-full">
+        <h2 class="serif text-4xl md:text-5xl font-bold mb-4">商业模式与可行性</h2>
+        <p class="text-gray-300 text-lg mb-8">多元收入 + 真实市场数据支撑。</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="card p-6 rounded-2xl">
+            <h3 class="text-lg font-bold mb-2 text-emerald-300">B2G 政府合作</h3>
+            <p class="text-sm text-gray-300">澳门旅游局 / 文化局项目补贴、世遗活化合作</p>
+          </div>
+          <div class="card p-6 rounded-2xl">
+            <h3 class="text-lg font-bold mb-2 text-emerald-300">B2B 企业服务</h3>
+            <p class="text-sm text-gray-300">景区 / 商户剧本定制、品牌植入、活动营销</p>
+          </div>
+          <div class="card p-6 rounded-2xl">
+            <h3 class="text-lg font-bold mb-2 text-emerald-300">B2C 用户付费</h3>
+            <p class="text-sm text-gray-300">剧情解锁、数字藏品、周边商品、UGC 付费</p>
+          </div>
+        </div>
+        <div class="card p-8 rounded-2xl">
+          <h3 class="text-2xl font-bold mb-6 text-emerald-300">可行性测算</h3>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
+            <div>
+              <p class="text-3xl font-bold accent">3,493万</p>
+              <p class="text-sm text-gray-400 mt-1">2024年入境旅客基数</p>
+            </div>
+            <div>
+              <p class="text-3xl font-bold accent">0.1%</p>
+              <p class="text-sm text-gray-400 mt-1">保守转化率</p>
+            </div>
+            <div>
+              <p class="text-3xl font-bold accent">5万+</p>
+              <p class="text-sm text-gray-400 mt-1">首年目标体验人次</p>
+            </div>
+            <div>
+              <p class="text-3xl font-bold accent">250万+</p>
+              <p class="text-sm text-gray-400 mt-1">首年预估营收（元）</p>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500 mt-6 text-center">说明：参考泉州 AI 剧本游 12 万人带动约 200 万元营收（人均约 16.7 元），澳秘以更高沉浸感的视频体验，预估人均消费 50 元。</p>
+        </div>
+        <div class="mt-8 text-center">
+          <p class="text-emerald-300 font-medium">澳秘 = 澳门文化 × 互动叙事 × AI 技术，打造世界级旅游体验新标杆。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation -->
+    <div class="fixed right-6 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-50">
+      <button class="nav-dot w-3 h-3 rounded-full bg-white/30 active" data-index="0"></button>
+      <button class="nav-dot w-3 h-3 rounded-full bg-white/30" data-index="1"></button>
+      <button class="nav-dot w-3 h-3 rounded-full bg-white/30" data-index="2"></button>
+      <button class="nav-dot w-3 h-3 rounded-full bg-white/30" data-index="3"></button>
+      <button class="nav-dot w-3 h-3 rounded-full bg-white/30" data-index="4"></button>
+    </div>
+
+    <div class="fixed bottom-6 right-6 z-50">
+      <button id="downloadBtn" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-900 rounded-lg font-medium text-sm transition">打印 / 保存 PDF</button>
+    </div>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.nav-dot');
+    let current = 0;
+
+    function showSlide(index) {
+      if (index < 0) index = 0;
+      if (index >= slides.length) index = slides.length - 1;
+      slides.forEach(s => s.classList.remove('active'));
+      dots.forEach(d => d.classList.remove('active'));
+      slides[index].classList.add('active');
+      dots[index].classList.add('active');
+      current = index;
+    }
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => showSlide(i));
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') showSlide(current + 1);
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') showSlide(current - 1);
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      window.print();
+    });
+  </script>
+</body>
+</html>
