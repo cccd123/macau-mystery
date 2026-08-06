@@ -1,0 +1,291 @@
+{
+  "schema_version": 1,
+  "story_id": "macau_mystery_02",
+  "title": "跨越中葡的悬案",
+  "description": "沿澳门历史城区展开调查，追寻悬案真相。",
+  "entry_scene": "ch01_s01",
+  "chapters": [
+    {
+      "id": "chapter_01",
+      "title": "第一章：妈阁庙",
+      "location": "妈阁庙",
+      "gps": { "lat": 22.1867, "lng": 113.5318 },
+      "scenes": [
+        {
+          "id": "ch01_s01",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch01_s01.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "go_to_a_ma_temple", "text": "点击前往妈阁庙，解锁第一条线索", "next_scene": "ch01_s02", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch01_s02",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch01_s02.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "photograph_lion", "text": "对石狮子拍照", "next_scene": "ch01_s02_lion", "grant_clues": [] },
+            { "id": "photograph_plaque", "text": "对牌匾拍照", "next_scene": "ch01_s02_paibian", "grant_clues": [] },
+            { "id": "talk_with_uncle_leung", "text": "和梁伯深聊", "next_scene": "ch01_s02_chat", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch01_s02_lion",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch01_s02_lion.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch01_s03", "text": "继续", "next_scene": "ch01_s03", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch01_s02_paibian",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch01_s02_paibian.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch01_s03", "text": "继续", "next_scene": "ch01_s03", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch01_s02_chat",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch01_s02_chat.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch01_s03", "text": "继续", "next_scene": "ch01_s03", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch01_s03",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch01_s03.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch02_s01", "text": "继续", "next_scene": "ch02_s01", "grant_clues": [] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter_02",
+      "title": "第二章：亚婆井前地",
+      "location": "亚婆井前地",
+      "gps": { "lat": 22.1876, "lng": 113.5331 },
+      "scenes": [
+        {
+          "id": "ch02_s01",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch02_s01.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "photograph_stone_wall", "text": "拍摄喷水池石壁", "next_scene": "ch02_s02_stone", "grant_clues": [] },
+            { "id": "photograph_tree_roots", "text": "拍摄榕树树根", "next_scene": "ch02_s02_tree", "grant_clues": [] },
+            { "id": "ask_about_hairpin", "text": "直接询问阿婆簪子来历", "next_scene": "ch02_s02_ask", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch02_s02_stone",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch02_s02_stone.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch02_s03", "text": "继续", "next_scene": "ch02_s03", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch02_s02_tree",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch02_s02_tree.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch02_s03", "text": "继续", "next_scene": "ch02_s03", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch02_s02_ask",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch02_s02_ask.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch02_s03", "text": "继续", "next_scene": "ch02_s03", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch02_s03",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch02_s03.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch03_s01", "text": "继续", "next_scene": "ch03_s01", "grant_clues": [] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter_03",
+      "title": "第三章：郑家大屋",
+      "location": "郑家大屋",
+      "gps": { "lat": 22.1879, "lng": 113.5347 },
+      "scenes": [
+        {
+          "id": "ch03_s01",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch03_s01.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "respond_honestly", "text": "诚恳地表态", "next_scene": "ch03_s01_honest", "grant_clues": [] },
+            { "id": "press_firmly", "text": "强硬追问", "next_scene": "ch03_s01_qiangying", "grant_clues": [] },
+            { "id": "explain_situation", "text": "说明情况", "next_scene": "ch03_s01_shoutuo", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch03_s01_honest",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch03_s01_honest.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch03_s02", "text": "继续", "next_scene": "ch03_s02", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch03_s01_qiangying",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch03_s01_qiangying.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch03_s02", "text": "继续", "next_scene": "ch03_s02", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch03_s01_shoutuo",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch03_s01_shoutuo.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch03_s02", "text": "继续", "next_scene": "ch03_s02", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch03_s02",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch03_s02.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "photograph_wooden_cabinet", "text": "对木柜拍照", "next_scene": "ch03_s02_mugui", "grant_clues": [] },
+            { "id": "photograph_altar", "text": "对神台拍照", "next_scene": "ch03_s02_shentai", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch03_s02_mugui",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch03_s02_mugui.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch03_s03", "text": "继续", "next_scene": "ch03_s03", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch03_s02_shentai",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch03_s02_shentai.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch03_s03", "text": "继续", "next_scene": "ch03_s03", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch03_s03",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch03_s03.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch03_s04", "text": "继续", "next_scene": "ch03_s04", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch03_s04",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch03_s04.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch04_s01", "text": "继续", "next_scene": "ch04_s01", "grant_clues": [] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter_04",
+      "title": "第四章：岗顶剧院",
+      "location": "岗顶剧院",
+      "gps": { "lat": 22.1892, "lng": 113.5389 },
+      "scenes": [
+        {
+          "id": "ch04_s01",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch04_s01.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "ask_last_location", "text": "问最后一次的位置", "next_scene": "ch04_s02_location", "grant_clues": [] },
+            { "id": "ask_performance_date", "text": "问那场戏的日期", "next_scene": "ch04_s02_date", "grant_clues": [] },
+            { "id": "ask_if_knows_them", "text": "问是否认识那两人", "next_scene": "ch04_s02_know", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch04_s02_location",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch04_s02_location.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch04_s03", "text": "继续", "next_scene": "ch04_s03", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch04_s02_date",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch04_s02_date.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch04_s03", "text": "继续", "next_scene": "ch04_s03", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch04_s02_know",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch04_s02_know.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch04_s03", "text": "继续", "next_scene": "ch04_s03", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch04_s03",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch04_s03.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "ask_about_costume_dock", "text": "追问“戏服码头”", "next_scene": "ch04_s04_ask", "grant_clues": [] },
+            { "id": "note_without_asking", "text": "只记下不追问", "next_scene": "ch04_s04_silent", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch04_s04_ask",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch04_s04_ask.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch04_s05", "text": "继续", "next_scene": "ch04_s05", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch04_s04_silent",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch04_s04_silent.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "continue_to_ch04_s05", "text": "继续", "next_scene": "ch04_s05", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch04_s05",
+          "type": "video",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch04_s05.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": [
+            { "id": "ask_about_her_fate", "text": "问姑娘后来的命运", "next_scene": "ch04_s06_fate", "grant_clues": [] },
+            { "id": "remain_silent", "text": "沉默", "next_scene": "ch04_s06_silent", "grant_clues": [] }
+          ]
+        },
+        {
+          "id": "ch04_s06_fate",
+          "type": "ending",
+          "ending_code": "fate",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch04_s06_fate.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": []
+        },
+        {
+          "id": "ch04_s06_silent",
+          "type": "ending",
+          "ending_code": "silent",
+          "media": { "status": "ready", "video_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/ch04_s06_silent.mp4", "poster_url": "https://xslc86wcombicd16.public.blob.vercel-storage.com/default_poster.jpg", "mime_type": "video/mp4" },
+          "choices": []
+        }
+      ]
+    }
+  ],
+  "clues": {}
+}
