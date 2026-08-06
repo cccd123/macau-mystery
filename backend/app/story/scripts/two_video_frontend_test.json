@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "story_id": "two_video_frontend_test",
+  "title": "双视频前端播放测试",
+  "description": "用于验证前端播放、继续选项和结局视频展示的最小测试剧情。",
+  "entry_scene": "test_video_01",
+  "chapters": [
+    {
+      "id": "test_chapter",
+      "title": "双视频播放测试",
+      "location": "妈阁庙",
+      "gps": {
+        "lat": 22.1867,
+        "lng": 113.5318
+      },
+      "scenes": [
+        {
+          "id": "test_video_01",
+          "type": "video",
+          "media": {
+            "status": "ready",
+            "video_url": "http://localhost:9000/macau-media/video_01.mp4",
+            "poster_url": "http://localhost:9000/macau-media/video_01.jpg",
+            "mime_type": "video/mp4"
+          },
+          "choices": [
+            {
+              "id": "continue_to_video_02",
+              "text": "继续播放第二段视频",
+              "next_scene": "test_video_02",
+              "grant_clues": []
+            }
+          ]
+        },
+        {
+          "id": "test_video_02",
+          "type": "ending",
+          "ending_code": "test_complete",
+          "media": {
+            "status": "ready",
+            "video_url": "http://localhost:9000/macau-media/video_02.mp4",
+            "poster_url": "http://localhost:9000/macau-media/video_02.jpg",
+            "mime_type": "video/mp4"
+          },
+          "choices": []
+        }
+      ]
+    }
+  ],
+  "clues": {}
+}
